@@ -6,7 +6,6 @@ export type UserData ={
    role:string;
    status:boolean;
    isAuthenticated:boolean;
-
 }
 export type User = {
      _id:string;
@@ -52,4 +51,10 @@ export type DataResponse ={
      oldPassword: string;
      newPassword:string;
      confirmPassword:string;
+ }
+
+ export type TCategoryValue = {
+    _id: string;
+    name:string;
+    image:string;
  }

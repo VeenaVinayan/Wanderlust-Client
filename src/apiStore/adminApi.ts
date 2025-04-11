@@ -10,8 +10,8 @@ const axiosInstance : AxiosInstance =axios.create({
            'Content-Type' : 'application/json',
      },
      withCredentials: true,
+     
 });
-
 axiosInstance.interceptors.request.use(
     (config) =>{
          const token = localStorage.getItem('Admin_accessToken');
@@ -24,7 +24,6 @@ axiosInstance.interceptors.request.use(
          return Promise.reject(error);
     }
 );
-
 axiosInstance.interceptors.response.use(
      (response) => response,
      async (error) => {
@@ -55,10 +54,12 @@ axiosInstance.interceptors.response.use(
  
         if (error.response.status === 403) {
              toast.error("Permission Denied!");
-         } else if (error.response.status === 404) {
+        } else if (error.response.status === 404) {
              toast.error("The requested resource was not found!");
          } else if (error.response.status >= 500) {
              toast.error("Something went wrong. Please try again later.");
+         }else if(error.respone.status === 400){
+             toast.error("Invalid OTP !!");
          }
  
          return Promise.reject(error);

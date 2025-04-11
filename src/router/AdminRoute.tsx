@@ -1,11 +1,13 @@
 import React from 'react';
-import {  Routes , Route } from 'react-router-dom';
+import { Route , Routes } from 'react-router-dom';
 import Dashboard from '../pages/Admin/AdminDashboard';;
 import Users from '../components/Admin/Users';
 import Agents from '../components/Admin/Agents';
 import Category from '../components/Admin/Category';
 import Verification from '../components/Admin/AgentVerification';
-import AgentCard from '../components/Admin/AgentCard';
+import  AgentCard  from '../components/Admin/AgentCard';
+import Packages from '../components/Admin/Packages';
+import PackageView from '../components/Admin/PackageView';
 
 const AdminRoute : React.FC = () =>{
     return(
@@ -16,7 +18,9 @@ const AdminRoute : React.FC = () =>{
                 <Route path="category" element={<Category /> } />
                 <Route path="verification" element={< Verification/>}  />
                 <Route path="agentCard" element={<AgentCard/>}  />
-            </Route>
+                <Route path="packages" element={<Packages />} />
+                <Route path="viewPackage" element={<PackageView/>} />
+             </Route>
         </Routes>
     )
 }

@@ -16,11 +16,27 @@ export type TAgentData= {
          }, 
     isVerified:string;     
  }
-
  export type TAgentVerification = {
     _id:string;
     name:string;
     email:string;
     phone:string;
     license:string;
+ }
+
+ export type TCategoryValue = {
+    _id:string;
+    name:string;
+ }
+
+ export type TSignedUrl = {
+   signedUrl: string;
+   fileKey: string;
+   publicUrl: string;
+ }
+
+ export type SearchParams = {
+     search: string,
+     sortBy: string,
+     sortOrder: string,
  }

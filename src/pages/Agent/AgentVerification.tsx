@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 const  LicenseUpload : React.FC = () => {
   const location = useLocation();
   const data = location.state; 
+  console.log('Agent Verification ::',data);
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const agentData = useSelector((state: RootState) => state.agentSliceData);

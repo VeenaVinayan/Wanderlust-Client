@@ -11,6 +11,7 @@ import { PER_PAGE } from "../../Constants/User";
 import Pagination from "../layout/Shared/Pagination";
 import Swal from 'sweetalert2';
 import Modal from '../common/Modal';
+import SearchFilter from '../layout/Shared/SearchFilter';
 
 const Category: React.FC = () => {
   const [ isModalOpen, setIsModal] = useState<boolean>(false);
@@ -25,6 +26,7 @@ const Category: React.FC = () => {
   const [ isImageUpdate, setIsImageUpdate ] = useState<boolean>(false);
   const [category, setCategory ] = useState<TCategory[]>([]);
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
+  const [ filters, setFilters ] = useState({keyword:'', sortOrder: ''});
   const [ editData, setEditData] = useState({
       _id:'',
       name:'',
@@ -55,10 +57,16 @@ const Category: React.FC = () => {
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
     };
-  }, [imagePreview,currentPage]);
+  }, [imagePreview,currentPage,filters]);
+  
   const fetchData = async (page: number) =>{
-       const data = await fetchAllCategory(page);
-       console.log("Data ::",data.data);
+       const data = await fetchAllCategory(page,
+        {
+          search: filters.keyword,
+          sortBy: 'name',
+          sortOrder : filters.sortOrder,
+       }
+      );
        if(data){
          setCategory(data?.data?.data);
          setCount(data?.data?.totalCount)
@@ -198,11 +206,12 @@ const Category: React.FC = () => {
       >
         <PlusCircle size={20} color={"white"} />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
-          CREATE CATEGORY
+          CREATE
         </span>
       </button>
       { !isCreate && 
       <>
+      <SearchFilter onFilterChange={setFilters} />
       <Table<TCategory> 
                 data={category}
                 columns= {Columns_Category}
@@ -230,9 +239,9 @@ const Category: React.FC = () => {
       />
       <div className="flex justify-center mt-6"> 
       <Pagination 
-              perPage={PER_PAGE}
-              length={count || 1}
-              handlePage={handlePage}
+            perPage={PER_PAGE}
+            length={count || 1}
+            handlePage={handlePage}
        />
        </div> 
        </>      

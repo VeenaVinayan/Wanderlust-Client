@@ -144,21 +144,7 @@ const AgentRegister :React.FC = () => {
       </div>
     </div>
   </div>
-   {/* { !isImage ? (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition duration-300 m-2">
-     <label  className="cursor-pointer flex flex-col items-center justify-center space-y-3">
-      <Image color='gray' size={20} />
-       <span className="text-gray-600 font-medium text-lg">Click to Upload  Your Travel Certificate ! </span>
-       <input id="file-upload" type="file" className="hidden" onChange={handleChange} />
-     </label>
-    </div> 
-    ):(
-      <div className='gap-4 mx-auto'>
-         <p className="mb-2 text-gray-600 ">Selected Image:</p>
-          <img src={preview}  alt="Selected Preview" className="w-64 h-64 object-cover rounded-lg shadow-lg"  />
-      </div>
-     )
-     } */}
+   
     <button type="submit"
         className="w-full bg-gray-700 text-white rounded p-2 hover:bg-gray-700 shadow-md transition">
         Register

@@ -8,7 +8,6 @@ export const uploadCertificate =  async (userId : string, image :File) =>{
           const response = await axiosInstance.post('/getPresignedUrl',{
              fileType:image.type
           });
-         
           console.log(' After upload url !!',response);
           if(response.status === 200){
               const { signedUrl, fileKey,publicUrl } = response.data.response;

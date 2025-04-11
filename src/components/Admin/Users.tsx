@@ -7,19 +7,25 @@ import { Columns } from '../../Constants/User';
 import { Ban } from 'lucide-react';
 import Pagination from "../layout/Shared/Pagination";
 import { PER_PAGE } from "../../Constants/User";
+import SearchFilter from '../layout/Shared/SearchFilter';
 
 const Users : React.FC = () => {
  const [ userData, setUserData ] = useState<User []>([]); 
  const { handleBlock} = useBlockActions();
  const [count, setCount] = useState<number>(0); 
  const [ currentPage, setCurrentPage] = useState(1);
+ const [filters, setFilters] = useState({ keyword: '', sortOrder: '' });
 
  useEffect(() =>{
      getUserData(currentPage);
- },[currentPage]); 
+ },[currentPage,filters]); 
    
    const getUserData  = async (page:number) =>{
-    const data  =  await fetchData("User",page);
+    const data  =  await fetchData("User",page,{
+       search : filters.keyword,
+       sortBy:'name',
+       sortOrder: filters.sortOrder
+    });
     console.log('In User Page !!',data);
     if(data){
         setUserData(data.data);
@@ -42,7 +48,8 @@ const Users : React.FC = () => {
  } 
   return (
     <>
-      { userData.length >0 ? ( 
+       <SearchFilter onFilterChange={setFilters} />
+       { userData.length >0 ? ( 
         <> 
         <Table<User>
                 data={userData} 

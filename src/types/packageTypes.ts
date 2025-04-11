@@ -1,18 +1,46 @@
 export type TPackage = {
+    _id:string;
     name:string;
     description: string;
     price:number;
     day:number;
     night:number;
-    images:File[];
+    images:string[];
     category:string;
-    itinery:{
+    status?:boolean;
+    agent:string;
+    totalCapacity:number;
+    discount:number;
+    itinerary:{
         day:number;
-        decription:string;
+        description:string;
         meals:string[];
         activities:string;
         stay:string;
         transfer:string;
-        location:string;  
-    }
+    }[]
 }
+export type TCategoryValue = {
+    _id: string;
+    name:string;
+}
+export type TPackageState = {
+    packages: TPackage[];
+    status: "idle" | "succeeded" | "failed" | "loading";
+    error: string | null;
+}
+export type TItinerary = { 
+    day:number;
+    description:string;
+    activities: string, 
+    meals: string [], 
+    stay: string; 
+    transfer: string;
+  };
+ 
+  export type TPackageUpdate = Omit<TPackage, '_id' | 'status'>;
+
+  export type TPackageData = {
+     packages: TPackage[],
+     totalCount : number,
+  }

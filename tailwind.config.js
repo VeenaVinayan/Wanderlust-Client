@@ -7,10 +7,10 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
-      'nunito': ['nunito', 'sans-serif'],
-      'MyFont': ['"My Font"', 'serif'],
+      sans: ["poppins", "sans-serif"],
     },
   },
   plugins: [],
 }
 
+  

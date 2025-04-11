@@ -36,8 +36,8 @@ const Login :React.FC = () => {
                     break;
         case 'User':
                      dispatch(setUserData(user));
-                     navigate('/user/userProfile');
-                    break;
+                     navigate('/');
+                     break;
         case 'Agent':
                    // const agent = { ...user, address, ...isVerified};
                     console.log("Verified ::",isVerified,address);
@@ -89,11 +89,7 @@ const Login :React.FC = () => {
       });
     }
     const toggleModal = ()=> setIsModalOpen(!isModalOpen);
-    //Google Auth
-
-    // const handleFailure = () =>{
-    //    console.log(' Error !');
-    // }
+  
     const handleSubmit = async (e: React.FormEvent) =>{
          setLoading(true);
          e.preventDefault();
@@ -163,7 +159,7 @@ const Login :React.FC = () => {
         <div className="flex flex-col md:flex-row h-screen">
           <div className="w-full md:w-1/2 bg-gray-100 flex flex-col items-center justify-center">
           <img
-            src="/images/wander.webp"
+            src="/images/wanderlust.png"
             alt="Login Illustration"
             className="rounded-md w-2/3 md:w-1/2"
           />

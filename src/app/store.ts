@@ -6,6 +6,7 @@ import registerReducer from '../features/authentication/registerSlice';
 import userReducer from '../features/authentication/userSlice';
 import agentRegisterReducer from '../features/authentication/AgentSlice';
 import agentDataSlice from '../features/authentication/AgentDataSlice';
+import packageReducer from '../features/authentication/packageSlice';
 
 const persistConfig = {
   key: 'root', 
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
    userData: userReducer,
    agentData: agentRegisterReducer,
    agentSliceData : agentDataSlice,
+   packages : packageReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -66,8 +66,7 @@ const Otp: React.FC = () => {
           user,
         },
       });
-      
-      if (response.data.success) {
+      if(response.data.success) {
         toast.success("OTP successfully verified!");
         navigate("/login"); // Redirect to a success page
       }else{

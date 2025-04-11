@@ -2,6 +2,7 @@ import { TCategory} from '../types/categoryTypes';
 import { Column } from '../components/common/Table';
 import { Agent , User} from '../types/userTypes';
 import { TAgentVerification } from '../types/agentTypes';
+import { TPackage } from '../types/packageTypes';
 
 export const Columns : Column <Agent | User>[]= [
     {key:"name", label:"Name"},
@@ -68,6 +69,36 @@ export const AgentVerificationColumn : Column<TAgentVerification>[] =[
       />     
     ),
   }
+]
 
+export const PackageColumn : Column <TPackage>[]=[
+  { key: "name", label:"Name"},
+  { key:"description", label:"Description"},
+  { key:"price", label: "Price"},
+  { key:"day", label: "Days"},
+  { key :"status",
+    label:"Status",
+    render:(value) =>{
+       if( typeof value === "boolean"){
+         return value ? 
+          (
+            <span className="text-green-800 border-spacing-1">Active</span>
+          ) : (
+            <span className="text-red-900">Inactive</span>
+          );
+          return "unknown"
+      }
+    }
+  },
+   { key:"images",
+     label:"Image",
+     render:(value) =>(
+       <img 
+             src={value[0]}
+             alt={'Package image'}
+             className='h-16 w-16 object-cover rounded-lg'
+       />      
+     )
+  },
 ]
  
