@@ -5,3 +5,12 @@ export const DURATIONS =[
      {label:"5 to 10", value:"5-10"},
      {label:" Above 10", value:"10+"}
 ];
+
+export const policy = {
+     refundable: true,
+     refundPercentage: 80,  
+     allowedUntilDaysBefore: 4,  
+     cancellationFee: 20,  
+     terms: 'You can cancel up to 4 days before the trip. 20% of the amount will be deducted as fees.  '
+ };
+ 

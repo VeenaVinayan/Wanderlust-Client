@@ -3,7 +3,6 @@ import { Navigate, Outlet } from "react-router-dom";
 import React from 'react';
 
 const PrivateRoute : React.FC = () =>{
-     localStorage.getItem(`Admin_accessToken`);
      const role  = activeRole();
      const token = localStorage.getItem(`${role}_accessToken`);
      console.log('In private Route ::', token);

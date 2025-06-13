@@ -13,7 +13,7 @@ const Header : React.FC= () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const userId = localStorage.getItem("userId");
   useEffect(() =>{
        setUserData(userData);
   },[userData]);
@@ -47,7 +47,7 @@ const Header : React.FC= () => {
           <Link to='/user/search' className='justify-end'>
             <Search size={20} color={'Gray'}/>
           </Link>
-          { !user?.isAuthenticated ? ( 
+          { (!user?.isAuthenticated )? ( 
           <Link 
                 to="/login"
                 className="border border-gray-400 text-gray-400 font-bold px-4 py-2 rounded-lg 
@@ -67,7 +67,7 @@ const Header : React.FC= () => {
             {isOpen && (
              <ul className="absolute right-0 mt-2 w-32 bg-white shadow-md rounded-md py-1 text-gray-700 text-sm">
              <li className="px-3 py-2 hover:bg-gray-100 text-bold rounded-t-md"> Hi, {user.name}</li>
-             <li className="px-3 py-2 hover:bg-gray-100 text-bold cursor-pointer" onClick={() => navigate('/user/userProfile')}> Profile</li>
+             <li className="px-3 py-2 hover:bg-gray-100 text-bold cursor-pointer" onClick={() => navigate('/user/userProfile/')}> Profile</li>
              <li className="px-3 py-2 hover:bg-gray-100 cursor-pointer rounded-b-md" onClick={handleLogout}>Logout</li>
            </ul>
           )}

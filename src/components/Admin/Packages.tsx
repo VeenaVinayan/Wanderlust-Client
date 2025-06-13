@@ -22,7 +22,9 @@ const Packages : React.FC = () => {
 
   useEffect(() =>{
      const fetchData = async(page : number) =>{
-       const data = await getPackages(page,{
+       const data = await getPackages({
+           page,
+           perPage: PER_PAGE,
           search : filters.keyword,
           sortBy:'name',
           sortOrder: filters.sortOrder

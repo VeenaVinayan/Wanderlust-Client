@@ -32,7 +32,7 @@ const AgentDashboard: React.FC = () => {
               🏠 Dashboard
             </NavLink>
             <NavLink
-              to="booking"
+              to="bookingData"
               className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
               📦 Bookings

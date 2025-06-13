@@ -39,7 +39,7 @@ const AppRouter: React.FC = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/admin/*" element={<AdminRoute />} />
           <Route path="/agent/*" element={<AgentRoute />} />
-          <Route path='/user/*' element={<UserRoute/>} />
+          <Route path="/user/*" element={<UserRoute/>} />
         </Route>
       </Routes>
     </Router>

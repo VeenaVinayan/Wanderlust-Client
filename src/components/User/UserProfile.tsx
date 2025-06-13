@@ -66,30 +66,34 @@ const UserProfile : React.FC  = () => {
         toast.error('Error in update user');
     }
   }
-const passwordResetSubmit = async(e: FormEvent) =>{
-       e.preventDefault();
-       try{
-            await schema.validate(password,{abortEarly: false});
-            console.log('Form Submitted Successfully !')
-            const res = await resetPassword(password,userInfo.id);
-            if(res){
-               toast.success("Password successfully reset !");
-               setErrors({});
-               setPassword(initialState);
-            }else{
-               toast.error("Not successfuly reset password !");
-            }
-       }catch(err : unknown){
-         console.log('Error in ',err);
-         if( err instanceof Error && "inner" in err){
-            const newErrors: Record<string, string> = {};
-            (err as any).inner.forEach((e: any) =>{
-                newErrors[e.path as string] = e.message;
-            });
-            setErrors(newErrors);
-         }
-       } 
+const passwordResetSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  try {
+    await schema.validate(password, { abortEarly: false });
+    const res = await resetPassword(password, userInfo.id);
+    console.log("REsponse is ::",res);
+    if (res?.success) {
+      toast.success(res.message);
+      setErrors({});
+      setPassword(initialState);
+      setIsPasswordModal(false);
+    }else { 
+      setIsPasswordModal(false);
+      }   
+    
+ } catch (err: unknown) {
+    console.log('Error in password reset submission:', err);
+    if (err instanceof Error && "inner" in err) {
+      const newErrors: Record<string, string> = {};
+      (err as any).inner.forEach((e: any) => {
+        newErrors[e.path as string] = e.message;
+      });
+      setErrors(newErrors);
     }
+   // Show generic error toast
+  }
+};
+
   return( 
     <div className="min-h-screen flex flex-col items-center  bg-gray-100 p-4">
     <Header />

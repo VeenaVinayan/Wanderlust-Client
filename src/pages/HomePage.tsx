@@ -15,11 +15,14 @@ import "swiper/css/effect-coverflow";
 import "../css/video.css";
 import { TPackage } from "../types/packageTypes";
 import Header from '../components/layout/Shared/Header';
+import { addToWishlist } from "../services/User/UserServices";
+import { toast } from 'react-toastify';
 
 const HomePage : React.FC = () => {
 const dispatch = useDispatch<AppDispatch>();  
 const [ categories, setCategories ] = useState<TCategoryValue[]>([]);
 const { packages, status, error } = useSelector((state: RootState) => state.packages);
+const user = useSelector(( state: RootState) => state.userData);
 const navigate = useNavigate();
 
  useEffect (() =>{
@@ -33,6 +36,19 @@ const navigate = useNavigate();
 
 if(status ==='loading') return <p>Loading...</p>
 if(status === 'failed') return <p>Error ...{error}</p>
+
+const handleWishlist = async (packageId : string) => {
+   console.log('Wishlist !!',packageId);
+   if(user.isAuthenticated){
+   const res = await addToWishlist(user.id,packageId);
+   if(res) toast.success(res);
+   else toast.error('Not successfully added To Wishlist !!');
+   }else{
+      toast.info("Please sign in to add items to your wishlist.");
+      navigate(`/login?redirectBack=${encodeURIComponent(location.pathname)}`);
+      return;
+   }
+  }
 
 const handleThemeSearch = (categoryId : string) =>{
    console.log("Category search",categoryId);
@@ -137,7 +153,6 @@ const handleThemeSearch = (categoryId : string) =>{
     >
       {/* Image Container */}
       <div className="relative"
-           onClick={()=> navigate('/user/packageDetails',{state:pkg})}
       >
         <img
           src={pkg.images[0] as string}
@@ -146,16 +161,21 @@ const handleThemeSearch = (categoryId : string) =>{
         />
 
         {/* Heart Icon in top-right */}
-        <div className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition">
+        <div 
+             className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition"
+             onClick={() => handleWishlist(pkg._id)}>
           <HeartIcon size={24} className="text-red-500" />
         </div>
        {/* Gradient Overlay at the bottom */}
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col items-center">
+        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col items-center"
+           onClick={()=> navigate('/user/packageDetails',{state:pkg})}
+        >
           <h3 className="text-lg font-semibold text-white text-center">{pkg.name}</h3>
        </div>
        </div> 
       <div>
-      <p className="text-sm text-gray-700 text-center">{pkg.description}</p>
+      <p className="text-sm text-gray-700 text-center">
+          {pkg.description.split(' ').slice(0, 10).join(' ')}...</p>
       <p className="text-lg font-bold text-center text-yellow-400 mt-1">{'\u20B9'}{pkg.price}</p>
      </div>
    

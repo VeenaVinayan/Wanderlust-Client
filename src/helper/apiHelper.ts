@@ -1,7 +1,7 @@
 import axiosInstance from "../apiStore/adminApi";
 import { PER_PAGE} from '../Constants/User';
 import { SearchParams } from "../types/agentTypes";
-import { TPackageData } from "../types/packageTypes";
+import { TPackageData, TAgentPackage } from "../types/packageTypes";
 
 class ApiHelper {
     async deleteCategory(categoryId : string) : Promise<boolean | undefined>{
@@ -68,16 +68,18 @@ class ApiHelper {
            return false;
         }
     }
- async getPackages(page : number,params : SearchParams) : Promise<TPackageData>{
-    // eslint-disable-next-line no-useless-catch
-    try{
-        console.log("Page ::",page);
-        const response = await axiosInstance.get(`/packages/${page}/${PER_PAGE}`,{params});
+ async getPackages(params : SearchParams) : Promise<TPackageData>{
+        const response = await axiosInstance.get(`/packages`,{params});
         return response.data.data;
-    }catch(err){
-        throw err;
-    }
+ }
+ async getAgentPackages(params : SearchParams) : Promise<TAgentPackage>{
+     const response = await axiosInstance.get('/packages',{params});
+     return response.data.data;
+ }
+ async getDashboard(){
+     const response = await axiosInstance.get('/dashboard');
+     console.log("DAta is ::",response.data);
+     return response.data;
  }
 }
-
 export default new ApiHelper();

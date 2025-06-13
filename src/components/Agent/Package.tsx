@@ -4,7 +4,7 @@ import AddPackage from './AddPackage';
 import { Link, useNavigate } from 'react-router-dom';
 import Table from '../../components/common/Table';
 import { TPackage } from '../../types/packageTypes';
-import { ViewIcon, Ban, Edit } from 'lucide-react';
+import { Ban, Edit } from 'lucide-react';
 import { PackageColumn } from '../../Constants/User';
 import  useSweetAlert  from '../../hooks/CustomHooks/SweetAlert';
 import { agentDeletePackage, getPackages } from '../../services/Agent/PackageService';
@@ -13,6 +13,8 @@ import Pagination from '../../components/layout/Shared/Pagination';
 import { PER_PAGE } from '../../Constants/User';
 import {  packageValidationSchema } from '../../Validations/PackageRegister';
 import SearchFilter from '../layout/Shared/SearchFilter';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../app/store'; 
 
  const Package : React.FC= () => {
    const [ currentPage, setCurrentPage] = useState(1);
@@ -22,27 +24,31 @@ import SearchFilter from '../layout/Shared/SearchFilter';
    const [ filters, setFilters] = useState({keyword:'',sortOrder:''});
    const navigate = useNavigate();
    const { showConfirm } = useSweetAlert();
-
+   const agent = useSelector((state:RootState) => state.agentSliceData);
    const handlePage = async (page: number) =>{
     setCurrentPage(page);
    }
    useEffect(() =>{
          const fetchPackages = async (page :number) =>{
-             const data = await getPackages(page,{
+             const data = await getPackages(agent.id,{
+                page,
+                perPage:PER_PAGE,
                 search: filters.keyword,
                 sortBy: 'name',
-                sortOrder: filters.sortOrder
-             });
+                sortOrder: filters.sortOrder,
+            });
              if(data){
+              console.log('Packages ::',data);
               setPackages(data.packages);
               setCount(data.totalCount);
              }
           }
          fetchPackages(currentPage);
-   },[currentPage,filters])
+   },[currentPage,filters]);
 
    const handleDelete = async (packageData: TPackage) =>{
-       const response = await agentDeletePackage(packageData._id);
+     if(packageData._id){
+      const response = await agentDeletePackage(packageData._id);
        if(response){
           toast.success("Successfully delete package !");
           packageData.status = !packageData.status;
@@ -50,11 +56,9 @@ import SearchFilter from '../layout/Shared/SearchFilter';
        }else{
          toast.error("Delete not working properly !!");
        }
-   }
-   const handleView = (packages : TPackage) => {
-       console.log('Handel View ',packages);
-      
-   }
+     }
+  }
+
    const handleEdit = (packages : TPackage) =>{
      console.log('Handle Edit ::', packages);
      navigate('/agent/agentDashboard/editPackage',{state:packages});
@@ -78,7 +82,7 @@ import SearchFilter from '../layout/Shared/SearchFilter';
  
     {isCreate && (
       <div className="mb-6">
-          <AddPackage setCreate={setIsCreate} />
+          <AddPackage />
       </div>
     )}
 
@@ -96,19 +100,13 @@ import SearchFilter from '../layout/Shared/SearchFilter';
               onClick={() => showConfirm("Delete Package |","Do you want to Delete package ?",()=> handleDelete(value))}
               className="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-400 transition flex items-center gap-1"
             >
-              <Ban color={'white'} size={16} />
-            </button>
-            <button
-              onClick={() => handleView(value)}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-500 focus:ring-2 transition flex items-center gap-1"
-            >
-              <ViewIcon color={'white'} size={16} />
+              <Ban color={'white'} size={12} />
             </button>
             <button
               onClick={() => showConfirm("Edit package !"," Do you want to Edit Package ?",() => handleEdit(value))}
               className="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-500 focus:ring-2 transition flex items-center gap-1"
             >
-              <Edit color={'white'} size={16} />
+              <Edit color={'white'} size={12} />
             </button>
           </div>
         )}
@@ -123,12 +121,15 @@ import SearchFilter from '../layout/Shared/SearchFilter';
     </div> 
     </> 
       ): (
-          <div> No Packages !! </div>
+           <div className="flex items-center justify-center h-60 bg-gray-50 rounded-xl shadow-inner">
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 tracking-wide">
+                🚫 No Package is Available
+               </h2>
+            </div>
        )
     } 
   </div>
 </>
  );
 }
-
-export default Package
+export default Package;

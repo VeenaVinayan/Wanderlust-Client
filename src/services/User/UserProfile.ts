@@ -14,16 +14,24 @@ export const updateProfile = async ( data : TUserUpdateData,id : string) =>{
     }
 }
 
-export const resetPassword = async (password :TResetPassword , id: string) =>{
-     try{
-          console.log("INside password reset service ::",password,id);
-          const response = await axiosInstance.patch(`/user/update-password/${id}`,password);
-          if(response.status === 200){
-              return true;
-          }else{
-             return false;
-          }
-      }catch(err){
-         console.log('Error occured in reset password !', err);
-      }
-}
+// export const resetPassword = async (password :TResetPassword , id: string) =>{
+//      try{
+//           console.log("INside password reset service ::",password,id);
+//           const response = await axiosInstance.patch(`/user/update-password/${id}`,password);
+//          response.data;
+//       }catch(err){
+//          console.log('Error occured in reset password !', err);
+//          return error.response.data;
+//       }
+// }
+export const resetPassword = async (password: TResetPassword, id: string) => {
+  try {
+    console.log("Inside password reset service ::", password, id);
+    const response = await axiosInstance.patch(`/user/update-password/${id}`, password);
+    console.log('Response in reset password:', response.data);
+    return response.data; // Return response on success
+  } catch (error: any) {
+    console.log('Error occurred in reset password!', error);
+    return error.response?.data || { message: 'Unexpected error occurred' };
+  }
+};

@@ -28,7 +28,9 @@ const PackageView : React.FC= () => {
         activities:'',
         stay:'',
         transfer:'',
-    }]
+    }],
+    agent:'',
+    totalCapacity:0,
   }) 
   const location = useLocation();
   const  travelPackage  = location.state;

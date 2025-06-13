@@ -9,7 +9,7 @@ import { TCategoryValue } from "../../types/agentTypes";
 import { useSelector } from 'react-redux';
 import { RootState } from "../../app/store";
 import schema from '../../Validations/EditPackage';
-import { PackageFormErrors } from '../../Interfaces/Error';
+import { ValidationError } from 'yup';
 
 const EditPackage = () => {
   const [packageData, setPackageData] = useState<TPackage>();
@@ -24,24 +24,19 @@ const EditPackage = () => {
   const packages = location.state;
   const navigate = useNavigate();
   const agentData = useSelector((state:RootState) => state.agentSliceData);
-  const [ errors, setErrors ] = useState<PackageFormErrors> ({
-    name: "",
-    description: "",
-    price: '',
-    day: '',
-    night: '',
-    images: '',
-    category: "",
-    itinerary: [ 
-      {
-        day: '',
-        description: "",
-        meals: [] as string[],
-        activities: "",
-        stay: "",
-        transfer: "",
-      }]   
-  });
+  type ItineraryError = {
+    description?: string;
+    activities?: string;
+    meals?: string;
+    stay?: string;
+    transfer?: string;
+  };
+  type ErrorsType = {
+    [key: string]: any;
+    itinerary?: ItineraryError[];
+  };
+  const [ errors, setErrors ] = useState<ErrorsType>({});
+
   useEffect(() => {
     if (packages) {
       const fetchCategories = async () =>{
@@ -56,7 +51,7 @@ const EditPackage = () => {
       setExistingImages(packages.images || []);
       fetchCategories();
     }
-  }, [packages]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement| HTMLSelectElement>) => {
     e.preventDefault();
@@ -110,36 +105,45 @@ const EditPackage = () => {
  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     console.log('Edit package ::',packageData);
-  // if (!packageData) return;
+    // if (!packageData) return;
     setIsSubmitting(true);
     try {
       packageData!.images = existingImages;
       packageData!.agent = agentData.id;
-   // await schema.validate(packageData,{ abortEarly:true})
+      await schema.validate(packageData,{ abortEarly:false})
+      if(existingImages.length === 0 && images.length ===0 ){
+          toast.error('Add atleat one Image');
+          return;
+      }
       console.log("After Edit values Are :: ",packageData,packageData!.category);
       const response = await editPackage(packageData!,images,deleteImage);
       console.log("REsponse ::",response)
       if (response) {
         toast.success("Package updated successfully!");
         setPackageData(null);
-         navigate('/agent/agentDashboard/package');
+        navigate('/agent/agentDashboard/package');
       }
-    }catch (err:unknown) {
-       if(err instanceof Error && 'inner' in err){
-          const newErrors: Record<string, string> = {};
-          (err as any).inner.forEach((e : unknown) =>{
-             newErrors[e.path as string] = e.message;
-          });
-        setErrors(newErrors);
+   }catch (err: unknown) {
+    if(err instanceof ValidationError) {
+       console.log("ERrors :: ",err);
+       const newErrors: Record<string, string> = {};
+       err.inner.forEach((e) => {
+       if (e.path) {
+          newErrors[e.path] = e.message;
        }
-    }finally {
+      });
+     setErrors(newErrors);
+     console.log("Error obj::",newErrors,errors);
+    } else {
+      console.error("Unexpected error during validation:", err);
+    }
+  }finally {
       setIsSubmitting(false);
     }
   };
-
-  if (!packageData) {
+ if(!packageData) {
     return <p className="text-center text-gray-600">Package not found.</p>;
-  }
+ }
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Package</h2>
@@ -153,7 +157,7 @@ const EditPackage = () => {
               name="name"
               value={packageData.name}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
               placeholder="Title"
             />
              {errors.name && <p className="text-red-500">{errors.name}</p>}
@@ -164,7 +168,7 @@ const EditPackage = () => {
               name="description"
               value={packageData.description}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
               placeholder="Description"
               rows={4}
             />
@@ -178,29 +182,54 @@ const EditPackage = () => {
               name="price"
               value={packageData.price}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
               placeholder="Price"
             />
          {errors.price && <p className="text-red-500">{errors.price}</p>}   
-    </div>
-<div>
- <label className="block text-gray-600 font-medium">Category</label>
-  <select
-     name="category"
-     value={packageData.category}  
-     onChange={handleChange}
-     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400"
-  >
-{categories
-     .map(category => (
+        </div>
+    <div>
+     <label className="block text-gray-600 font-medium">Category</label>
+     <select
+       name="category"
+       value={packageData.category}  
+       onChange={handleChange}
+       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-300"
+     >
+    {categories
+      .map(category => (
       <option key={category._id} value={category._id}>
         {category.name}
       </option>
-    ))}
- </select>
-   {errors.category && <p className="text-red-500">{errors.category}</p>}
- </div>
- </div>
+      ))}
+    </select>
+     {errors.category && <p className="text-red-500">{errors.category}</p>}
+   </div>
+   </div>
+   <div className="grid grid-cols-2 gap-4">
+    <div>
+     <label className="block text-sm font-medium text-gray-700">Total Capacity</label>
+       <input 
+            type="number"
+            name="totalCapacity"
+            className="w-full p-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 fous:ring-gray-300"
+            value={packageData.totalCapacity}
+            onChange={handleChange}
+            placeholder="Total Capacity"
+        />    
+        {errors.day && <p className="text-red-500">{errors.day}</p>}
+    </div>
+    <div>
+       <label className="block text-sm font-small text-gray-700">Discount</label>
+       <input
+              type="number"
+              name="discount"
+              value={packageData.discount}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder="Discount"
+       />
+    </div>
+   </div>
      <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Day</label>
@@ -209,7 +238,7 @@ const EditPackage = () => {
                 name="day"
                 value={packageData.day || ""}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
                 placeholder="Day"
               />
                 {errors.day && <p className="text-red-500">{errors.day}</p>}
@@ -221,12 +250,12 @@ const EditPackage = () => {
                 name="night"
                 value={packageData.night || ""}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
                 placeholder="Night"
               />
                 {errors.night && <p className="text-red-500">{errors.night}</p>}
              </div>
-          </div>
+         </div>
         </div>
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-800">Images</h3>
@@ -244,8 +273,7 @@ const EditPackage = () => {
               </div>
             ))}
           </div>
-
-          {/* New Image Upload */}
+  
 <label className="block text-sm font-medium text-gray-700">Upload New Images</label>
 <div className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition duration-300">
   <input
@@ -263,9 +291,9 @@ const EditPackage = () => {
     <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
       📷
     </div>
-    <button className="mt-2 px-2 py-1 text-white bg-blue-500 rounded-lg shadow hover:bg-blue-600 transition">
+    <label className="mt-2 px-2 py-1 text-white bg-gray-700 rounded-lg shadow hover:bg-gray-900 transition">
       Select Files
-    </button>
+    </label>
   </label>
  </div>
      {/* New Image Preview */}
@@ -288,7 +316,13 @@ const EditPackage = () => {
         {/* Itinerary Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-800">Itinerary</h3>
-          {packageData.itinerary.map((day, index) => (
+          {(packageData.itinerary as {
+               description: string;
+               activities: string;
+               meals: string[];
+               stay: string;
+               transfer: string;
+          }[]).map((day, index) => (
             <div key={index} className="border border-gray-200 p-4 rounded-lg">
               <div className="flex justify-between items-center">
                 <button
@@ -307,8 +341,7 @@ const EditPackage = () => {
                   <DeleteIcon size={20} />
                 </button>
               </div>
-
-              {expandedDays[index] && (
+             {expandedDays[index] && (
                 <div className="mt-4 space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Day Description</label>
@@ -319,7 +352,7 @@ const EditPackage = () => {
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Day Description"
                     />
-                     {errors.itinerary?.[index]?.description && <p className="text-red-500">{errors.itinerary?.[index]?.description}</p>}
+                     {errors.itinerary?.[index]?.description && <p className="text-red-500">{errors.itinerary[index]?.description}</p>}
                   </div>
                  <div>
                     <label className="block text-sm font-medium text-gray-700">Activities</label>
@@ -330,11 +363,10 @@ const EditPackage = () => {
                       placeholder="Activities for the day"
                       rows={3}
                     />
-                  {errors.itinerary?.[index]?.description && (
-                    <p className="text-red-500">{errors.itinerary[index].description}</p>
+                  {errors.itinerary?.[index]?.activities && (
+                    <p className="text-red-500">{errors.itinerary[index]?.activities}</p>
                  )}
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Meals</label>
                     <div className="grid grid-cols-2 gap-2">
@@ -355,7 +387,7 @@ const EditPackage = () => {
                           <span className="text-gray-600">{meal}</span>
                         </label>
                       ))}
-                 {errors.itinerary?.[index]?.meals && <p className="text-red-500">{errors.itinerary[index].meals}</p>} 
+                 {errors.itinerary?.[index-1]?.meals && <p className="text-red-500">{errors.itinerary[index]?.meals}</p>} 
                     </div>
                   </div>
 
@@ -368,12 +400,12 @@ const EditPackage = () => {
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Stay details"
                     />
-                     {errors.itinerary?.[index]?.stay && (
-                        <p className="text-red-500">{errors.itinerary[index].stay}</p>
+                     {errors.itinerary?.[index-1]?.stay && (
+                        <p className="text-red-500">{errors.itinerary[index]?.stay}</p>
                      )}
-                  </div>
-
-                  <div>
+                      {errors.itinerary?.[index]?.transfer && (
+                          <p className="text-red-500">{errors.itinerary[index]?.transfer}</p>
+                      )}
                     <label className="block text-sm font-medium text-gray-700">Transfer</label>
                     <input
                       type="text"
@@ -382,8 +414,8 @@ const EditPackage = () => {
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Transfer details"
                     />
-                      {errors.itinerary?.[index]?.transfer && (
-                          <p className="text-red-500">{errors.itinerary[index].transfer}</p>
+                      {errors.itinerary?.[index-1]?.transfer && (
+                          <p className="text-red-500">{errors.itinerary[index]?.transfer}</p>
                       )}
                   </div>
                 </div>

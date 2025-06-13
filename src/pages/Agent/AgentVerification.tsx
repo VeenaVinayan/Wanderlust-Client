@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { ImagePlus } from "lucide-react";
-import Header from '../../components/Agent/Header';
+import Header from '../../components/layout/Shared/Header';
 import { toast } from 'react-toastify';
 import { uploadCertificate  } from "../../services/Agent/AgentService";
 import { useSelector } from 'react-redux';

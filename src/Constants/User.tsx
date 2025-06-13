@@ -1,8 +1,11 @@
 import { TCategory} from '../types/categoryTypes';
 import { Column } from '../components/common/Table';
-import { Agent , User} from '../types/userTypes';
+import { Agent , User, TWalletTransaction} from '../types/userTypes';
 import { TAgentVerification } from '../types/agentTypes';
 import { TPackage } from '../types/packageTypes';
+import { TBookingValue, TBookingAgentResponse } from '../types/bookingTypes';
+import { TAgentPackage } from '../types/packageTypes';
+export const PER_PAGE = 6;
 
 export const Columns : Column <Agent | User>[]= [
     {key:"name", label:"Name"},
@@ -23,7 +26,7 @@ export const Columns : Column <Agent | User>[]= [
       },
     }
  ];
-export const PER_PAGE = 2;
+
 
 export const Columns_Category: Column<TCategory>[] = [
    { key: "name", label: "Name" },
@@ -71,9 +74,43 @@ export const AgentVerificationColumn : Column<TAgentVerification>[] =[
   }
 ]
 
-export const PackageColumn : Column <TPackage>[]=[
-  { key: "name", label:"Name"},
-  { key:"description", label:"Description"},
+export const PackageColumn : Column <TPackage>[]=[    
+  {
+   key: "images",
+   label: "Image",
+   render: (value) => {
+    if (Array.isArray(value) && value.length > 0) {
+      return (
+        <img
+          src={value[0]}
+          alt="Package"
+          className="h-16 w-16 object-cover rounded-lg"
+        />
+      );
+    }
+     return <span className="text-gray-400">No image</span>;
+   },
+ },
+
+  { key: "name", 
+    label:"Name",
+    render:(value) =>  { 
+      if(typeof value === "string"){ 
+      return(
+         <span className="text-gray-800 font-semibold">{value}</span>
+     )
+  }
+ }
+ },
+  { key:"description", 
+    label:"Description",
+    render:(value) =>{ 
+       { if(typeof value === "string") { 
+        return (
+          <span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
+        )}
+     } }
+},
   { key:"price", label: "Price"},
   { key:"day", label: "Days"},
   { key :"status",
@@ -88,17 +125,53 @@ export const PackageColumn : Column <TPackage>[]=[
           );
           return "unknown"
       }
+      
     }
   },
-   { key:"images",
-     label:"Image",
-     render:(value) =>(
-       <img 
-             src={value[0]}
-             alt={'Package image'}
-             className='h-16 w-16 object-cover rounded-lg'
-       />      
-     )
-  },
-]
+  
+];
+  export const BookingColumn : Column<TBookingValue>[]=[
+     { key:"bookingId", label:"Booking ID"},
+     { key:"tripDate",
+       label:"Trip Date",
+        render: (value) => {
+          const date = new Date(value);
+          return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          });
+        },
+      },
+     {key:"email", label:"Email"},
+     {key:"totalGuest", label:"Travellers"},
+     {key:"tripStatus", label:"Trip Status"},  
+  ] 
+  
+  export const BookingAgentData  : Column<Partial<TBookingAgentResponse>>[]=[
+    { key:"packageName", label:'Package Name'},
+    { key: "totalBooking", label:'Total Booking'}
+  ]
+
+  export const WalletTransactionData : Column<TWalletTransaction>[] =[
+    { key: "description", label: "Description" },
+    { 
+      key: "transactionDate", 
+      label: "Transaction Date",
+      render: (value) => {
+        const date = new Date(value);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      },
+    },
+    { key: "amount", label: "Amount" }, 
+  ]
+ export const AgentPackage : Column<TAgentPackage>[] =[
+ { key: "agentName", label: "Agent Name"},
+ { key: "totalCount", label:"Total Packages"},
+ ];
+  
  

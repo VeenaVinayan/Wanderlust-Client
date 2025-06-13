@@ -50,8 +50,11 @@ axiosInstance.interceptors.response.use(
              return Promise.reject(refreshError);
            }
        } 
-       if(error.response.status === 401){
+       if(error.response.status === 403){
+          localStorage.removeItem("Agent_accessToken");
           toast.error('Permission Denied !');
+          window.location.assign("/login");
+
        }
        if(error.response.status === 404){
          toast.error("The requested resource not found !");

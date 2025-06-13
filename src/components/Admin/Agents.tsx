@@ -10,11 +10,16 @@ import { PER_PAGE } from '../../Constants/User';
 import SearchFilter from '../layout/Shared/SearchFilter';
 
 const Agents: React.FC = () => {
+  const sortData = [
+                    {label:'Package', value: 'name'},
+                    {label:'Date',value:'bookingDate'},
+                    {label:'Amout' ,value:'totalAmount'}
+               ];
   const [agentData, setAgentData] = useState<Agent[]>([]);
   const [count, setCount] = useState<number>(0);
   const { handleBlock, loading } = useBlockActions();
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({ keyword: '', sortOrder: '' });
+  const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortData:sortData });
 
   useEffect(() => {
     getAgentData(currentPage);

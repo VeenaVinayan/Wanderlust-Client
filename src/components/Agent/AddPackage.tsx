@@ -9,53 +9,16 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import schema from '../../Validations/PackageRegister';
-import { PackageFormErrors } from "../../Interfaces/Error";
+import { ValidationError } from 'yup';
+import {  PackageInitialState } from "../../Constants/InitialState";
 
 const AddPackage: React.FC = ()  => {
   const [files, setFiles] = useState<File[]>([]);
   const [ categories, setCategories ] = useState<TCategoryValue[]>([]);
   const agentData = useSelector((state: RootState) => state.agentSliceData);
-  const [ errors, setErrors ] = useState<PackageFormErrors>({
-    name: "",
-    description: "",
-    price: '',
-    day: '',
-    night: '',
-    images: '',
-    category: "",
-    totalCapacity:'',
-    itinerary: [ 
-      {
-        day: '',
-        description: "",
-        meals: [] as string[],
-        activities: "",
-        stay: "",
-        transfer: "",
-      }],
-     })
-  const initialState = {
-    name: "",
-    description: "",
-    price: 0,
-    agent:'',
-    day: 0,
-    night: 0,
-    images: [] as File[],
-    category: "",
-    totalCapacity:0,
-    itinerary: [ 
-      {
-        day: 1,
-        description: "",
-        meals: [] as string[],
-        activities: "",
-        stay: "",
-        transfer: "",
-      },
-    ],
-  }
-  const [packageData, setPackageData] = useState<TPackage>(initialState);
+  const [ errors, setErrors ] = useState<Record<string, string>>({});;
+  const [packageData, setPackageData] = useState<TPackage>(PackageInitialState);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   const { name, value } = e.target;
     setPackageData((prev) => ({ ...prev, [name]: value }));
@@ -68,7 +31,7 @@ const AddPackage: React.FC = ()  => {
         setCategories(data);
       } 
         fetchAllCategory();
-  }, [categories]);
+  }, []);
 
  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -106,9 +69,8 @@ const AddPackage: React.FC = ()  => {
       itinerary: prev.itinerary.filter((_, i) => i !== index),
     }));
   };
-  
-   // Remove Image
-   const removeImage = (index: number) => {
+  // Remove Image
+  const removeImage = (index: number) => {
     setPackageData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
@@ -122,33 +84,39 @@ const AddPackage: React.FC = ()  => {
      console.log("Package Data:", packageData);
      packageData.images= files;
      packageData.agent= agentData.id;
-     console.log("Category:: Agent :::",packageData.agent,packageData.category)
+     console.log("Package Data  :::",packageData)
      const response = await addPackage(packageData);
      if(response){
        toast.success("Package created Successfully !!");
-       setPackageData(initialState)
+       setPackageData(PackageInitialState)
        navigate('/agent/agentDashboard/package');
      }else{
        toast.error("Error occured create Package !!");
      }
-   }catch(err : unknown){
-     if(err instanceof Error && 'inner' in err){
-       const newErrors: Record<string, string> = { };
-       (err as any).inner.forEach((e: unknown) => {
-          newErrors[e.path as string] = e.message;
-       });
-       setErrors(newErrors);
-     }
+   }catch(err: unknown) {
+    if (err instanceof ValidationError) {
+      console.log("Error s ",err);
+      const newErrors: Record<string, string> = {};
+      err.inner.forEach((e) => {
+      if (e.path) {
+          newErrors[e.path] = e.message;
+       }
+      });
+     setErrors(newErrors);
+     console.log("Errors :: ",errors);
+    }else{
+         throw err
+    }
   } 
-  };
-  const cancelHandleClick = (e: React.FormEvent) =>{
+}
+ const cancelHandleClick = (e: React.FormEvent) =>{
        e.preventDefault();
        console.log('Handle Click !!');
-    }
+  }
   return (
     <div className="max-w-3xl mx-auto bg-gray-50 p-6 rounded-2xl shadow-lg mt-10">
      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Add Package</h2>
-      <form className="grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col" onSubmit={handleSubmit}>
         <div>
           <label className="block text-gray-600 font-medium">Package Name</label>
           <input type="text" name="name" value={packageData.name} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400" placeholder="Enter package name" />
@@ -163,22 +131,32 @@ const AddPackage: React.FC = ()  => {
         <div className="flex flex-row gap-4 w-full">
           <div className="w-full">
             <label className="block text-gray-600 font-medium">Price</label>
-            <input type="number" name="price" value={packageData.price} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400" placeholder="Enter price" />
+            <input 
+                    type="number" 
+                    name="price" 
+                    value={packageData.price} 
+                    onChange={handleChange} 
+                    min={500}
+                    max={15000}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400" placeholder="Enter price" />
             {errors.price && <p className="text-red-500">{errors.price}</p>}
           </div> 
           <div className="w-full">
             <label className="block text-gray-600 font-medium">Total Capacity</label>
-            <input type="number" name="capacity" 
+            <input type="number" 
+                      name="totalCapacity" 
                       value={packageData.totalCapacity} 
                       onChange={handleChange} 
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400" 
                       placeholder="Enter Total Capacity"
+                      min={1}
+                      max={10}
             />
            {errors.totalCapacity && <p className="text-red-500">{errors.price}</p>}
           </div>
-        </div>
-        <div>
-        <div >
+         </div>
+        <div className="flex flex-row gap-4 w-full m-3">
+        <div className="w-full">
           <label className="block text-gray-600 font-medium">Category</label>
           <select name="category" value={packageData.category} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400">
             <option value="">-Select-</option>
@@ -188,18 +166,34 @@ const AddPackage: React.FC = ()  => {
           </select>
           {errors.category && <p className="text-red-500">{errors.category}</p>}
         </div>
-        <div>
+        <div className="w-full">
           <label className="block text-gray-600 font-medium">Duration</label>
           <div className="flex items-center gap-4">
           <label className="block text-gray-600 font-medium">Day</label>
-          <input type="number" name="day" value={packageData.day} onChange={handleChange} className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-gray-400" placeholder="Days" />
+          <input 
+                  type="number"
+                  name="day" 
+                  value={packageData.day} 
+                  onChange={handleChange} 
+                  className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-gray-400" placeholder="Days" 
+                  min={1}
+                  max={15}
+          />
           {errors.day && <p className="text-red-500">{errors.day}</p>}
           <label className="block text-gray-600 font-medium">Night</label>
-          <input type="number" name="night" value={packageData.night} onChange={handleChange} className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-gray-400" placeholder="Nights" />
+          <input 
+                  type="number" 
+                  name="night" 
+                  value={packageData.night} 
+                  onChange={handleChange} 
+                  min={0}
+                  max={15}
+                  className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-gray-400" placeholder="Nights" />
           {errors.night && <p className="text-red-500">{errors.night}</p>}
           </div>
+         </div>
         </div>
-        </div>
+      <label>upload Images</label>
       <div className="flex flex-col items-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-blue-500 transition duration-200 cursor-pointer">
        <label htmlFor="file-upload" className="flex flex-col items-center gap-2 cursor-pointer">
         <svg
@@ -224,7 +218,7 @@ const AddPackage: React.FC = ()  => {
         className="hidden"
         onChange={handleFileChange}
       />
-       {errors.images && <p className="text-red-500">{errors.images}</p>}
+      {errors.images && <p className="text-red-500">{errors.images}</p>}
       {files.length > 0 && (
         <div className="mt-4 grid grid-cols-3 gap-2">
           {files.map((file, index) => (
@@ -254,13 +248,12 @@ const AddPackage: React.FC = ()  => {
         <div className="col-span-2">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Itinerary</h2>
           {packageData.itinerary.map((day, index) => (
-            <div key={index} className="p-4 mb-4 border rounded-lg bg-gray-50">
-              <label className="text-gray-700 font-medium">Day {day.day}</label>
+            <div key={index} className="p-4 mb-4 border font-bold rounded-lg bg-gray-50">
+              <label className="text-gray-900 font-medium text-xl">Day - {day.day}</label>
               <button onClick={() => removeItineraryDay(index)} className="ml-4 px-3 py-1  text-white rounded-lg hover:bg-red-600">
               <Delete size={12} />
               </button>
 
-              {/* Itinerary Inputs */}
               <div className="mt-2">
                 <label className="block text-gray-700 font-medium">Description</label>
                 <input type="text" value={day.description} onChange={(e) => handleItineraryChange(index, "description", e.target.value)} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter description" />
@@ -274,6 +267,7 @@ const AddPackage: React.FC = ()  => {
                  )}
               </div>
             <div className="mt-2 flex flex-row gap-4 items-center">
+         
      <div className="flex-1">
       <label className="block text-gray-700 font-medium">Stay</label>
       <input 
@@ -326,10 +320,15 @@ const AddPackage: React.FC = ()  => {
                </div>
             </div>
           ))}
-     
-          <button type="button" onClick={addItineraryDay} className="w-32 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">+ Add Day</button>
+      {errors.itinerary && <p className="text-red-500">{errors.itinerary}</p>}
+          <button 
+                 type="button" 
+                 onClick={addItineraryDay} 
+                 disabled={packageData.itinerary.length >= Number(packageData.day)}
+                 className="w-32 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                  +Add Day
+          </button>
         </div>
-
         {/* Submit Button */}
         <div className="flex flex-row">
          <div className="col-span-2 text-center mt-4">

@@ -1,18 +1,40 @@
-export const UpdatePackageInitialState = {
-    _id:"",
+export const PackageInitialState = {
     name:"",
     description: '',
-    price:'',
-    day:0,
-    night:'',
+    price:0,
+    day:1,
+    night:0,
+    agent:'',
     images:[],
     category:'',
-    itinerary:{
-        day:0,
+    totalCapacity:0,
+    discount:0,
+    itinerary:[{
+        day:1,
         description:'',
         meals:[],
-        activities:[],
+        activities:'',
         stay:'',
         transfer:'',
-    }
+    }]
+}
+export const FormErrorInitialState = {
+        name: "",
+        description: "",
+        price: '',
+        day: '',
+        night: '',
+        images: '',
+        category: "",
+        totalCapacity:"",
+        discount:'',
+        itinerary: [ 
+          {
+            day: '',
+            description: "",
+            meals: [] as string[],
+            activities: "",
+            stay: "",
+            transfer: "",
+          }]
 }

@@ -1,15 +1,12 @@
 import axiosInstance  from "../apiStore/agentApi";
-import axiosInstancePackage from '../apiStore/packageApi';
-import axiosInstanceUser from "../apiStore/userApi";
 import { TPackageData , TPackage} from "../types/packageTypes";
 import { SearchParams, TCategoryValue } from "../types/agentTypes";
 import axios from "axios";
-import { PER_PAGE } from "../Constants/User";
 
 class PackageApi{
    async addPackage(packageData : TPackage): Promise<boolean>{
          console.log(" DAta is :",packageData);
-         const response = await axiosInstancePackage.post('/package',packageData);
+         const response = await axiosInstance.post('/packages',packageData);
          return response.data;
     }
    async getCategories(): Promise<TCategoryValue[]> {
@@ -72,10 +69,11 @@ class PackageApi{
        throw new Error('Failed to Delete Package !');
     }
  }
- async getPackages(page : number, params : SearchParams): Promise<TPackageData> {
+ async getPackages(agent:string, params : SearchParams): Promise<TPackageData> {
   try{
       console.log('Get Packages :::');
-      const response = await axiosInstance.get(`/packages/${page}/${PER_PAGE}`,{params});
+      const response = await axiosInstance.get(`/packages/${agent}`,
+         {params});
       console.log("REsponse is",response.data);
       return response.data.data; 
    }catch(err){

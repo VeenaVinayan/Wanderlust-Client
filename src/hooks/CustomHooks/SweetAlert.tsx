@@ -39,7 +39,6 @@ const useSweetAlert = () => {
              }
         });
     };
-
    return { showSuccess, showError, showAlert, showConfirm};
 }
 

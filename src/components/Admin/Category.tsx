@@ -143,7 +143,7 @@ const Category: React.FC = () => {
          if(!image){
             setImage(editData.image);
          }
-        // await schema.validate({ name:editData.name, description:editData.description, image }, { abortEarly: false });
+         await schema.validate({ name:editData.name, description:editData.description, image }, { abortEarly: false });
          const categoryEditData = {
             id:editData._id,
             name: editData.name,
@@ -305,7 +305,7 @@ const Category: React.FC = () => {
         </div>
        )}
       {
-         isEdit && (
+        isEdit && (
             <Modal
                   isOpen={isModalOpen}
                   closeModal={toggleModal}

@@ -4,10 +4,10 @@ import { DataResponse } from "../../types/userTypes";
 import { TCategory } from '../../types/categoryTypes';
 import axios from 'axios';
 import apiHelper from "../../helper/apiHelper";
-import { TPackageData } from "../../types/packageTypes";
-import { SearchParams } from '../../types/agentTypes';
+import { TPackageData ,TAgentPackage } from "../../types/packageTypes";
+import { SearchParams, TAgentData } from '../../types/agentTypes';
 
-export const fetchData = async (user: string,page: number =1, params: SearchParams): Promise< DataResponse | null> => {
+export const fetchData = async (user: string,page : number, params: SearchParams): Promise< DataResponse | null> => {
   try {
     const response = await axiosInstance.get(`getData/${user}/${PER_PAGE}/${page}`,{params});
     return response.data.users;
@@ -58,8 +58,7 @@ export const createCategory = async (category: TCategory) => {
       console.error("Failed to upload image to S3.");
       return false;
     }
-    console.log('Here is the Error !!--- !!!');
-    console.log('Here hellooooo ---- !!!');
+     
     category.image = publicUrl;
     const res = await axiosInstance.post("addCategory", category);
     return res.status === 200 ? res : false;
@@ -158,10 +157,17 @@ export const blockPackage = async(packageId : string): Promise<boolean> => {
    }
 }
 
-export const getPackages = async (page: number, params: SearchParams) : Promise<TPackageData> =>{
-    const response : TPackageData = await apiHelper.getPackages(page,params);
+export const getPackages = async (params: SearchParams) : Promise<TPackageData> =>{
+    const response : TPackageData = await apiHelper.getPackages(params);
     return response;
 }
 
+export const getAgentPackages = async (params : SearchParams) : Promise<TAgentPackage> =>{
+   const response :TAgentPackage  = await apiHelper.getAgentPackages(params);
+   return response;
+}
 
-
+export const getDashboard = async() => {
+  const response = await apiHelper.getDashboard();
+  return response;
+}

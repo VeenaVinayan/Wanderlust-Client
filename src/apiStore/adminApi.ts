@@ -46,14 +46,15 @@ axiosInstance.interceptors.response.use(
                  return axiosInstance(originalRequest);
              } catch (refreshError) {
                  console.error("Refresh Token Expired or Invalid!");
-                 localStorage.removeItem("accessToken");
+                 localStorage.removeItem("admin_accessToken");
                  window.location.assign("/login"); // Redirect to login
                  return Promise.reject(refreshError);
              }
          }
- 
-        if (error.response.status === 403) {
+       if (error.response.status === 403) {
              toast.error("Permission Denied!");
+             localStorage.removeItem("admin_accessToken");
+             window.location.assign('/login');
         } else if (error.response.status === 404) {
              toast.error("The requested resource was not found!");
          } else if (error.response.status >= 500) {
@@ -61,10 +62,7 @@ axiosInstance.interceptors.response.use(
          }else if(error.respone.status === 400){
              toast.error("Invalid OTP !!");
          }
- 
          return Promise.reject(error);
      }
  );
- 
-
 export default axiosInstance;

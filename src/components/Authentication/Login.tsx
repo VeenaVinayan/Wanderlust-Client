@@ -25,10 +25,9 @@ const Login :React.FC = () => {
     const navigate = useNavigate();
    
     const userAuthorize = (data : LoginResponse) =>{
-      alert('INside user authorize !!');
-      const { accessToken, user, address, isVerified } = data;
-      console.log('Data valuess in funtion :: ',user,data);
-      localStorage.setItem(`${user.role}_accessToken`,accessToken);
+     const { accessToken, user, address, isVerified } = data;
+         localStorage.setItem(`${user.role}_accessToken`,accessToken);
+         localStorage.setItem("userId",user.id);
       console.log('User Data ::',user);
       switch(user.role){
         case 'Admin':
@@ -39,7 +38,6 @@ const Login :React.FC = () => {
                      navigate('/');
                      break;
         case 'Agent':
-                   // const agent = { ...user, address, ...isVerified};
                     console.log("Verified ::",isVerified,address);
                     dispatch(setAgentData(user));
                     if(isVerified === 'Pending'){
@@ -244,8 +242,7 @@ const Login :React.FC = () => {
                          className="cursor-pointer"
                     />
                   </button>
-                  {/* <GoogleLogin onSuccess={handleSuccess} onError={handleFailure} /> */}
-              </div>
+                </div>
              </div>
           </div>
         </div>

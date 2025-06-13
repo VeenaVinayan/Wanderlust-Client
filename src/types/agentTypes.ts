@@ -36,6 +36,8 @@ export type TAgentData= {
  }
 
  export type SearchParams = {
+     page:number,
+     perPage:number,
      search: string,
      sortBy: string,
      sortOrder: string,

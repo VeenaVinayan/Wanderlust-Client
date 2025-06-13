@@ -6,7 +6,7 @@ import LoginPage from '../pages/LoginPage';
 import HomePage from '../pages/HomePage';
 import ResetPasswordPage from '../pages/ResetPasswordPage';
 import AgentRegister from '../pages/AgentRegister';
-
+import PublicRoute from './PublicRoute';
 
 const AuthRoute : React.FC = () =>{
      return(
@@ -14,7 +14,7 @@ const AuthRoute : React.FC = () =>{
                 <Route path="/" element={ < HomePage/>} />
                 <Route path="/register" element={ <RegisterPage />} />
                 <Route path='/otp/:user' element={<OtpPage />} />
-                <Route path='/login' element={<LoginPage />} />
+                <Route path='/login' element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route path='/home' element={<HomePage />} />
                 <Route path='/ResetPassword/:token' element={<ResetPasswordPage />} />
                 <Route path="/agentRegister" element={<AgentRegister /> } />

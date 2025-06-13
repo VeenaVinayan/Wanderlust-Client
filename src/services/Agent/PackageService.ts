@@ -67,9 +67,9 @@ export const editPackage = async (packageData: TPackage, images: File[], deleteI
           return false;
       }
  }
- export const getPackages = async(page : number ,params: SearchParams): Promise<TPackageData | undefined> => {
+ export const getPackages = async(agent : string,params: SearchParams): Promise<TPackageData | undefined> => {
      try{
-         const response : TPackageData= await packageApi.getPackages(page,params);
+         const response : TPackageData= await packageApi.getPackages(agent,params);
          return response;
      }catch(err){
         console.log('Error in get packages ::',err);

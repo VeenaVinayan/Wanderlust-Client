@@ -46,8 +46,7 @@ const Footer:React.FC = () => {
             <address className="text-gray-400 not-italic">
               <p>123 Travel Lane</p>
               <p>Adventure City, AC 12345</p>
-              <p className="mt-2">Phone: (123) 456-7890</p>
-              <p>Email: info@wanderlust.com</p>
+              <p>Email: wanderlust3603@gmail.com</p>
             </address>
           </div>
 

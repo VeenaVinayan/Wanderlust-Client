@@ -46,7 +46,6 @@ export type DataResponse ={
     name:string;
     phone:string;
  }
-
  export type TResetPassword = {
      oldPassword: string;
      newPassword:string;
@@ -58,3 +57,28 @@ export type DataResponse ={
     name:string;
     image:string;
  }
+
+ export type TReview = {
+   _id:string;
+    review : string;
+    rating : number;
+ }
+ 
+ export type TReviewData ={
+    review : string;
+    rating:number;
+    packageId : string;
+    userId: string;
+ }
+ export type TWalletTransaction ={
+      _id:string;
+      transactionDate: Date;
+      amount:number;
+      description:string;
+ }
+ export type TWallet={
+    _id:string;
+    amount:number;
+    transaction:TWalletTransaction[]
+ }
+ 

@@ -1,68 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { User } from '../../types/userTypes';
-
-// import { TableProps } from '../../Interfaces/Props';
-
-// const Table: React.FC <TableProps>= ({data,columns, role, renderActions}) => {
-
-//  const [users, setUsers ] = useState<User []>([]); 
-//  useEffect(() => {
-//       setUsers(data);
-//   },[data]);
-  
-//   return (
-//    <> 
-//     <div className="overflow-x-auto m-10">
-//       <h2 className="text-2xl font-bold mb-4 text-gray-800">{ role} </h2>  
-//        <table className="w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
-//         <thead className="bg-gray-700 text-white">
-//           <tr>
-//             { 
-//               columns.map((col) =>(
-//                 <th key={col.key} className="px-6 py-3 text-left">
-//                   { col.label }
-//                 </th>
-//               ))
-//             }
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {users.map((user, index) => (
-//             <tr
-//               key={user._id}
-//               className={`border-b ${
-//                 index % 2 === 0 ? "bg-gray-100" : "bg-white"
-//               } hover:bg-gray-200 transition`}
-//             >
-//               <td className="px-6 py-4 text-left font-medium">{user.name}</td>
-//               <td className="px-6 py-4 text-left text-gray-600">{user.email}</td>
-//               <td className="px-6 py-4 text-left text-gray-600">{user.phone}</td>
-//               <td
-//                  className={`px-3 py-1 text-sm font-semibold rounded-sm  ${
-//                   user.status
-//                    ? "text-green-500"
-//                    : "text-red-500"
-//                 }`}
-//                >
-//                 {user.status 
-//                          ? (<span>Active</span>)
-//                          : (<span>Blocked</span>) }
-//               </td>
-//               <td className="px-6 py-4 text-left">
-//                { renderActions && renderActions(user._id,role)}
-//               </td>
-//             </tr>
-//           ))}
-//           </tbody>
-//         </table>
-         
-//       </div>
-//    </>
-//   );
-// };
-
-// export default Table;
-
 import React, { useEffect, useState } from "react";
 
 export interface Column<T> {
@@ -93,7 +28,7 @@ const GenericTable = <T extends { _id: string }>({
   return (
     <div className="overflow-x-auto m-10">
       {role && <h2 className="text-2xl font-bold mb-4 text-gray-800">{role}</h2>}
-      <table className="w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
+      <table className="w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden table-auto">
         <thead className="bg-gray-700 text-white">
           <tr>
             {columns.map((col) => (
