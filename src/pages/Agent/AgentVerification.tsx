@@ -17,13 +17,20 @@ const  LicenseUpload : React.FC = () => {
   const agentData = useSelector((state: RootState) => state.agentSliceData);
   const [isUpload, setIsUpload ] = useState<boolean>(data.status);
   
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setImagePreview(URL.createObjectURL(selectedFile));
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (file) {
+    const fileSizeInMB = file.size / (1024 * 1024); // Convert bytes to MB
+    if (fileSizeInMB > 2) {
+      toast.error("Image size exceeds 2 MB");
+      return;
     }
-  };
+    console.log("Image size:", fileSizeInMB.toFixed(2), "MB");
+     setFile(file);
+     setImagePreview(URL.createObjectURL(file));
+  }
+};
+
   const handleSubmit =  async(e: FormEvent) => {
     e.preventDefault();
     if (!file) {
@@ -56,7 +63,7 @@ const  LicenseUpload : React.FC = () => {
               type="file" 
               className="hidden" 
               accept=".jpg,.jpeg,.png,.pdf" 
-              onChange={handleFileChange} 
+              onChange={handleImageChange} 
             />
             {imagePreview ? (
               <img 

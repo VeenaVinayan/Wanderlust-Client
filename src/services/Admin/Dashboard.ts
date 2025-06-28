@@ -6,7 +6,7 @@ import axios from 'axios';
 import apiHelper from "../../helper/apiHelper";
 import { TPackageData ,TAgentPackage } from "../../types/packageTypes";
 import { SearchParams, TAgentData } from '../../types/agentTypes';
-
+import packageApi from "../../helper/packageApi";
 export const fetchData = async (user: string,page : number, params: SearchParams): Promise< DataResponse | null> => {
   try {
     const response = await axiosInstance.get(`getData/${user}/${PER_PAGE}/${page}`,{params});
@@ -18,6 +18,7 @@ export const fetchData = async (user: string,page : number, params: SearchParams
 };
 export const adminLogout = async (): Promise<void> =>{
    localStorage.removeItem("Admin_accessToken");
+   localStorage.removeItem("userId");
    console.log('Inside logout from service !!');
 }
 
@@ -88,7 +89,7 @@ export const  fetchAllCategory = async (page : number,params: SearchParams) => {
           return false;
       }
   } 
-export const editCategoryById = async (category : Category) =>{
+export const editCategoryById = async (category : TCategory) =>{
   try{ 
    console.log("Category :: Values  ",category);
    if(category.image instanceof File){
@@ -170,4 +171,14 @@ export const getAgentPackages = async (params : SearchParams) : Promise<TAgentPa
 export const getDashboard = async() => {
   const response = await apiHelper.getDashboard();
   return response;
+}
+
+export const verifyPackage = async (packageId : string) =>{
+   try{
+      const response = await packageApi.verifyPackage(packageId);
+      return response;
+   }catch(err){
+      console.error('Error in verify Package !!',err);
+      return err;  
+   }
 }

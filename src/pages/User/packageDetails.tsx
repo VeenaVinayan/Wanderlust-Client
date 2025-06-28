@@ -64,18 +64,15 @@ function renderStars(rating :number) {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     if (i <= Math.floor(rating)) {
-      // full star
-      stars.push(
+        stars.push(
         <Star key={i} size={16} className="text-yellow-400" fill="currentColor" />
       );
     } else if (i - rating < 1) {
-      // half star (optional: you can use a half-star icon or style)
-      stars.push(
+        stars.push(
         <Star key={i} size={16} className="text-yellow-400" fill="currentColor" style={{ opacity: 0.5 }} />
       );
     } else {
-      // empty star
-      stars.push(
+        stars.push(
         <Star key={i} size={16} className="text-gray-300" fill="none" />
       );
     }
@@ -112,7 +109,28 @@ function renderStars(rating :number) {
             </div>
           </div>
           <div className="space-y-4">
-            <h1 className="text-2xl sm:text-3xl font-bold">{packageData.name}</h1>
+           <div className="flex flex-row justify-between" >
+             <h1 className="text-2xl sm:text-3xl font-bold">{packageData.name}</h1>
+             <button
+                  onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent})}
+                  className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
+                >
+                  <svg
+                    className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"
+                    />
+                  </svg>
+                  <span className="font-medium">Chat with Agent</span>
+              </button>
+            </div>  
             <div className="flex items-center gap-2">
                 {renderStars(rating)}
                <span className="text-sm text-gray-600">| {rating.toFixed(1)}</span>
@@ -139,11 +157,10 @@ function renderStars(rating :number) {
                 className="bg-gray-600 justify-end text-white font-semibold px-6 py-2 rounded-2xl shadow hover:bg-gray-800 transition duration-300"
                 onClick={() => navigate('/user/booking',{state:packageData})} >
                Book Now
-            </button>
-         </div>
+             </button>
+          </div>
         </div>
                 
-    
         <div className="mt-10 w-full">
           <h2 className="text-2xl font-bold mb-4">Itinerary</h2>
           <div className="space-y-4">
@@ -247,6 +264,13 @@ function renderStars(rating :number) {
       </div>
     </div>
   )}
+  <button 
+  onClick={() => navigate(`/chat?to=${agentId}`)}
+  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+>
+  Chat with Agent
+</button>
+
  </div>
  <Footer />
  </div>

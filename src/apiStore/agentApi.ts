@@ -11,7 +11,6 @@ const axiosInstance : AxiosInstance = axios.create({
      withCredentials:true,
 });
 
-// Request interceptors to add the access token to the headers
 axiosInstance.interceptors.request.use(
     (config) =>{
          const token = localStorage.getItem('Agent_accessToken');

@@ -26,6 +26,7 @@ export type TPackage = {
     totalCapacity:number;
     discount?:number;
     itinerary:TItinerary[];
+    isVerified:boolean
 }
 export type TCategoryValue = {
     _id: string;
@@ -36,7 +37,6 @@ export type TPackageState = {
     status: "idle" | "succeeded" | "failed" | "loading";
     error: string | null;
 }
-
   export type TPackageUpdate = Omit<TPackage, '_id' | 'status'>;
 
   export type TPackageData = {

@@ -5,14 +5,12 @@ export interface Column<T> {
   label: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
-
 interface TableProps<T> {
   data: T[];
   columns: Column<T>[];
   role?: string;
   renderActions?: (row: T) => React.ReactNode; 
 }
-
 const GenericTable = <T extends { _id: string }>({
   data,
   columns,

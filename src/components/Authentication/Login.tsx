@@ -11,9 +11,10 @@ import Spinner from '../common/Spinner';
 import { useGoogleLogin } from '@react-oauth/google';
 import googleAuth  from '../../services/Auth/GoogleAuth';
 import { LoginResponse } from '../../types/userTypes';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login :React.FC = () => {
-    const [ formData, setFormData ]  = useState <LoginFormType>({
+     const [ formData, setFormData ]  = useState <LoginFormType>({
         email :'',
         password:'',
     });
@@ -23,19 +24,24 @@ const Login :React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-   
+    const [eyeClosed, setEyeClosed ] = useState(true);
+    const toggleEye = (e: React.MouseEvent)=>{
+       e.preventDefault();
+       console.log("eye clicked !!");
+       setEyeClosed(!eyeClosed);
+    }
     const userAuthorize = (data : LoginResponse) =>{
      const { accessToken, user, address, isVerified } = data;
          localStorage.setItem(`${user.role}_accessToken`,accessToken);
          localStorage.setItem("userId",user.id);
-      console.log('User Data ::',user);
+        console.log('User Data ::',user);
+        dispatch(setUserData(user));
       switch(user.role){
         case 'Admin':
                     navigate('/admin/adminDashboard');
                     break;
         case 'User':
-                     dispatch(setUserData(user));
-                     navigate('/');
+                    navigate('/');
                      break;
         case 'Agent':
                     console.log("Verified ::",isVerified,address);
@@ -187,14 +193,25 @@ const Login :React.FC = () => {
                   <label className="block text-gray-600 mb-2" htmlFor="password">
                     Password
                   </label>
+               
+                <div className="relative w-full">
                   <input
-                    type="password"
+                    type={eyeClosed ? 'password' : 'text'}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter your password"
+                    className="w-full px-4 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <button
+                    type="button"
+                    onClick={toggleEye}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {eyeClosed ? <Eye size={18} /> : <EyeOff size={18} />}
+                  </button>
+                </div>
+
                   {formError.password && <p className='text-red-800 font-thin mb-2'> {formError.password}</p> } 
                 </div>
                 {isLoading ? ( <Spinner/>   ):

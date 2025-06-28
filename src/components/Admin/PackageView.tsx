@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom';
 import { TPackage } from '../../types/packageTypes';
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { verifyPackage } from '../../services/Admin/Dashboard';
+import { toast} from 'react-toastify';
 
 const PackageView : React.FC= () => {
-
   const [openDay, setOpenDay] = useState<number | null>(null);
-
   const toggleDay = (index: number) => {
     setOpenDay(openDay === index ? null : index);
   };
@@ -29,6 +29,7 @@ const PackageView : React.FC= () => {
         stay:'',
         transfer:'',
     }],
+    isVerified:false,
     agent:'',
     totalCapacity:0,
   }) 
@@ -42,11 +43,24 @@ const PackageView : React.FC= () => {
     }
    }, []);
 
+  const onVerify = async(packageId : string) =>{
+     console.log('Verify Package !',packageId);
+     const response = await verifyPackage(packageId);
+     if(response){
+       toast.success('Package Verified Successfully !!');
+       setPackageData((prev) => ({ ...prev, isVerified: true }));
+     } else {
+       console.error('Failed to verify package');
+     }  
+  }
+  const onReject = (packageId : string) =>{
+      console.log('Reject Package !',packageId);
+  }
   return (
   <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl overflow-hidden">
-     <h2 className="text-3xl font-bold text-gray-600 tracking-wide">
-     {packageData.name}
-  </h2>
+    <h2 className="text-3xl font-bold text-gray-600 tracking-wide">
+      {packageData.name}
+    </h2>
 
    <div className="grid grid-cols-4 gap-2 p-4">
   
@@ -60,8 +74,23 @@ const PackageView : React.FC= () => {
  </div>
    <div className="p-6">
     <h2 className="text-2xl font-bold text-gray-800">{packageData.name}</h2>
+    {!packageData.isVerified && (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onVerify(packageData._id)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
+          >
+            ✅ Verify
+          </button>
+          <button
+            onClick={() => onReject(packageData._id)}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
+          >
+            ❌ Cancel
+          </button>
+        </div>
+      )}
     <p className="text-gray-500 mt-2">{packageData.description}</p>
-
     
     <div className="mt-4 flex items-center justify-between">
       <span className="text-lg font-semibold text-green-600">{packageData.price}</span>

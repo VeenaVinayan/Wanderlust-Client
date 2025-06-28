@@ -158,6 +158,15 @@ class UserApi{
             throw err;
         }
     } 
+    async getAgentData(agentId : string){
+        try{
+            const response = await axiosInstance.get(`/agents/data?agentId=${agentId}`);
+            return response.data;
+        }catch(err){
+             console.log('Error is ::',err);
+             throw err;
+        }
+    }
 }
 
 export default new UserApi();

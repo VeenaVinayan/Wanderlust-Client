@@ -22,9 +22,9 @@ const Booking : React.FC = ()  => {
   const {email ,phone} = useSelector((state: RootState) => state.userData);
   const [ errors, setErrors ] = useState<Record<string, string>>({
     tripDate: '',
-    'travellers.adult': '',
+     'travellers.adult': '',
      'travellers.children': '',
-      'travellers.infant': '',
+     'travellers.infant': '',
     email: '',
     phone: '',
     totalAmount: '',
@@ -205,10 +205,9 @@ return (
             />
               {errors.phone && <p className="text-red-500">{errors.phone}</p>}
           </div>
-          
           <div className="flex justify-center">
             <button type ="submit" className="bg-indigo-600 text-white px-6 py-2 rounded-md shadow hover:bg-indigo-700 transition">
-               Book Now
+                Book Now
             </button>
           </div>
         </form> 

@@ -132,3 +132,14 @@ export const editReview = async(data : TReview , reviewId : string) =>{
         throw err;
      }
 }
+
+export const getAgentData = async(agentId : string) =>{
+     try{
+         console.log("Agent Id:",agentId);
+         const data = await userApi.getAgentData(agentId);
+         return data;
+     }catch(err){
+         console.log('Error in Edit Review !!');
+        throw err;
+     }
+}

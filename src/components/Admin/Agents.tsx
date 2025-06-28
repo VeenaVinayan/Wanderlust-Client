@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Table from '../common/Table';
 import { fetchData } from '../../services/Admin/Dashboard';
 import { Agent } from '../../types/userTypes';
-import { Ban, ViewIcon, LucideVerified } from 'lucide-react';
+import { Ban } from 'lucide-react';
 import useBlockActions from '../../hooks/CustomHooks/useBlockActions';
 import { Columns } from '../../Constants/User';
 import Pagination from '../layout/Shared/Pagination';
@@ -26,11 +26,13 @@ const Agents: React.FC = () => {
   },[currentPage, filters]);
 
   const getAgentData = async (page: number) => {
-    const data = await fetchData('Agent',page, 
+    const data = await fetchData('Agent', page, 
       {
         search: filters.keyword,
         sortBy: 'name',
         sortOrder: filters.sortOrder,
+        page: page,
+        perPage: PER_PAGE,
       }, 
     );
 
@@ -57,7 +59,15 @@ const Agents: React.FC = () => {
   };
 return (
     <div>
-      <SearchFilter onFilterChange={setFilters} />
+      <SearchFilter
+        onFilterChange={({ keyword, sortOrder }) =>
+          setFilters((prev) => ({
+            ...prev,
+            keyword,
+            sortOrder,
+          }))
+        }
+      />
       {agentData.length > 0 ? (
         <>
           <Table<Agent>
@@ -73,13 +83,10 @@ return (
                 >
                   <Ban color={'white'} size={10} />
                 </button>
-                <button className="bg-gray-100 text-white px-4 m-2 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-200 transition gap-2">
+                {/* <button className="bg-gray-100 text-white px-4 m-2 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-200 transition gap-2">
                   <ViewIcon color={'black'} size={10} />
-                </button>
-                <button className="bg-gray-100 text-white px-4 py-2 m-2 rounded-lg font-semibold shadow-md hover:bg-gray-200 transition gap-2">
-                  <LucideVerified color={'black'} size={10} />
-                </button>
-              </>
+                </button> */}
+               </>
             )}
           />
           <div className="flex justify-center mt-6">

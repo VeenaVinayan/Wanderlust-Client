@@ -13,26 +13,26 @@ const Header : React.FC= () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userId = localStorage.getItem("userId");
+  
   useEffect(() =>{
        setUserData(userData);
   },[userData]);
-
   const handleLogout = async () => {
-      try{
-          console.log("Logout user !!");
-          localStorage.removeItem("User_accessToken");
-          dispatch(resetUserData());
-          toast.success('Logout Succesfully');
-          navigate('/login');
-       }catch(err){
-         console.error(err);
-      }
+    try{
+        console.log("Logout user !!");
+        localStorage.removeItem("User_accessToken");
+        localStorage.removeItem("userId");
+        dispatch(resetUserData());
+        toast.success('Logout Succesfully');
+        navigate('/login');
+    }catch(err){
+       console.error(err);
     }
+  }
   return (
     <>
-         <header className="text-white p-4  flex justify-between items-center fixed top-0 left-0 w-full z-20 text-xl shadow-lg ">
-         <Link to="/" className="flex items-center gap-2">
+        <header className="text-white p-4  flex justify-between items-center fixed top-0 left-0 w-full z-20 text-xl shadow-lg ">
+        <Link to="/" className="flex items-center gap-2">
             <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-800 via-pink-700 to-red-800 text-transparent bg-clip-text">
               Wanderlust
             </h1>
@@ -72,10 +72,9 @@ const Header : React.FC= () => {
            </ul>
           )}
           </div>
-         
-          ) }
-          </div>
-        </header> 
+       ) }
+      </div>
+     </header> 
         
     </>
   )

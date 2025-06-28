@@ -1,6 +1,7 @@
 import axiosInstance  from "../apiStore/agentApi";
 import { TPackageData , TPackage} from "../types/packageTypes";
 import { SearchParams, TCategoryValue } from "../types/agentTypes";
+import axiosInstanceAdmin from '../apiStore/adminApi';
 import axios from "axios";
 
 class PackageApi{
@@ -81,6 +82,16 @@ class PackageApi{
       throw new Error("Failed to Get Packages !");
    } 
  }
+ async verifyPackage(packageId: string): Promise<boolean> {
+      try{
+         console.log('Verify Package !!');
+         const response = await axiosInstanceAdmin.patch(`/packages/verify/${packageId}`);
+         return response.status === 200;
+      }catch (err: unknown) {
+         console.error('Error in Verify Package !!', err);
+         throw new Error('Failed to Verify Package!');
+      }
+   }
 }
 
 export default new PackageApi();

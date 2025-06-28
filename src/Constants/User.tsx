@@ -26,8 +26,6 @@ export const Columns : Column <Agent | User>[]= [
       },
     }
  ];
-
-
 export const Columns_Category: Column<TCategory>[] = [
    { key: "name", label: "Name" },
    { key: "description", label: "Description" },
@@ -115,20 +113,20 @@ export const PackageColumn : Column <TPackage>[]=[
   { key:"day", label: "Days"},
   { key :"status",
     label:"Status",
-    render:(value) =>{
-       if( typeof value === "boolean"){
-         return value ? 
-          (
-            <span className="text-green-800 border-spacing-1">Active</span>
-          ) : (
-            <span className="text-red-900">Inactive</span>
-          );
-          return "unknown"
+    render: (value: TPackage["status"], row: TPackage) => {
+      if (!row.isVerified) return <span className="text-red-500">Awaiting Verification</span>;
+      else{ 
+      if (typeof value === "boolean") {
+        return value ? (
+          <span className="rounded-full bg-green-800 border-spacing-1 text-white">Active</span>
+        ) : (
+          <span className="text-white rounded-full bg-red-400 border-spacing-1">Inactive</span>
+        );
       }
-      
+      return "unknown";
     }
+  }
   },
-  
 ];
   export const BookingColumn : Column<TBookingValue>[]=[
      { key:"bookingId", label:"Booking ID"},

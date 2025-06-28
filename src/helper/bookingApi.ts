@@ -30,9 +30,9 @@ class BookingApi{
            const response = await axiosAgent.get(`/booking/${agentId}`,{params});
            return response.data.data;
      }
-     async updateBookingStatusByAgent(bookingId : string){
+     async updateBookingStatusByAgent(bookingId : string,status: string){
           console.log('Booking Id ::',bookingId);
-          const data = await axiosAgent.patch(`/booking/${bookingId}`);
+          const data = await axiosAgent.patch(`/booking/${bookingId}`,{status});
           return data.data;    
      }
      async getBookingDataToAdmin( params : SearchParams){

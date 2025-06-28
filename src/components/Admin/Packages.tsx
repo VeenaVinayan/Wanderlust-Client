@@ -11,7 +11,6 @@ import  Pagination  from '../../components/layout/Shared/Pagination';
 import { getPackages } from '../../services/Admin/Dashboard';
 import { PER_PAGE } from '../../Constants/User';
 import SearchFilter from '../layout/Shared/SearchFilter';
-
 const Packages : React.FC = () => {
   const [ count, setCount ] = useState<number>(0); 
   const [ currentPage, setCurrentPage] = useState<number>(1);
@@ -62,7 +61,9 @@ const Packages : React.FC = () => {
               columns={PackageColumn}
               role={"Packages"}  
               renderActions={ (value) => (
-                <>
+               <> 
+               { value.isVerified ? (
+                   <>
                    <button
                        onClick={() => handleView(value)}
                        className="bg-red-400 m-3 px-5 py-2 rounded-lg font-semibold shadow-md hover:bg-red-500 focus:ring-2 focus:ring-red-400 transition flex-row">
@@ -74,9 +75,20 @@ const Packages : React.FC = () => {
                    >
                     <Ban color={'gray'} size={12} />   
                    </button>
-                </>   
+                  </> 
+                ):(
+                  <>
+                    <button
+                       onClick={() => handleView(value)}
+                       className="bg-red-400 m-3 px-5 py-2 rounded-lg font-semibold shadow-md hover:bg-red-500 focus:ring-2 focus:ring-red-400 transition flex-row">
+                      <ViewIcon color={'gray'} size={12} />
+                   </button>
+                  </>
+                ) 
+              }
+              </>
               )}
-        />
+       />
          <div className="flex justify-center mt-6"> 
           <Pagination 
               perPage={PER_PAGE}
@@ -87,5 +99,4 @@ const Packages : React.FC = () => {
     </div>
   )
 }
-
 export default Packages;

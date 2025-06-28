@@ -1,26 +1,37 @@
 import React ,{ useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TBookingResponse } from '../../types/bookingTypes';
-import { CheckCircle, Calendar, Mail, Phone, User } from 'lucide-react';
+import { CheckCircle, Calendar, Mail, Phone, User, CreditCard, Pen } from 'lucide-react';
 import { updateBookingStatusByAgent } from '../../services/Booking/BookingService';
 import { toast } from 'react-toastify';
+import  useSweetAlert  from '../../hooks/CustomHooks/SweetAlert';
 
 const BookingView : React.FC = () => {
   const [ booking, setBooking] = useState<TBookingResponse | null>(null); 
+  const [ isEditing, setIsEditing] = useState<boolean>(false);
+  const { showConfirm } = useSweetAlert();
   const location = useLocation();
   const data : TBookingResponse = location.state;
   console.info('Data :: in views  ',data); 
 
-  const handleStatusUpdate = async () =>{
-    if(booking){
-        const response = await updateBookingStatusByAgent(booking._id);
+  const onChange =  (e: React.ChangeEvent<HTMLSelectElement>) =>{
+    e.preventDefault();
+    const { value } =e.target;
+    setIsEditing(false);
+    console.log("Selected Value ::", value);
+    showConfirm('Change Trip Status',`Do you want to change the status to ${value}?`, async () => {
+      console.log('Confirmed Status Change:', value);
+        if(booking){
+        const response = await updateBookingStatusByAgent(booking._id,value);
         toast.success(response.message);
         setBooking((prev) => { 
           if(!prev) return null;
-          return { ...prev,tripStatus:'Completed'}
+          return { ...prev,tripStatus:value}
     });
    }
-  }
+  });
+};
+   
  useEffect(() => {
       setBooking(data);
   },[data,booking]);
@@ -41,23 +52,56 @@ const BookingView : React.FC = () => {
       <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
         {booking.packageId.name}
       </h2>
-      <span
+      { booking.tripStatus ==='Completed' || booking.tripStatus === 'Cancelled' ? (
+         <span
         className={`text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-sm
           ${booking.tripStatus === 'Completed'
             ? 'bg-green-100 text-green-700'
-            : booking.tripStatus === 'Pending'
-            ? 'bg-yellow-100 text-yellow-800'
-            : 'bg-gray-200 text-red-700'}`}
+            : booking.tripStatus === 'Cancelled' && 'bg-gray-200 text-red-700'}`
+           }
       >
         {booking.tripStatus}
       </span>
-    </div>
-
-    {/* Metadata */}
-    <div className="grid gap-4 text-gray-700 text-sm sm:grid-cols-2 lg:grid-cols-3">
+      ):(
+        <div className="w-full max-w-[180px]">
+          <label htmlFor="status" className="block mb-1 text-xs font-medium text-gray-500 tracking-wide">
+            Booking Status
+          </label>
+          { isEditing ? (
+            <select
+            id="status"
+            name="status"
+            className="block w-full px-2.5 py-1 text-xs text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm 
+                      focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600 transition duration-150"
+            onChange={onChange}
+          >
+            <option value="" disabled selected className="text-gray-400">{booking.tripStatus}</option>
+            <option value="In-progress" className="font-semibold">In-Progress</option>
+            <option value="Confirmed" className="font-semibold">Confirmed</option>
+            <option value="Cancelled" className="font-semibold">Cancelled</option>
+            <option value="Completed" className="font-semibold">Completed</option>
+          </select>
+            ):(
+              <>
+                <div className="text-xs font-semibold text-gray-600">
+                  <span className='rounded-full bg-orange-100 text-lg text-gray-700 font-semibold'>{booking.tripStatus}</span>
+                  <Pen size={12} className="inline-block ml-1 cursor-pointer  text-gray-500 hover:text-gray-700" onClick={() => setIsEditing(true)} />
+                </div> 
+              </> 
+            )}
+         
+       </div>
+    )
+  }   
+  </div>
+  <div className="grid gap-8 sm:grid-cols-2">
+  {/* User Details */}
+  <div className="bg-white rounded-xl p-6 border shadow-sm">
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">👤 Customer Details</h3>
+    <div className="space-y-3 text-gray-700 text-sm">
       <p className="flex items-center gap-2">
         <User className="w-4 h-4 text-gray-500" />
-        <strong className="whitespace-nowrap">Customer:</strong>
+        <strong className="whitespace-nowrap">Name:</strong>
         <span className="truncate">{booking.userId?.name}</span>
       </p>
 
@@ -72,51 +116,63 @@ const BookingView : React.FC = () => {
         <strong>Phone:</strong>
         <span className="truncate">{booking.phone}</span>
       </p>
+    </div>
+  </div>
 
-      <p className="flex items-center gap-2">
-        <User className="w-4 h-4 text-gray-500" />
-        <strong>Total&nbsp;Guests:</strong>
-        <span>{booking.totalGuest}</span>
-      </p>
-
-     <p className="flex items-center gap-2">
+  {/* Booking Details */}
+  <div className="bg-white rounded-xl p-6 border shadow-sm">
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">📅 Booking Details</h3>
+    <div className="space-y-3 text-gray-700 text-sm">
+        <p className="flex items-center gap-2">
         <Calendar className="w-4 h-4 text-gray-500" />
-        <strong>Travel&nbsp;Date:</strong>
+        <strong>Booking Date:</strong>
+        <span>{new Date(booking.bookingDate).toLocaleDateString()}</span>
+      </p>
+       <p className="flex items-center gap-2">
+        <Calendar className="w-4 h-4 text-gray-500" />
+        <strong>Travel Date:</strong>
         <span>{new Date(booking.tripDate).toLocaleDateString()}</span>
       </p>
-
+       <p className="flex items-center gap-2">
+        <CreditCard className="w-4 h-4 text-gray-500" />
+        <strong>Payment Status:</strong>
+        <span className='rounded-full bg-green-200 font-medium'>{booking.paymentStatus}</span>
+      </p>
       <p className="flex items-center gap-2">
-        💰 <strong>Total&nbsp;Amount:</strong>
+        💰 <strong>Total Amount:</strong>
         <span>₹{booking.totalAmount}</span>
       </p>
-
-       <p className="flex items-center gap-2">
+      <p className="flex items-center gap-2">
         <User className="w-4 h-4 text-gray-500" />
-        <strong>Travellers:</strong>
-       <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-sm text-gray-700">
-          <span>
-            <strong>Adult:</strong> {booking.travellers.adult}
-          </span>
-          <span>
-            <strong>Children:</strong> {booking.travellers.children}
-          </span>
-          <span>
-            <strong>Infant:</strong> {booking.travellers.infant}
-          </span>
-       </div>
+        <strong>Total Guests:</strong>
+        <span>{booking.totalGuest}</span>
       </p>
+      <div className="flex items-start gap-2">
+        <User className="w-4 h-4 mt-1 text-gray-500" />
+        <div>
+          <strong>Travellers:</strong>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-1">
+            <span><strong>Adult:</strong> {booking.travellers.adult}</span>
+            <span><strong>Children:</strong> {booking.travellers.children}</span>
+            <span><strong>Infant:</strong> {booking.travellers.infant}</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
+
 
     {/* Action */}
-    {(booking.tripStatus !== 'Completed' && booking.tripStatus !== 'Cancelled') && (
+    {/* {(booking.tripStatus !== 'Completed' && booking.tripStatus !== 'Cancelled') && (
       <button
         onClick={handleStatusUpdate}
         className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition-colors"
       >
         <CheckCircle className="w-4 h-4" />
         Mark as Completed
-      </button>
-    )}
+      </button> */}
+    {/* )} */}
   </div>
 </div>
 

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { resetAgentData } from "../../features/authentication/AgentDataSlice";
 import { Outlet, NavLink } from "react-router-dom";
+import { MessageCircle } from 'lucide-react';
 
 const AgentDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const AgentDashboard: React.FC = () => {
   const handleLogout = () => {
     dispatch(resetAgentData());
     localStorage.removeItem("Agent_accessToken");
+    localStorage.removeItem('userId');
     navigate("/login");
   };
   return (
@@ -48,6 +50,12 @@ const AgentDashboard: React.FC = () => {
               className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
               🎁 Packages
+            </NavLink>
+            <NavLink
+              to="chat"
+              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
+            >
+              <MessageCircle size={12} /> Chats
             </NavLink>
             <button
               onClick={handleLogout}

@@ -10,7 +10,6 @@ const axiosInstance : AxiosInstance =axios.create({
            'Content-Type' : 'application/json',
      },
      withCredentials: true,
-     
 });
 axiosInstance.interceptors.request.use(
     (config) =>{
@@ -41,7 +40,7 @@ axiosInstance.interceptors.response.use(
                       { withCredentials: true }
                  );
                  console.log("New Access Token ::: ",data,data.accessToken)  
-                 localStorage.setItem("admin_accessToken", data.accessToken);
+                 localStorage.setItem("Admin_accessToken", data.accessToken);
                  originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
                  return axiosInstance(originalRequest);
              } catch (refreshError) {

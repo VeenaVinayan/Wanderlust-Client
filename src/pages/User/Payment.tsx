@@ -8,12 +8,13 @@ import {  TBookingType, TBooking } from '../../types/bookingTypes';
 import { useSelector , useDispatch} from 'react-redux';   
 import { RootState } from '../../app/store';
 import { setBookingData } from '../../features/authentication/BookingSlice';
-
+import Spinner from '../../components/common/Spinner';
+import { set } from 'date-fns';
 const STRIPE_API_KEY = import.meta.env.VITE_APP_STRIPE_API_KEY;
 const stripePromise = loadStripe(STRIPE_API_KEY);
 
 const Payment: React.FC = () => {
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.userData);
   const [booking, setBooking ] = useState<TBooking>();
   const location = useLocation();
@@ -99,16 +100,20 @@ const Payment: React.FC = () => {
                 </span>
               </div>
             </div>
-
+       { !isLoading ? (
             <button
-              onClick={() =>
-                handleStripCheckout(bookingData?.totalAmount ?? 0, packageValue?.name ?? '')
-              }
+              onClick={() => {
+                setIsLoading(true);
+                handleStripCheckout(bookingData?.totalAmount ?? 0, packageValue?.name ?? '');
+              }}
               className="w-64 bg-gray-600 text-white py-3 mt-6 rounded-lg font-semibold hover:bg-gray-800 transition"
             >
               Pay With Stripe
             </button>
-
+       ):(
+         <Spinner />
+       )
+      }
             <p className="text-gray-400 font-thin text-sm mt-2">
                 Your payment is secure and encrypted via Stripe.
             </p>

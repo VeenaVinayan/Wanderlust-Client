@@ -26,9 +26,9 @@ export const getBookingData = async( userId: string,params : SearchParams) =>{
                 throw error;
         }
  }
- export const updateBookingStatusByAgent = async (bookingId : string) =>{
+ export const updateBookingStatusByAgent = async (bookingId : string,status : string) =>{
         try{
-                const response = await bookingApi.updateBookingStatusByAgent(bookingId)
+                const response = await bookingApi.updateBookingStatusByAgent(bookingId,status)
                 return response;
         }catch(err){
                 console.log('Error Update booking Status !!');
