@@ -1,7 +1,7 @@
 import React, { useState ,useEffect } from "react";
 import { IndianRupee, CalendarDays, Star } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { TPackage } from "../../types/packageTypes";
+import { TPackageAllData } from "../../types/packageTypes";
 import Header from "../../components/layout/Shared/Header";
 import Footer from '../../components/layout/Shared/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -9,22 +9,15 @@ import { getReviews } from '../../services/User/UserServices';
 import CancellationPolicy from "../../components/User/CancellationPolicy";
 import { policy } from '../../Constants/Packages';
 import { TReviews } from '../../types/packageTypes';
+import { ItineraryItem } from "../../types/packageTypes";
 
-type ItineraryItem = {
-   day: number;
-   description: string;
-   meals?: string[];
-   activities: string;
-   stay?: string;
-   transfer?: string;
-};
 const PackageDetails: React.FC = () => {
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [ reviews, setReviews] = useState<TReviews[]>([]);
   const [rating, setRating] = useState(0);
   const location = useLocation();
-  const packageData: TPackage = location.state;
+  const packageData: TPackageAllData = location.state;
   const navigate = useNavigate();
   const toggleDay = (index: number) => {
     setExpandedDay(expandedDay === index ? null : index);
@@ -85,7 +78,6 @@ function renderStars(rating :number) {
       <Header />
       <div className="container mx-auto px-6 sm:px-6 lg:px-20 xl:px-32 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Image Gallery */}
           <div className="flex flex-col items-center">
             <img
               src={selectedImage || packageData.images[0]}
@@ -111,25 +103,7 @@ function renderStars(rating :number) {
           <div className="space-y-4">
            <div className="flex flex-row justify-between" >
              <h1 className="text-2xl sm:text-3xl font-bold">{packageData.name}</h1>
-             <button
-                  onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent})}
-                  className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
-                >
-                  <svg
-                    className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-200"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"
-                    />
-                  </svg>
-                  <span className="font-medium">Chat with Agent</span>
-              </button>
+            
             </div>  
             <div className="flex items-center gap-2">
                 {renderStars(rating)}
@@ -218,19 +192,45 @@ function renderStars(rating :number) {
             )}
           </div>
         </div>
-    
- <div className="mt-8">
-  <h4 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Cancellation Policy</h4>
-  <div className="m-5 p-6 shadow-xl border rounded-2xl bg-white">
-  <CancellationPolicy
-    refundable={policy.refundable}
-    refundPercentage={policy.refundPercentage}
-    allowedUntilDaysBefore={policy.allowedUntilDaysBefore}
-    cancellationFee={policy.cancellationFee}
-    terms={policy.terms}
-  />
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+  <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+    <h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+      🧑‍💼 Agent Details
+    </h2>
+    <div className="space-y-4 text-sm text-gray-700">
+  <div className="flex items-center gap-3">
+    <span className="text-gray-500 font-semibold w-20">👤 Name:</span>
+    <span className="text-gray-800">{packageData.agent.name}</span>
   </div>
-  </div> 
+  <div className="flex items-center gap-3">
+    <span className="text-gray-500 font-semibold w-20">📧 Email:</span>
+    <span className="text-gray-800 break-all">{packageData.agent.email}</span>
+  </div>
+  <div className="flex items-center gap-3">
+    <span className="text-gray-500 font-semibold w-20">📞 Phone:</span>
+    <span className="text-gray-800">{packageData.agent.phone}</span>
+  </div>
+</div>
+       <button
+            onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent._id})}
+            className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
+       >
+          <span className="font-medium">Chat with Agent</span>
+        </button>
+  </div>
+  <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+    <h4 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
+      📄 Cancellation Policy
+    </h4>
+    <CancellationPolicy
+      refundable={policy.refundable}
+      refundPercentage={policy.refundPercentage}
+      allowedUntilDaysBefore={policy.allowedUntilDaysBefore}
+      cancellationFee={policy.cancellationFee}
+      terms={policy.terms}
+    />
+  </div>
+</div>
  { reviews.length > 0 && (
     <div className="mt-8">
       <h3 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">Reviews</h3>
@@ -264,13 +264,7 @@ function renderStars(rating :number) {
       </div>
     </div>
   )}
-  <button 
-  onClick={() => navigate(`/chat?to=${agentId}`)}
-  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
->
-  Chat with Agent
-</button>
-
+ 
  </div>
  <Footer />
  </div>

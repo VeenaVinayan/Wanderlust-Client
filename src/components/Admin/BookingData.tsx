@@ -3,7 +3,7 @@ import Table from  '../common/Table';
 import SearchFilter from '../layout/Shared/SearchFilter';
 import { TBookingResponse } from '../../types/bookingTypes';
 import { useNavigate } from 'react-router-dom';
-import { BookingColumn } from '../../Constants/User';
+import { BookingColumnData } from '../../Constants/User';
 import Pagination from '../../components/layout/Shared/Pagination';
 import { getBookingDataToAdmin } from '../../services/Booking/BookingService';
 import { PER_PAGE } from '../../Constants/User';
@@ -41,7 +41,7 @@ const BookingData :React.FC = () => {
         <SearchFilter onFilterChange={setFilters} />
         <Table <TBookingResponse>
           data={booking}
-          columns={BookingColumn}
+          columns={BookingColumnData}
           role={'Booking Data'}
           renderActions={(value) => (
              <>
@@ -58,6 +58,7 @@ const BookingData :React.FC = () => {
                   perPage={PER_PAGE}
                   length={count || 1}
                   handlePage = {handlePage}
+                  currentPage={currentPage}
           />      
         </div>
       </>

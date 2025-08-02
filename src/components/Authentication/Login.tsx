@@ -1,7 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import {useNavigate} from 'react-router-dom';
 import { LoginFormType, LoginErrorType, FormError } from '../../types/formTypes';
-import axiosInstance from '../../apiStore/authApi';
 import {toast} from 'react-toastify';
 import Modal from '../common/Modal';
 import { useDispatch } from 'react-redux';
@@ -12,7 +11,9 @@ import { useGoogleLogin } from '@react-oauth/google';
 import googleAuth  from '../../services/Auth/GoogleAuth';
 import { LoginResponse } from '../../types/userTypes';
 import { Eye, EyeOff } from 'lucide-react';
-
+import { loginUser, passwordForget } from '../../services/Auth/Auth';
+import { Link } from 'react-router-dom';
+import type { CodeResponse } from '@react-oauth/google';
 const Login :React.FC = () => {
      const [ formData, setFormData ]  = useState <LoginFormType>({
         email :'',
@@ -32,16 +33,16 @@ const Login :React.FC = () => {
     }
     const userAuthorize = (data : LoginResponse) =>{
      const { accessToken, user, address, isVerified } = data;
-         localStorage.setItem(`${user.role}_accessToken`,accessToken);
+         localStorage.setItem(`accessToken`,accessToken);
          localStorage.setItem("userId",user.id);
-        console.log('User Data ::',user);
-        dispatch(setUserData(user));
+         console.log('User Data ::',user);
+         dispatch(setUserData(user));
       switch(user.role){
         case 'Admin':
-                    navigate('/admin/adminDashboard');
+                    navigate('/admin/adminDashboard',{replace:true});
                     break;
         case 'User':
-                    navigate('/');
+                    navigate('/',{replace:true});
                      break;
         case 'Agent':
                     console.log("Verified ::",isVerified,address);
@@ -51,7 +52,7 @@ const Login :React.FC = () => {
                     }else if(isVerified ==='Uploaded'){
                       navigate('/agent/agentVerification',{state :{status:true}});
                     }else{
-                      navigate('/agent/agentDashboard');
+                      navigate('/agent/agentDashboard',{replace:true});
                     }
                    break;
         default:
@@ -59,29 +60,33 @@ const Login :React.FC = () => {
                     break;                                   
       }
     }
-
-    const responseGoogle =  async(authResult) =>{
-      try{
-            if(authResult["code"]){
-                console.log(authResult.code);
-                const result = await googleAuth(authResult.code);
-                console.log(result.data);
-                userAuthorize(result.data);
-                toast.success('Successfully Loggddin !');
-            }else{
-               console.log(authResult);
-               throw new Error(authResult);
-            }
-      }catch(e){
-          console.log(e);
+  const handleGoogleSuccess = async (codeResponse: Omit<CodeResponse, "error" | "error_description" | "error_uri">) => {
+    try {
+      if (codeResponse.code) {
+        console.log(codeResponse.code);
+        const result = await googleAuth(codeResponse.code);
+        console.log(result.data);
+        userAuthorize(result.data);
+        toast.success('Successfully Logged in!');
+      } else {
+        throw new Error("Google Auth Error: No code received");
       }
-  }
-    const googleLogin = useGoogleLogin({
-         onSuccess: responseGoogle,
-         onError: responseGoogle,
-         flow: "auth-code",
-    })
+    } catch (e) {
+      console.log(e);
+      toast.error('Google login failed.');
+    }
+  };
 
+  const handleGoogleError = (errorResponse: Pick<CodeResponse, "error" | "error_description" | "error_uri">) => {
+    console.error('Google login error:', errorResponse);
+    toast.error('Google login failed.');
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: handleGoogleError,
+    flow: "auth-code",
+  });
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
         const { name, value } = e.target;
         setFormData((preData) => ({...preData,[name]:value}));
@@ -97,23 +102,21 @@ const Login :React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) =>{
          setLoading(true);
          e.preventDefault();
-         if(!validation()) return;
+         if(!validation()){
+            setLoading(false);
+            return;
+         } 
          try{
-           const response =  await axiosInstance({
-                method:'post',
-                url:'/login',
-                data :{
-                   email:formData.email,
-                   password:formData.password,
-                }
-             })
-             if(response.data.success) { 
-                 toast.success(response?.data?.message);
-                 console.log('User Data valuess after response',response.data.data);
-                 userAuthorize(response.data.data);
+           const data = await loginUser(formData.email, formData.password);
+           if(data.success) { 
+                 toast.success(data?.message);
+                 console.log('User Data valuess after response',data.data);
+                 userAuthorize(data.data);
               } 
-            }catch(err:any ){
-                console.error(err.message);
+            }catch(err:unknown ){
+                if(err instanceof Error){
+                    console.log('Error in Login :',err.message);
+                }  
                 clearFormData();
                 setLoading(false);
           }
@@ -122,25 +125,24 @@ const Login :React.FC = () => {
          setEmail(e.target.value);
      }
      const forgetPassword = async (e: FormEvent) =>{
-      e.preventDefault(); 
-       alert('Forgot password !');
-       await axiosInstance.post('/forgotPassword',{email:email})
-       .then((response) =>{
-           if(response.data.success) {
-            toast.success(response.data.message);
-            setIsModalOpen(false);
-           }else{
-            toast.success(response.data.message);
+      try{ 
+            e.preventDefault(); 
+            const data  = await passwordForget(email);
+            if(data.success) {
+                toast.success(data.message);
+                setIsModalOpen(false);
+             }else{
+                toast.success(data.message);
+              }
+        }catch(err : unknown){
+            if(err instanceof Error){
+                toast.error(err.message);
+                console.error('Error in Forgot Password !!', err);
            }
-       })
-       .catch((err) =>{
-         toast.error(err.data.message);
-       })
-       alert('Forgot password !!');
-     }
+     } 
+    }
     const validation = () : boolean => {
           const errors : FormError ={};
-        // Validation for Email  
           if(!formData.email.trim()){
              errors.name = 'Email required !'
           }else if(!/\S+@\S+\.\S+/.test(formData.email)){
@@ -159,111 +161,132 @@ const Login :React.FC = () => {
         return Object.keys(errors).length === 0;
     }
     return (
-      <>
-        <div className="flex flex-col md:flex-row h-screen">
-          <div className="w-full md:w-1/2 bg-gray-100 flex flex-col items-center justify-center">
-          <img
-            src="/images/wanderlust.png"
-            alt="Login Illustration"
-            className="rounded-md w-2/3 md:w-1/2"
-          />
-          <p className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500
-                       3xl">"Fuel Your Soul, Explore the World."</p>
-         </div>
-          <div className="w-full md:w-1/2 bg-white flex items-center justify-center">
-            <div className="w-3/4 md:w-2/3 lg:w-1/2">
-              <h2 className="text-2xl font-bold mb-4 text-center text-zinc-700">Login Here !</h2>
-              <form className="space-y-4" onSubmit={handleSubmit}>
-                <div>
-                  <label className="block text-gray-600 mb-2" htmlFor="email">
-                    Email
-                  </label>
+     <>
+      <div className="flex flex-col mt-12 md:flex-row h-screen bg-gradient-to-tr from-gray-100 via-white to-gray-200">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-white ">
+        <img
+          src="/images/travel.jpg"
+          alt="Login Illustration"
+          className="rounded-lg shadow-xl w-[250px] h-[180px] md:w-[350px] md:h-[240px]"
+        />
+       <p className="mt-8 text-center text-2xl tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-gray-600 via-emerald-400 to-gray-500 font-[Playfair_Display]">
+          Escape the ordinary. Embrace the journey.
+        </p>
+      </div>
+        <div className="w-full md:w-1/2 flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8 space-y-6">
+            <h2 className="text-3xl font-bold text-center text-gray-700">Log In | Wanderlust</h2>
+
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {formError.email && <p className="text-red-600 text-sm">{formError.email}</p>}
+              </div>
+
+              <div>
+              <div className='flex flex-row justify-between'>
+                <label className="block text-sm text-gray-600 mb-1">Password</label>
+                 <div className="text-center">
+                  <button
+                     onClick={toggleModal}
+                     className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                   >
+                      Forgot your password?
+                 </button>
+               </div>
+              </div>
+                <div className="relative">
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your email"
-                  />
-                  {formError.email && <p className='text-red-800 text-thin'>{formError.email}</p>}
-                </div>
-  
-                <div>
-                  <label className="block text-gray-600 mb-2" htmlFor="password">
-                    Password
-                  </label>
-               
-                <div className="relative w-full">
-                  <input
-                    type={eyeClosed ? 'password' : 'text'}
+                    type={eyeClosed ? "password" : "text"}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Enter your password"
-                    className="w-full px-4 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                   <button
                     type="button"
                     onClick={toggleEye}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
                   >
                     {eyeClosed ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                 </div>
-
-                  {formError.password && <p className='text-red-800 font-thin mb-2'> {formError.password}</p> } 
-                </div>
-                {isLoading ? ( <Spinner/>   ):
-                ( <button
-                    type="submit"
-                    className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-400"
-                   >  Login
-                </button>
-                )}
-              
-              </form>
-              <div className="flex justify-center items-center py-4">
-              <a onClick={toggleModal}
-                 className="text-sm md:text-base font-medium text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded transition duration-200">
-                 Forgot your password? </a>
+                {formError.password && <p className="text-red-600 text-sm">{formError.password}</p>}
               </div>
-
-              <Modal 
-                 isOpen={isModalOpen}
-                 closeModal={toggleModal}
-                 title='Reset Your password !'
+              {isLoading ? (
+                <Spinner />
+              ) : (
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-gray-500 text-white rounded-md hover:bg-gray-700 transition"
                 >
-                 <form onSubmit={forgetPassword}>
-                 <label htmlFor="email" className="block mb-2">Email address</label>
-                    <input
-                        name="email"
-                        type="email"
-                        required
-                        onChange={handleEmail}
-                        placeholder="Enter your email"
-                        className="w-full p-3 mb-4 border border-gray-300 rounded-md" />
-                      <button
-                        type="submit"
-                        className="w-full py-3 bg-gray-600 text-white rounded-md hover:bg-gray-400"
-                      >
-                        Submit
-                   </button>
-                 </form>
-                </Modal>  
-              <div className="mt-4 text-center text-gray-600 gap-2">OR</div>
-              <div className="flex justify-center gap-5" >
-                  <button onClick={googleLogin} >
-                   <img  src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png" 
-                        alt="Sign in with Google" 
-                         className="cursor-pointer"
-                    />
-                  </button>
-                </div>
-             </div>
+                  Login
+                </button>
+              )}
+            </form>
+            <div className="flex items-center gap-4">
+              <hr className="flex-1 border-gray-300" />
+              <span className="text-sm text-gray-400">OR</span>
+              <hr className="flex-1 border-gray-300" />
+            </div>
+   
+            <div className="flex justify-center border">
+              <button onClick={googleLogin}>
+                <img
+                  src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png"
+                  alt="Sign in with Google"
+                  className="cursor-pointer"
+                />
+              </button>
+            </div>
+
+            {/* Register Link */}
+            <div className="text-center text-sm text-gray-600">
+              Don’t have an account?{" "}
+              <Link
+                to="/register"
+                className="text-teal-600 hover:text-teal-800 font-semibold hover:underline"
+              >
+                Sign Up
+              </Link>
+            </div>
           </div>
         </div>
-      </>
+      </div>
+
+      {/* Modal for Forgot Password */}
+      <Modal isOpen={isModalOpen} closeModal={toggleModal} title="Reset Your Password">
+        <form onSubmit={forgetPassword}>
+          <label htmlFor="email" className="block mb-2 text-sm text-gray-700">
+            Email address
+          </label>
+          <input
+            name="email"
+            type="email"
+            required
+            onChange={handleEmail}
+            placeholder="Enter your email"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <button
+            type="submit"
+            className="w-full py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition"
+          >
+            Submit
+          </button>
+        </form>
+      </Modal>
+    </>
     );
   };
+
   export default Login;

@@ -1,13 +1,12 @@
-import axiosInstance from "../apiStore/userApi";
+import axiosInstance from "../apiStore/api";
 import { SearchParams } from "../types/agentTypes";
 import { TBooking } from "../types/bookingTypes";
-import axiosAgent from '../apiStore/agentApi';
-import axiosAdmin from '../apiStore/adminApi';
+import { TBookingValidationData } from '../types/bookingTypes';
 
 class BookingApi{
      async bookPackage(bookingData : TBooking){
             try{
-                 const response = await axiosInstance.post('/booking', bookingData);
+                 const response = await axiosInstance.post('/user/booking', bookingData);
                  console.log('Booking Response:', response.data);
                  return response.data;
             }catch(err : unknown){
@@ -18,7 +17,7 @@ class BookingApi{
      async getBookingData(userId: string,params: SearchParams){
           try{
                console.log('Get Booking Data:', userId,params);
-               const response = await axiosInstance.get(`/booking/${userId}`,{params});
+               const response = await axiosInstance.get(`/user/booking/${userId}`,{params});
                return response.data.data;    
           }catch(err: unknown){
                console.error('Error in Fetching Booking Data:', err);
@@ -27,22 +26,22 @@ class BookingApi{
      }
      async getAgentBookingData(agentId: string,params : SearchParams){
            console.log('Agent booking data !!',agentId,params);
-           const response = await axiosAgent.get(`/booking/${agentId}`,{params});
+           const response = await axiosInstance.get(`/agent/booking/${agentId}`,{params});
            return response.data.data;
      }
      async updateBookingStatusByAgent(bookingId : string,status: string){
           console.log('Booking Id ::',bookingId);
-          const data = await axiosAgent.patch(`/booking/${bookingId}`,{status});
+          const data = await axiosInstance.patch(`/agent/booking/${bookingId}`,{status});
           return data.data;    
      }
      async getBookingDataToAdmin( params : SearchParams){
-          const data = await axiosAdmin.get(`/booking`,{params});
+          const data = await axiosInstance.get(`/admin/booking`,{params});
           return data.data.data;    
      }
      async cancelBooking(bookingId : string){
            try{
                 console.log('Cancel Booking ',bookingId);
-                const response = await axiosInstance.post('/booking/cancel', { bookingId });
+                const response = await axiosInstance.post('/user/booking/cancel', { bookingId });
                 console.log('REsponse in cacel Booking ::',response.data);
                 return response.data;
            }catch(err){
@@ -53,7 +52,7 @@ class BookingApi{
      async getPackageBooking(packageId : string,params : SearchParams){
           try{
                console.log('Get package Booking : ',packageId);
-               const response = await axiosAgent.get(`/bookings/package/${packageId}`,{params});
+               const response = await axiosInstance.get(`/agent/bookings/package/${packageId}`,{params});
                console.log('Response in package Booking ::',response.data);
                return response.data;
           }catch(err){
@@ -61,5 +60,15 @@ class BookingApi{
                throw err;
           }
      }
+     async getPackageBookingDataValue(packageId:string, day : Date): Promise<TBookingValidationData >{
+          try{
+               const { data } = await axiosInstance.get('/user/bookings/validate', { params: { packageId, day } });
+               return data.data;
+          }catch(err){
+               console.log('Error in get booking Data :: ',err);
+               throw err;
+          }
+     }
 }
+
 export default new BookingApi();

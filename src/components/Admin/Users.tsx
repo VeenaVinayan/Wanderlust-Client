@@ -22,9 +22,11 @@ const Users : React.FC = () => {
    
    const getUserData  = async (page:number) =>{
     const data  =  await fetchData("User",page,{
+       page,
+       perPage : PER_PAGE,
        search : filters.keyword,
        sortBy:'name',
-       sortOrder: filters.sortOrder
+       sortOrder: filters.sortOrder,
     });
     console.log('In User Page !!',data);
     if(data){
@@ -71,6 +73,7 @@ const Users : React.FC = () => {
                      perPage={PER_PAGE} 
                      length={count || 1}
                      handlePage={handlePage}
+                     currentPage={currentPage}
           />
           </div>
           </>

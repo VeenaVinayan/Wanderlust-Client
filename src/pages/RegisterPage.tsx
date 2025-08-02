@@ -1,11 +1,10 @@
 import React from 'react'
-import Navbar from '../components/layout/Navbar';
 import Register from '../components/Authentication/Register';
-
+import Header from '../components/layout/Shared/Header';
 const registerPage : React.FC= () => {
   return (
     <div>
-      <Navbar />
+      <Header />
       <Register />
     </div>
   )

@@ -1,4 +1,4 @@
-import { TBooking, TBookingData } from "../../types/bookingTypes";
+import { TBooking, TBookingData , TBookingValidationData} from "../../types/bookingTypes";
 import bookingApi from "../../helper/bookingApi";
 import { SearchParams } from "../../types/agentTypes";
 import userApi from "../../helper/userApi";
@@ -14,7 +14,6 @@ export const bookPackage = async (bookingData : TBooking) =>{
                 throw error;
         }
 }
-
 export const getBookingData = async( userId: string,params : SearchParams) =>{
         try{
                 const response = await bookingApi.getBookingData(userId,params);
@@ -53,9 +52,12 @@ export const cancelBooking = async(bookingId : string) =>{
     }
 export const validateBooking = async(bookingData : TBookingData) =>{
         try{
-               return await userApi.validateBooking(bookingData);
+           return await userApi.validateBooking(bookingData);
         }catch(err){
                 console.log('Error in Validate Booking !');
                 throw err;
         }
 }   
+export const getPackageBookingDataValue = async (packageId : string,day :Date):Promise<TBookingValidationData> =>{     
+       return await bookingApi.getPackageBookingDataValue(packageId,day);
+}

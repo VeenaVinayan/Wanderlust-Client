@@ -22,7 +22,6 @@ export type Agent = {
    phone:string;
    status:boolean;
  }
-
 export type DataResponse ={
     data : Agent[] | User[];
     totalCount:number;
@@ -41,7 +40,6 @@ export type DataResponse ={
    }
     isVerified:string;
  }
-
  export type TUserUpdateData = {
     name:string;
     phone:string;
@@ -63,8 +61,7 @@ export type DataResponse ={
     review : string;
     rating : number;
  }
- 
- export type TReviewData ={
+  export type TReviewData ={
     review : string;
     rating:number;
     packageId : string;
@@ -72,6 +69,7 @@ export type DataResponse ={
  }
  export type TWalletTransaction ={
       _id:string;
+      bookingId:string;
       transactionDate: Date;
       amount:number;
       description:string;
@@ -81,4 +79,7 @@ export type DataResponse ={
     amount:number;
     transaction:TWalletTransaction[]
  }
- 
+  export type GoogleAuthCodeResponse ={
+    code: string;
+    status:string;
+ }

@@ -4,10 +4,13 @@ import {  useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../app/store';
 import { UserData, TResetPassword } from '../../types/userTypes';
 import Modal from '../common/Modal';
+import { ValidationError } from 'yup';
 import {toast } from 'react-toastify';
 import { updateProfile , resetPassword } from '../../services/User/UserProfile';
 import { setUserData } from '../../features/authentication/userSlice';
 import schema from '../../Validations/UserPasswordReset';
+import editProfileSchema from '../../Validations/EditProfile';
+
 import Header from '../layout/Shared/Header';
 
 const UserProfile : React.FC  = () => {
@@ -53,6 +56,7 @@ const UserProfile : React.FC  = () => {
       e.preventDefault();
      try{
         console.log(" User Id  update profile : ",userInfo.id);
+        await editProfileSchema.validate(updateUser, { abortEarly: false });
         const response = await updateProfile(updateUser,userInfo.id);
         console.log("REsponse after Edit ::",response.data)
         setIsModalOpen(false);
@@ -62,8 +66,17 @@ const UserProfile : React.FC  = () => {
         }else{
           toast.error("Error occur while update !");
       }
-    }catch(err){
-        toast.error('Error in update user');
+    }catch(err : unknown){
+        console.log('Error in password reset submission:', err);
+        if (err instanceof ValidationError) {
+          const newErrors: Record<string, string> = {};
+          err.inner.forEach((e) => {
+          if (e.path) {
+             newErrors[e.path] = e.message;
+          }
+        });
+        setErrors(newErrors);
+      }
     }
   }
 const passwordResetSubmit = async (e: FormEvent) => {
@@ -83,14 +96,15 @@ const passwordResetSubmit = async (e: FormEvent) => {
     
  } catch (err: unknown) {
     console.log('Error in password reset submission:', err);
-    if (err instanceof Error && "inner" in err) {
+    if (err instanceof ValidationError) {
       const newErrors: Record<string, string> = {};
-      (err as any).inner.forEach((e: any) => {
-        newErrors[e.path as string] = e.message;
+      err.inner.forEach(e => {
+        if(e.path) {
+          newErrors[e.path] = e.message;
+        }
       });
       setErrors(newErrors);
     }
-   // Show generic error toast
   }
 };
 
@@ -98,19 +112,6 @@ const passwordResetSubmit = async (e: FormEvent) => {
     <div className="min-h-screen flex flex-col items-center  bg-gray-100 p-4">
     <Header />
     <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl overflow-hidden">
-        {/* <div className="bg-gradient-to-r from-purple-500 to-pink-600 text-white text-center py-8">
-          <div className="mx-auto mb-4">
-            <img
-              src="/placeholder.svg?height=120&width=120"
-              width={120}
-              height={120}
-              alt="Profile picture"
-              className="rounded-full border-4 border-white mx-auto"
-            />
-          </div>
-          <h2 className="text-2xl font-bold">{user?.name}</h2>
-          <p className="text-sm text-gray-200">{user?.email}</p>
-        </div> */}
         <div className="p-6">
           <div className="space-y-6">
            <div className="flex items-center space-x-4 border-b pb-4">
@@ -168,6 +169,7 @@ const passwordResetSubmit = async (e: FormEvent) => {
             required
         />
       </div>
+      {errors.name && <p className="text-red-500">{errors.name}</p>}
      <div>
         <label className="block text-sm font-medium text-gray-600">
             Phone Number
@@ -182,6 +184,7 @@ const passwordResetSubmit = async (e: FormEvent) => {
             required
         />
     </div>
+      {errors.phone && <p className="text-red-500">{errors.phone}</p>}
     <button
         type="submit"
         className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium text-lg hover:bg-blue-600 transition duration-300"

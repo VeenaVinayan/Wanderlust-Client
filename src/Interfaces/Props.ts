@@ -11,6 +11,7 @@ export interface PaginationProps {
     perPage: number;
     length: number;
     handlePage: (page: number) => void;
+    currentPage:number;
  }
 
  export interface IApiResponse{

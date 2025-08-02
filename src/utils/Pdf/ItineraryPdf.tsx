@@ -1,7 +1,7 @@
 import React from 'react'
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 import { TItinerary } from '../../types/packageTypes';
-import { PdfProps } from '../../types/packageTypes';
+import { TPdfProps } from '../../types/packageTypes';
 
 const styles = StyleSheet.create({
   page: {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 });
   
  
-const ItineraryPdf : React.FC <PdfProps>= ({title,day,night,itinerary}) => ( 
+const ItineraryPdf : React.FC <TPdfProps>= ({title,day,night,itinerary}) => ( 
   <Document>
   <Page size="A4" style={styles.page}>
     <View style={styles.section}>

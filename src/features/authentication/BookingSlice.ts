@@ -6,7 +6,7 @@ const initialState = {
      packageId:'',
      totalGuest:0,
      totalAmount:0,
-     tripDate:'',
+     tripDate:new Date(),
      email:'',
      phone:'',
      travellers:{

@@ -3,15 +3,14 @@ import { PlusCircle } from 'lucide-react';
 import AddPackage from './AddPackage';
 import { Link, useNavigate } from 'react-router-dom';
 import Table from '../../components/common/Table';
-import { TPackage } from '../../types/packageTypes';
+import {  TPackageData, TPackageAllData } from '../../types/packageTypes';
 import { Ban, Edit } from 'lucide-react';
-import { PackageColumn } from '../../Constants/User';
+import { PackageColumnData } from '../../Constants/User';
 import  useSweetAlert  from '../../hooks/CustomHooks/SweetAlert';
 import { agentDeletePackage, getPackages } from '../../services/Agent/PackageService';
 import { toast } from 'react-toastify';
 import Pagination from '../../components/layout/Shared/Pagination';
 import { PER_PAGE } from '../../Constants/User';
-import {  packageValidationSchema } from '../../Validations/PackageRegister';
 import SearchFilter from '../layout/Shared/SearchFilter';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store'; 
@@ -19,7 +18,7 @@ import { RootState } from '../../app/store';
  const Package : React.FC= () => {
    const [ currentPage, setCurrentPage] = useState(1);
    const [isCreate, setIsCreate] = useState<boolean>(false); 
-   const [packages , setPackages ] = useState<TPackage []>([]);
+   const [packages , setPackages ] = useState<TPackageAllData []>([]);
    const [ count , setCount ] = useState<number>(0);
    const [ filters, setFilters] = useState({keyword:'',sortOrder:''});
    const navigate = useNavigate();
@@ -30,7 +29,7 @@ import { RootState } from '../../app/store';
    }
    useEffect(() =>{
          const fetchPackages = async (page :number) =>{
-             const data = await getPackages(agent.id,{
+             const data : TPackageData | undefined= await getPackages(agent.id,{
                 page,
                 perPage:PER_PAGE,
                 search: filters.keyword,
@@ -39,14 +38,16 @@ import { RootState } from '../../app/store';
             });
              if(data){
               console.log('Packages ::',data);
-              setPackages(data.packages);
-              setCount(data.totalCount);
-             }
+              if(data){
+                setPackages(data.packages);
+                setCount(data.totalCount);
+              }
+            }
           }
          fetchPackages(currentPage);
-   },[currentPage,filters]);
+   },[currentPage, filters, agent.id]);
 
-   const handleDelete = async (packageData: TPackage) =>{
+   const handleDelete = async (packageData: TPackageAllData) =>{
      if(packageData._id){
       const response = await agentDeletePackage(packageData._id);
        if(response){
@@ -59,7 +60,7 @@ import { RootState } from '../../app/store';
      }
   }
 
-   const handleEdit = (packages : TPackage) =>{
+   const handleEdit = (packages : TPackageAllData) =>{
      console.log('Handle Edit ::', packages);
      navigate('/agent/agentDashboard/editPackage',{state:packages});
    }
@@ -90,9 +91,9 @@ import { RootState } from '../../app/store';
     <>
     <SearchFilter onFilterChange={setFilters} /> 
      <div className="overflow-x-auto">
-      <Table<TPackage>
+      <Table<TPackageAllData>
         data={packages}
-        columns={PackageColumn}
+        columns={PackageColumnData}
         role={"Packages"}
         renderActions={(value) => (
           <div className="flex gap-2">
@@ -116,6 +117,7 @@ import { RootState } from '../../app/store';
               perPage={PER_PAGE}
               length={count || 1}
               handlePage={handlePage}
+              currentPage={currentPage}
         />
       </div> 
     </div> 

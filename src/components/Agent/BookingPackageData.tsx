@@ -1,8 +1,8 @@
 import React, { useState , useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Table from '../common/Table';
-import { BookingColumn, PER_PAGE} from '../../Constants/User';
-import { TBookingResponse } from '../../types/bookingTypes';
+import { BookingColumnData, PER_PAGE} from '../../Constants/User';
+import { TBookingResponse} from '../../types/bookingTypes';
 import { getPackageBooking} from '../../services/Agent/BookingService';
 import  Pagination from '../layout/Shared/Pagination';
 import SearchFilter from '../layout/Shared/SearchFilter';
@@ -42,10 +42,10 @@ const BookingPackageData: React.FC = () => {
      { bookings.length > 0 ? ( 
        <> 
        <SearchFilter onFilterChange={setFilters} />
-        <Table <TBookingValue>
+        <Table <TBookingResponse>
             data = {bookings}
-            columns = {BookingColumn}
-            role = {bookings[0]?.packageName}
+            columns = {BookingColumnData}
+            role = {bookings[0]?.packageId.name}
             renderActions={(value) =>(
                 <>
                     <button 
@@ -61,6 +61,7 @@ const BookingPackageData: React.FC = () => {
                 perPage={PER_PAGE}
                 length ={ count || 1}
                 handlePage={handlePage}
+                currentPage={currentPage}
             />
           </div>  
         </> 

@@ -1,4 +1,4 @@
-import axiosInstance from "../apiStore/userApi";
+import axiosInstance from "../apiStore/api";
 import { TCategoryValue } from "../types/userTypes";
 import { TPackage ,TPackageData } from '../types/packageTypes';
 import { TBookingType,TBookingData } from "../types/bookingTypes";
@@ -6,10 +6,9 @@ import { TReviewData, TReview } from '../types/userTypes';
 import { SearchParams } from '../types/agentTypes';
 
 class UserApi{
-    async getAllCategories(): Promise<TCategoryValue> {
+    async getAllCategories(): Promise<TCategoryValue[]> {
        try{
-          const { data } = await axiosInstance.get('/category');
-          console.log(' Values ::',data,data.data)
+          const { data } = await axiosInstance.get('/user/category');
           return data.data;
        }catch(err : unknown){
          throw Error(`Error in Get Category !! : ${err}`);
@@ -18,7 +17,7 @@ class UserApi{
     async getPackagesByCategory(): Promise<TPackage[]> {
         try{
             console.log('Error in get Packages :::');
-            const respone = await axiosInstance.get(`/packages-category`);
+            const respone = await axiosInstance.get(`/user/packages-category`);
             console.log("REsponse is ::",respone.data.packages);
             return respone.data.packages;
         }catch(err : unknown){
@@ -28,10 +27,9 @@ class UserApi{
      }
     async getPackges(queryString : string) : Promise<TPackageData>{
          try{
-              const response = await axiosInstance.get(`/advance-search?${queryString}`);
+              const response = await axiosInstance.get(`/user/advance-search?${queryString}`);
               console.log(' Searched Packages !!',response);
-              console.log("Response Data ::",response.data.packages);
-              return response.data.data;
+             return response.data.data;
          }catch(err){
             console.error('Error in Stripe Payment:', err);
              throw Error('Error in get Packages !');
@@ -39,7 +37,7 @@ class UserApi{
     } 
     async stripePayment(bookingData : TBookingType) {
         try{
-            const response = await axiosInstance.post('/stripe-payment', bookingData);
+            const response = await axiosInstance.post('/user/stripe-payment', bookingData);
             console.log('Booking Response:', response.data);
             console.log('Booking URL:', response.data.data);
             return response.data.data;
@@ -51,7 +49,7 @@ class UserApi{
     async addToWishlist(userId: string,packageId : string){
          try{
              console.log(' Wishlist in api helper !!');
-             const response = await axiosInstance.post(`/wishlist`,{userId,packageId});
+             const response = await axiosInstance.post(`/user/wishlist`,{userId,packageId});
              console.log(' REsult in wishlist ::',response.data.message);
              return response.data.message;
          }catch(err){
@@ -62,7 +60,7 @@ class UserApi{
     async getWishlists(userId : string){
          try{
              console.log('Get Wishlist !!');
-             const res = await axiosInstance.get(`/wishlist?userId=${userId}`);
+             const res = await axiosInstance.get(`/user/wishlist?userId=${userId}`);
              return res.data.data;
          }catch(err){
              console.log('Error occured in Get Wishlist !');
@@ -72,7 +70,7 @@ class UserApi{
     async deleteWishlist(id : string){
          try{
              console.log('Delete Wishlist !');
-             const res = await axiosInstance.delete(`/wishlist?id=${id}`);
+             const res = await axiosInstance.delete(`/user/wishlist?id=${id}`);
              return res.data;
          }catch(err){
             console.log('Error in delete Wishlist ',err);
@@ -88,7 +86,7 @@ class UserApi{
                 packageId,
                 userId
              }
-             const response = await axiosInstance.post('/review',{reviewData});
+             const response = await axiosInstance.post('/user/review',{reviewData});
              return response.data;
          }catch(err){
              console.log('Error in Add Review !!'); 
@@ -98,7 +96,7 @@ class UserApi{
     async getReview(userId : string ,packageId : string ){
          try{
              console.log('Get Review data !');
-             const data = await axiosInstance.get(`/review?userId=${userId}&packageId=${packageId}`);
+             const data = await axiosInstance.get(`/user/review?userId=${userId}&packageId=${packageId}`);
              console.log('Review DAta ::',data.data.data);
              return data.data.data;
          }catch(err){
@@ -108,7 +106,7 @@ class UserApi{
     }
     async deleteReview(reviewId : string){
         try{
-                const response = await axiosInstance.delete(`/review?reviewId=${reviewId}`);
+                const response = await axiosInstance.delete(`/user/review?reviewId=${reviewId}`);
                 console.log('Result after Delete Review ::',response);
                 return response.data.success;
         }catch(err){
@@ -118,7 +116,7 @@ class UserApi{
     }
     async getReviews(packageId : string){
         try{
-             const response = await axiosInstance.get(`/reviews/${packageId}`);
+             const response = await axiosInstance.get(`/user/reviews/${packageId}`);
              console.log('DAta reviews ::',response.data.data);
              return response.data.data;
         }catch(err){
@@ -129,7 +127,7 @@ class UserApi{
     async getWallet (userId : string,params : SearchParams){
         try{
              console.log("User ID :: ", userId);
-             const data = await axiosInstance.get(`/wallets/${userId}`,{params});
+             const data = await axiosInstance.get(`/user/wallets/${userId}`,{params});
              console.log("Data from ::",data.data.data);
              return data.data.data;
         }catch(err){
@@ -140,7 +138,7 @@ class UserApi{
     async editReview(data : TReview, reviewId: string){
         try{
             console.log('Edit Review !!',data,reviewId);
-            const response = await axiosInstance.patch(`/reviews/${reviewId}`,data);
+            const response = await axiosInstance.patch(`/user/reviews/${reviewId}`,data);
             console.log('Response in Edit Review ::',response.data);
             return response.data.message;
         }catch(err){
@@ -160,13 +158,14 @@ class UserApi{
     } 
     async getAgentData(agentId : string){
         try{
-            const response = await axiosInstance.get(`/agents/data?agentId=${agentId}`);
+            const response = await axiosInstance.get(`/user/agents/data?agentId=${agentId}`);
             return response.data;
         }catch(err){
              console.log('Error is ::',err);
              throw err;
         }
     }
+    
 }
 
 export default new UserApi();

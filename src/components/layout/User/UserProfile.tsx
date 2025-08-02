@@ -9,6 +9,7 @@ import { updateProfile , resetPassword } from '../../../services/User/UserProfil
 import { setUserData } from '../../../features/authentication/userSlice';
 import schema from '../../../Validations/AgentRegister';
 import Header from '../Shared/Header';
+import { ValidationError } from 'yup';
 
 const UserProfile : React.FC  = () => {
   const [ user, setUser ] = useState<UserData>();
@@ -83,9 +84,9 @@ const passwordResetSubmit = async(e: FormEvent) =>{
             }
        }catch(err : unknown){
          console.log('Error in ',err);
-         if( err instanceof Error && "inner" in err){
+         if( err instanceof ValidationError){
             const newErrors: Record<string, string> = {};
-            (err as any).inner.forEach((e: any) =>{
+            err.inner.forEach((e) =>{
                 newErrors[e.path as string] = e.message;
             });
             setErrors(newErrors);

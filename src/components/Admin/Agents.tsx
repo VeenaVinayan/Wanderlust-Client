@@ -94,6 +94,7 @@ return (
               perPage={PER_PAGE}
               length={count || 1}
               handlePage={handlePage}
+              currentPage={currentPage}
             />
           </div>
         </>

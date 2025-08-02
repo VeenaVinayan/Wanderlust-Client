@@ -13,9 +13,12 @@ import useSweetAlert from '../../hooks/CustomHooks/SweetAlert';
 import { cancelBooking } from '../../services/Booking/BookingService';
 import { editReview } from '../../services/User/UserServices';
 import ItineraryPdf from '../../utils/Pdf/ItineraryPdf'; 
+import  InvoicePdf from '../../utils/Pdf/InvoicePdf';
+
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { TPdfProps} from '../../types/packageTypes';
+import { TBookingPdfProps} from '../../types/bookingTypes';
 
 const BookingDetails: React.FC = () => {
   const [bookingValue, setBookingValue] = useState<TBookingResponse | null>(null);
@@ -41,9 +44,9 @@ const BookingDetails: React.FC = () => {
       setValue('rating',data.rating);
     };
     if(bookingData) {
-      fetchReviewData(user.id, bookingData.packageId._id);
+        fetchReviewData(user.id, bookingData.packageId._id);
     }
-  }, [bookingData, user.id,setValue]);
+  },[bookingData, user.id,setValue]);
 
   const handleDownloadPDF = async () => {
     console.log('Download PDF !!',bookingValue?.packageId?.itinerary);
@@ -60,7 +63,6 @@ const BookingDetails: React.FC = () => {
     const blob = await pdf(
       <ItineraryPdf {...Itinerary} />
     ).toBlob();
-
     saveAs(blob, 'Itinerary.pdf');
   };
 
@@ -79,7 +81,6 @@ const BookingDetails: React.FC = () => {
                     ...prev,
                     tripStatus: 'Cancelled',
                  };
-                
           });
            console.log("Booking Value ==",bookingValue);
          toast.success(response.message);
@@ -107,11 +108,9 @@ const BookingDetails: React.FC = () => {
       toast.error('Failed to delete review');
     }
   };
-
 const handleEditSubmit = async (data: TReview) => {
   setIsEditModal(false);
   console.log('Edit Review ::', data);
-
   if (review && bookingValue) {
     const result = await editReview(data, review._id);
     console.log('Edit Review Result:', result);
@@ -123,7 +122,30 @@ const handleEditSubmit = async (data: TReview) => {
     toast.success(result);
   }
 };
-
+  const handleInvoice = async () =>{
+    console.log('Download INVoice PDF !!');
+    const booking: TBookingPdfProps = {
+      title : bookingValue?.packageId.name || 'Package' ,
+      day:  bookingValue?.packageId.day || 0,  
+      night: bookingValue?.packageId.night || 0,
+      price: bookingValue?.packageId.price || 0,
+      totalGuest: bookingValue?.totalGuest || 0,
+      tripDate: bookingValue?.tripDate || new Date(),
+      email: bookingValue?.email || '',
+      name: user.name || '',
+      bookingId: bookingValue?.bookingId || '',
+      phone: bookingValue?.phone || '',
+      adult:bookingValue?.travellers.adult|| 1,
+      children:bookingValue?.travellers.children || 0,
+      infant:bookingValue?.travellers.infant || 0,
+      tripDate:bookingValue?.tripDate || new Date(),
+      bookingDate: bookingValue?.bookingDate || new Date(),
+    }
+    const blob = await pdf(
+      <InvoicePdf {...booking} />
+    ).toBlob();
+    saveAs(blob, 'Invoice.pdf');
+  }
   const StarRating = ({ rating, setRating }: { rating: number; setRating: (value: number) => void }) => {
     const [hovered, setHovered] = useState<number | null>(null);
     return (
@@ -151,9 +173,13 @@ const handleEditSubmit = async (data: TReview) => {
     );
   };
 
+  if (!bookingValue) return null;
+
   return (
+    <> 
     <div className="max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-lg mt-10">
       <h1 className="text-4xl font-bold text-center mb-10 text-gray-600">Booking Details</h1>
+      <div className='flex items-center justify-between mb-2'>
       { (bookingValue?.tripStatus === 'Pending') && (
         <button
           onClick={() => showConfirm("Cancel Booking !","Are you sure to cancel Booking ?", handleCancelBooking)}
@@ -165,6 +191,12 @@ const handleEditSubmit = async (data: TReview) => {
           Cancel Booking
         </button>
       )}
+      <button 
+            className='flex items-center gap-2 justify-end py-2 px-4 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-semibold rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-in-out mb-4'
+            onClick={handleInvoice}>
+          Invoice
+      </button>
+      </div>
       <div>
          <h2 className="text-2xl font-semibold text-gray-700 mb-4">{bookingValue?.packageId.name}</h2>
       </div>
@@ -221,13 +253,21 @@ const handleEditSubmit = async (data: TReview) => {
           <span className="text-gray-500 mb-1">Payment Status </span>
           <span className="text-lg font-bold">{bookingValue?.paymentStatus}</span>
         </div>
+         { bookingValue?.tripStatus ==="Cancelled" && 
+            <div className="flex flex-col">
+              <span className="text-gray-500 mb-1">Refund Amount</span>
+              <span className={`text-lg font-bold`}>
+                {Math.floor(bookingValue?.totalAmount *.8)}
+              </span>
+            </div>
+         }
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Trip Date : </span>
-          <span className="text-lg font-bold">{bookingValue?.tripDate?.toLocaleString()}</span>
+          <span className="text-lg font-bold">{new Date(bookingValue.tripDate)?.toLocaleDateString()}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking Date </span>
-          <span className="text-lg font-bold">{bookingValue?.bookingDate?.toLocaleString()}</span>
+          <span className="text-lg font-bold">{new Date(bookingValue.bookingDate).toLocaleDateString()}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking Status</span>
@@ -235,9 +275,8 @@ const handleEditSubmit = async (data: TReview) => {
             {bookingValue?.tripStatus || 'Pending'}
           </span>
         </div>
-      </div>
-
-      {(bookingValue?.tripStatus !== 'Cancelled' && bookingValue?.tripStatus !== 'Completed') && (
+     </div>
+     {(bookingValue?.tripStatus !== 'Cancelled' && bookingValue?.tripStatus !== 'Completed') && (
         <div className="flex justify-center mt-12">
           <button
             onClick={handleDownloadPDF}
@@ -375,6 +414,7 @@ const handleEditSubmit = async (data: TReview) => {
   </Modal>
 )}
 </div>
+</>
   );
 };
 

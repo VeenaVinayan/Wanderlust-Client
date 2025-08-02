@@ -1,11 +1,11 @@
-import axiosInstance from "../../apiStore/agentApi";
+import axiosInstance from "../../apiStore/api";
+import agentHelper from '../../helper/agentApi';
 import axios from 'axios';
 
-// Agent Verification
 export const uploadCertificate =  async (userId : string, image :File) =>{
     console.log("Inside  upload certificate !! ",userId,File);
      try{
-          const response = await axiosInstance.post('/getPresignedUrl',{
+          const response = await axiosInstance.post('/agent/getPresignedUrl',{
              fileType:image.type
           });
           console.log(' After upload url !!',response);
@@ -18,7 +18,7 @@ export const uploadCertificate =  async (userId : string, image :File) =>{
           console.log(' Result : response from S3 :: ',res);  
           if(res.status === 200){
               console.log("Image upload successfully !!");
-              const result = await axiosInstance.patch(`/upload-certificate/${userId}`,
+              const result = await axiosInstance.patch(`/agent/upload-certificate/${userId}`,
                  {publicUrl});
               if(result.status === 200) return "true";
               else return false;
@@ -29,4 +29,14 @@ export const uploadCertificate =  async (userId : string, image :File) =>{
     }catch(err){
        console.log('Error in upload image !!' ,err)
     }
+}
+
+export const getDashboard = async (agentId : string) =>{
+   try{
+        const data = await agentHelper.getDashboard(agentId);
+        return data;
+   }catch(err:unknown){
+        console.error('Error in Fetching Agent Dashboard ::', err);
+        throw err;
+   }
 }

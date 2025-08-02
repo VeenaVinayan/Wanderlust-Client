@@ -2,24 +2,29 @@ import React , { useState , useEffect} from 'react';
 import Header from '../../components/layout/Shared/Header'
 import Footer from '../../components/layout/Shared/Footer';
 import { useLocation } from 'react-router-dom';
-import { PackageInitialState } from '../../Constants/InitialState';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { TBookingData } from '../../types/bookingTypes';
+import { TBookingData, TBookingValidationData } from '../../types/bookingTypes';
 import schema from '../../Validations/Booking'
 import { useNavigate } from 'react-router-dom';
+import { policy } from '../../Constants/Packages';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { ValidationError } from 'yup';
+import { getPackageBookingDataValue } from '../../services/Booking/BookingService';
+import { TPackageAllData } from '../../types/packageTypes';
+import CancellationPolicy from '../../components/User/CancellationPolicy';
 // import { validateBooking } from '../../services/Booking/BookingService';
 // import { toast } from 'react-toastify';
 
 const Booking : React.FC = ()  => {
-  const [packageValue, setPackageValue ] = useState(PackageInitialState);
+  const [packageValue, setPackageValue ] = useState<TPackageAllData>();
+  const [totalCapcity, setTotalCapacity ] = useState<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const packageData = location.state;
+  const packageData : TPackageAllData = location.state;
   const {email ,phone} = useSelector((state: RootState) => state.userData);
+  let availabilityMap : Record<string,number> ;
   const [ errors, setErrors ] = useState<Record<string, string>>({
     tripDate: '',
      'travellers.adult': '',
@@ -29,6 +34,7 @@ const Booking : React.FC = ()  => {
     phone: '',
     totalAmount: '',
   });
+  
   const [ bookingData, setBookingData ] = useState<TBookingData>({
     tripDate: new Date(),
     travellers: {
@@ -38,15 +44,44 @@ const Booking : React.FC = ()  => {
     },
     email: email,
     phone: phone,
-    totalAmount: packageValue.price || 0,
+    totalAmount: packageValue?.price || 0,
   });
   useEffect(() =>{
      setPackageValue(packageData);
      setBookingData(prev =>({
        ...prev, totalAmount: packageData.price || 0,
-   }))
+   }));
+      (async () => {
+          const today = new Date();
+          if (packageData && packageData._id) {
+            const data : TBookingValidationData= await getPackageBookingDataValue(packageData._id, today);
+            console.log(data);
+            if(!data?.tripDate){
+                setTotalCapacity(data.totalCapacity);
+                setCalenderValue(data);
+            }
+          } else {
+            console.warn('Package ID is undefined');
+          }
+      })();
   },[packageData]);
-
+  
+  const setCalenderValue = (data: TBookingValidationData)=>{
+        availabilityMap = data?.tripDate.reduce((map, item) => {
+                map[new Date(item.date).toDateString()] = item.bookingCount;
+                return map;
+              }, {} as Record<string, number>);
+            }
+         const getStatus = (date: Date) => {
+              const dateKey = date.toDateString(); 
+              const today = new Date();
+              const count = availabilityMap?.[dateKey];  
+              if (count >= totalCapcity) return { color: "red" };
+              if (count >= totalCapcity * 0.7) return {  color: "orange" };
+              if(today> date) return { color:'gray'}
+              return {  color: "green" };
+          }
+       
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const numValue = Number(value);
@@ -56,7 +91,6 @@ const Booking : React.FC = ()  => {
         ...bookingData?.travellers,
         [name]: numValue,
       };
-  
       const price = packageValue?.price || 0;
       const { adult = 0, children = 0 } = updatedTravellers;
   
@@ -73,8 +107,10 @@ const Booking : React.FC = ()  => {
       }));
     }
   };
-  const handleDateChange = (date: Date) => {
-     setBookingData((prev) => ({ ...prev, tripDate: date }));
+  const handleDateChange = (date: Date | null) => {
+     if (date) {
+       setBookingData((prev) => ({ ...prev, tripDate: date }));
+     }
   };
   const handleSubmit= async (e: React.FormEvent) =>{
      e.preventDefault();
@@ -90,14 +126,12 @@ const Booking : React.FC = ()  => {
     //  }
  }catch (err: unknown) {
   if (err instanceof ValidationError) {
-    console.log("Errors ::",err);
     const newErrors: Record<string, string> = {};
     err.inner.forEach((e) => {
       if (e.path) {
         newErrors[e.path] = e.message;
       }
     });
-    console.log('Error occured ::',newErrors);
     setErrors(newErrors);
   } else {
     console.error("Unexpected error during validation:", err);
@@ -111,19 +145,19 @@ return (
       <div className="flex flex-col lg:flex-row gap-10 px-6 lg:px-20 py-10 w-full justify-center items-start">
         <div className="bg-white rounded-3xl shadow-lg p-6 max-w-xl w-full hover:shadow-xl transition">
           <h2 className="text-3xl font-bold text-gray-800 mb-4 tracking-tight">
-            {packageValue.name}
+            {packageValue?.name}
           </h2>
           <img
-            src={packageValue.images[2]}
-            alt={packageValue.name}
+            src={packageValue?.images[2]}
+            alt={packageValue?.name}
             className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-md"
           />
          <div className="mt-4 flex items-center justify-between">
             <span className="text-sm text-gray-500 font-medium">
-              {packageValue.day} Days / {packageValue.night} Nights
+              {packageValue?.day} Days / {packageValue?.night} Nights
             </span>
             <span className="text-xl font-semibold text-indigo-600">
-              ₹ {packageValue.price.toLocaleString()}
+              ₹ {packageValue?.price.toLocaleString()}
             </span>
           </div>
         </div>
@@ -134,13 +168,28 @@ return (
           
             <label className="text-gray-600 block mb-2 text-sm">Trip Date</label>
             <DatePicker
-              selected={bookingData?.tripDate}
-              onChange={handleDateChange}
-              dateFormat="dd-MM-yyyy"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholderText="Choose a date"
-             />
-           {errors.tripDate && <p className="text-red-500">{errors.tripDate}</p>}
+                selected={bookingData?.tripDate}
+                onChange={handleDateChange}
+                dateFormat="dd-MM-yyyy"
+                minDate={new Date()}
+                placeholderText="Choose a date"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm"
+                renderDayContents={(day, date) => {
+                  const { color } = getStatus(date);
+                  return (
+                    <div
+                      className={`w-10 h-10 flex flex-col items-center justify-center rounded-md text-xs font-medium transition-all duration-200`}
+                      style={{
+                        backgroundColor: color,
+                        color: color === '#ffffff' ? '#000000' : '#1f2937'
+                      }}
+                    >
+                      <span className="text-base">{day}</span>
+                  </div>
+                  );
+                }}
+              />
+         {errors.tripDate && <p className="text-red-500">{errors.tripDate}</p>}
           </div>
           <div className="mb-5">
             <label className="text-gray-600 block mb-2 text-sm">Travellers</label>
@@ -164,8 +213,8 @@ return (
             ))}
             </div>
             {errors['travellers.adult'] && <p className='text-red-700'>{errors['travellers.adult']}</p>}
-             {errors['travellers.children'] && <p className='text-red-700'>{errors['travellers.children']}</p>}
-              {errors['travellers.infant'] && <p className='text-red-700'>{errors['travellers.infant']}</p>}
+            {errors['travellers.children'] && <p className='text-red-700'>{errors['travellers.children']}</p>}
+            {errors['travellers.infant'] && <p className='text-red-700'>{errors['travellers.infant']}</p>}
           </div>
           <div className="mb-5">
             <label className="text-gray-600 block mb-2 text-sm">Total Amount</label>
@@ -180,8 +229,7 @@ return (
               {errors.price && <p className="text-red-500">{errors.price}</p>}
           </div>
 
-          {/* Email */}
-          <div className="mb-5">
+         <div className="mb-5">
             <label className="text-gray-600 block mb-2 text-sm">Email</label>
             <input
               type="email"
@@ -193,7 +241,6 @@ return (
               {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
 
-          {/* Phone */}
           <div className="mb-5">
             <label className="text-gray-600 block mb-2 text-sm">Phone</label>
             <input
@@ -211,7 +258,14 @@ return (
             </button>
           </div>
         </form> 
-       </div>
+        <CancellationPolicy
+            refundable={policy.refundable}
+            refundPercentage={policy.refundPercentage}
+            allowedUntilDaysBefore={policy.allowedUntilDaysBefore}
+            cancellationFee={policy.cancellationFee}
+            terms={policy.terms}
+         />
+         </div>
       </div>
      <Footer />
     </div>

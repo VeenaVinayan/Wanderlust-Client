@@ -9,7 +9,8 @@ import EditPackage from '../components/Agent/EditPackage';
 import BookingData from '../components/Agent/BookingData';
 import BookingView from '../components/Agent/BookingView';
 import BookingPackageData from '../components/Agent/BookingPackageData';
-import AgentChat from '../components/Agent/agentChat';
+import AgentChat from '../components/Agent/AgentChat';
+import Notification from '../components/Notification/Notification';
 
 const AgentRoute : React.FC = () =>{
     return(
@@ -24,6 +25,7 @@ const AgentRoute : React.FC = () =>{
                 <Route path="bookingView" element={<BookingView />} />
                 <Route path="bookingPackage" element={<BookingPackageData />} />
                 <Route path="chat" element={<AgentChat />} />
+                <Route path="notification" element={<Notification /> } />
             </Route>
             <Route path='/agentVerification' element={<Verification/>} /> 
            

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../apiStore/authApi';
 import {  FormDataType , FormError } from '../../types/formTypes';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch  } from 'react-redux';
 import { setRegistrationData } from '../../features/authentication/registerSlice';
+import { registerUser} from '../../services/Auth/Auth';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -23,35 +23,6 @@ const Register: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const handleSubmit  = async  (e: React.FormEvent) => {
-    e.preventDefault();
-    if(!validateForm()) return;
-     try{
-         //const response = await axiosInstance.post('/auth/register',formData);
-         const response = await axiosInstance({
-            method:'post',
-            url:'/register',
-            data:{
-               email:formData.email,
-            }
-         })
-         setSuccessMessage(response.data.message ||  'Registration Successful !');
-         setErrorMessage(null);
-         dispatch(setRegistrationData(formData));  
-         setFormData({
-           name:'',
-           email:'',
-           phone:'',
-           password:'',
-           conPassword:'',
-         })
-         const user:string = 'User';
-         navigate(`/otp/${user}`);
-     }catch(err :any){
-        setErrorMessage(err.response?.data?.message || 'Something went Wrong !');
-        setSuccessMessage(null);
-     }
-   };
   const validateForm = () :boolean  =>{
        const errors: FormError = {};
  // Validations for Name      
@@ -93,8 +64,33 @@ const Register: React.FC = () => {
   return Object.keys(errors).length === 0;    
   }
 
+  const handleSubmit  = async  (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!validateForm()) return;
+     try{
+         const data = await registerUser(formData.email);
+         setSuccessMessage(data.message ||  'Registration Successful !');
+         setErrorMessage(null);
+         dispatch(setRegistrationData(formData));  
+         setFormData({
+           name:'',
+           email:'',
+           phone:'',
+           password:'',
+           conPassword:'',
+         })
+         const user:string = 'User';
+         navigate(`/otp/${user}`);
+     }catch(err :unknown){
+      if(err instanceof Error){
+         console.error('Error in Registration !', err.message); 
+         setErrorMessage(err.message || 'Something went Wrong !');
+         setSuccessMessage(null);
+     }
+   };
+  }
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 mt-10">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         {successMessage && <p className='text-green-500 mb-4'>{successMessage}</p>}

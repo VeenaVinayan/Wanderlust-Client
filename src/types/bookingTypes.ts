@@ -86,5 +86,40 @@ export type TBookingView = TBooking & {
         _id:string;
      }
 }
+export type TBookingValidationData = {
+     tripDate:{
+        date : Date,
+        bookingCount:number,
+     }[],
+      totalCapacity:number;
+}
 
+export type TBookingPdfProps ={
+    title:string;
+    day:number;
+    night:number;
+    price:number;
+    totalGuest:number;
+    tripDate: Date;
+    email:string;
+    name:string;
+    phone:string;
+    bookingId:string;
+    adult:number;
+    children:number;    
+    infant:number;
+    bookingDate: Date;
+}
+export type TMonthBooking = {
+    month:string;
+    totalBookings:number;
+}
+export type TBookingPerPackages ={
+    packageName : string;
+    value:number;
+}
 
+export type TBookingAgentData = {
+    packageName:string;
+    totalBooking:number;
+}

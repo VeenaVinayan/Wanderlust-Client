@@ -64,6 +64,7 @@ const BookingData : React.FC = () => {
               perPage={PER_PAGE}
               length={count || 1}
               handlePage={handlePage}
+              currentPage={currentPage}
             />
           </div>
           </>

@@ -1,22 +1,26 @@
 import { Link , useNavigate } from "react-router-dom";
 import React , { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination ,Autoplay, EffectCoverflow} from "swiper/modules";
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import { Navigation, Pagination ,Autoplay, EffectCoverflow} from "swiper/modules";
 import { getCategories } from "../services/User/UserServices";
 import { TCategoryValue } from '../types/userTypes';
 import { fetchPackages } from "../features/authentication/packageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from '../app/store';
 import { HeartIcon} from 'lucide-react';
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-coverflow";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Navigation ,Autoplay, EffectCoverflow } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 import "../css/video.css";
 import { TPackage } from "../types/packageTypes";
 import Header from '../components/layout/Shared/Header';
 import { addToWishlist } from "../services/User/UserServices";
 import { toast } from 'react-toastify';
+import  Footer  from '../components/layout/Shared/Footer';
 
 const HomePage : React.FC = () => {
 const dispatch = useDispatch<AppDispatch>();  
@@ -27,7 +31,7 @@ const navigate = useNavigate();
 
  useEffect (() =>{
     const fetchAllCategory = async () =>{
-      const data = await getCategories();
+      const data : TCategoryValue[]= await getCategories();
       setCategories(data);
     } 
       fetchAllCategory(); 
@@ -118,7 +122,6 @@ const handleThemeSearch = (categoryId : string) =>{
     <SwiperSlide key={category._id} className="flex justify-center"
                  onClick={()=> handleThemeSearch(category._id)} >
       <div className="relative bg-white shadow-xl rounded-lg overflow-hidden w-72 backdrop-blur-lg" >
-        {/* Image Section with Overlay */}
         <div className="relative">
           <img
             src={category.image}
@@ -148,7 +151,7 @@ const handleThemeSearch = (categoryId : string) =>{
    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
   {packages.map((pkg: TPackage) => (
     <div
-      key={pkg.id}
+      key={pkg._id}
       className="relative bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
     >
       {/* Image Container */}
@@ -160,13 +163,11 @@ const handleThemeSearch = (categoryId : string) =>{
           className="w-full h-48 object-cover rounded-t-lg transition-transform duration-300 hover:brightness-90"
         />
 
-        {/* Heart Icon in top-right */}
         <div 
              className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition"
              onClick={() => handleWishlist(pkg._id)}>
           <HeartIcon size={24} className="text-red-500" />
         </div>
-       {/* Gradient Overlay at the bottom */}
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col items-center"
            onClick={()=> navigate('/user/packageDetails',{state:pkg})}
         >
@@ -184,77 +185,8 @@ const handleThemeSearch = (categoryId : string) =>{
 </div>
 </div>
 </section>
-     {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">Wanderlust</h3>
-            <p className="text-gray-400">
-              Creating unforgettable travel experiences since 2010.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/destinations"
-                  className="text-gray-400 hover:text-white"
-                >
-                  Destinations
-                </Link>
-              </li>
-              <li>
-                <Link to="/packages" className="text-gray-400 hover:text-white">
-                  Travel Packages
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-gray-400 hover:text-white">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold mb-4">Contact Us</h4>
-            <address className="text-gray-400 not-italic">
-              <p>123 Travel Lane</p>
-              <p>Adventure City, AC 12345</p>
-              <p className="mt-2">Phone: (123) 456-7890</p>
-              <p>Email: info@wanderlust.com</p>
-            </address>
-          </div>
-
-          <div>
-            <h4 className="font-bold mb-4">Subscribe</h4>
-            <p className="text-gray-400 mb-4">
-              Get special offers and travel inspiration.
-            </p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-2 w-full text-black rounded-l focus:outline-none"
-              />
-              <button className="px-4 py-2 bg-yellow-500 text-black rounded-r">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>© {new Date().getFullYear()} Wanderlust. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  );
+ <Footer />  
+</div>
+);
 }
 export default HomePage;

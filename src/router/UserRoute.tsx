@@ -11,7 +11,8 @@ import BookingData from '../components/User/BookingData';
 import BookingDetails from '../components/User/BookingDetails';
 import Wishlist from '../components/User/Wishlist';
 import Wallet from '../components/User/Wallet';
-import Chat from '../pages/Chat/ChatPage';
+import Notification from '../components/Notification/Notification'
+import UserChat from '../components/User/UserChat';
 
 const UserRoute : React.FC = () =>{
    return(
@@ -19,18 +20,19 @@ const UserRoute : React.FC = () =>{
        <Routes> 
           <Route path="/" element={<HomePage/>} />
           <Route path="/userProfile" element={<UserProfile/>}>
-              {/* <Route path="user" element={<User />} /> */}
               <Route index element={<User />} />
               <Route path="booking" element={<BookingData/>} />
               <Route path="bookingDetails" element={<BookingDetails/>} />
               <Route path="wishlist" element={<Wishlist />} />
               <Route path="Wallet" element={<Wallet/>} />
+              <Route path="notification" element={<Notification/>} />
+              <Route path="chat" element={<UserChat/>} />
           </Route> 
           <Route path="/booking" element={<Booking/>} />
           <Route path="/payment" element={<Payment/>} />
           <Route path="/success" element={<Success/>} />
           <Route path="/cancel" element={<Cancel />} />
-          <Route path="/userProfile/chat" element={<Chat />} />
+          
        </Routes>
       </>
    )

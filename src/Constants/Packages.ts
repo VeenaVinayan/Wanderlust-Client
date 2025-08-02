@@ -1,3 +1,4 @@
+
 export const DURATIONS =[
      {label:"1 to 2", value:"1-2"},
      {label:"2 to 3", value:"2-3"},

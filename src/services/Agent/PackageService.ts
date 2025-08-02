@@ -1,13 +1,11 @@
-import {  TPackage, TPackageData, TPackageUpdate} from "../../types/packageTypes";
+import {  TPackage, TPackageData, TPackageValue,TPackageUpload} from "../../types/packageTypes";
 import packageApi from "../../helper/packageApi";
 import { SearchParams, TCategoryValue } from "../../types/agentTypes";
 import { TSignedUrl } from "../../types/agentTypes";
 
-export const addPackage =  async (packageData : TPackage) =>{
+export const addPackage =  async (packageData : TPackageValue) =>{
     try{
         console.log('Package Details ::',packageData);
-        //const isExist = await packageApi.
-        //  const imageTypes = packageData.images.map((image => String(image.type)));
         const imageTypes = packageData.images.map((image) => String(image.type));
         console.log("Image types:", imageTypes);
         const{ data } = await packageApi.getSignedUrl(imageTypes);
@@ -18,7 +16,8 @@ export const addPackage =  async (packageData : TPackage) =>{
             const newUrls = data.map(((url:TSignedUrl) => url.publicUrl));
             console.log('Public Urls ::',newUrls);
             packageData.images = newUrls;
-            const response =  packageApi.addPackage(packageData);
+            const packages: TPackageUpload = { ...packageData, images: newUrls };
+            const response =  packageApi.addPackage(packages);
             return response;
         }
     }catch(err){

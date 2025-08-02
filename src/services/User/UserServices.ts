@@ -1,12 +1,12 @@
 
 import userApi from '../../helper/userApi';
 import { TPackage, TPackageData } from '../../types/packageTypes';
-import { TCategoryValue } from '../../types/packageTypes';
+import { TCategoryValue } from '../../types/userTypes';
 import {TBookingType } from '../../types/bookingTypes';
 import { TReview } from '../../types/userTypes';
 import { SearchParams } from '../../types/agentTypes';
 
-export const getCategories = async() : Promise<TCategoryValue>=> {
+export const getCategories = async() : Promise<TCategoryValue[]>=> {
     try{
         console.log('Fetch Category for Landing Page !!'); 
         const data = await userApi.getAllCategories();
@@ -143,3 +143,6 @@ export const getAgentData = async(agentId : string) =>{
         throw err;
      }
 }
+
+
+

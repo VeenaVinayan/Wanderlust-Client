@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from "../../app/store";
 import schema from '../../Validations/EditPackage';
 import { ValidationError } from 'yup';
+import { PackageFormError , ItineraryItemError} from '../../types/errorTypes';
+import { EditPackageInitialState } from "../../Constants/InitialState";
 
 const EditPackage = () => {
   const [packageData, setPackageData] = useState<TPackage>();
@@ -24,18 +26,7 @@ const EditPackage = () => {
   const packages = location.state;
   const navigate = useNavigate();
   const agentData = useSelector((state:RootState) => state.agentSliceData);
-  type ItineraryError = {
-    description?: string;
-    activities?: string;
-    meals?: string;
-    stay?: string;
-    transfer?: string;
-  };
-  type ErrorsType = {
-    [key: string]: any;
-    itinerary?: ItineraryError[];
-  };
-  const [ errors, setErrors ] = useState<ErrorsType>({});
+  const [ errors, setErrors ] = useState<PackageFormError>({});
 
   useEffect(() => {
     if (packages) {
@@ -45,8 +36,8 @@ const EditPackage = () => {
               setCategories(response);
           }
       }
-      console.log("Catrgories ::",categories);
       setSelectedCategory(selectCategory())
+      console.log(selectedCategory)
       setPackageData(packages);
       setExistingImages(packages.images || []);
       fetchCategories();
@@ -105,7 +96,6 @@ const EditPackage = () => {
  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     console.log('Edit package ::',packageData);
-    // if (!packageData) return;
     setIsSubmitting(true);
     try {
       packageData!.images = existingImages;
@@ -120,24 +110,34 @@ const EditPackage = () => {
       console.log("REsponse ::",response)
       if (response) {
         toast.success("Package updated successfully!");
-        setPackageData(null);
+        setPackageData(EditPackageInitialState);
         navigate('/agent/agentDashboard/package');
       }
-   }catch (err: unknown) {
-    if(err instanceof ValidationError) {
-       console.log("ERrors :: ",err);
-       const newErrors: Record<string, string> = {};
-       err.inner.forEach((e) => {
-       if (e.path) {
-          newErrors[e.path] = e.message;
-       }
-      });
-     setErrors(newErrors);
-     console.log("Error obj::",newErrors,errors);
-    } else {
-      console.error("Unexpected error during validation:", err);
-    }
-  }finally {
+   }catch(err: unknown){
+     if (err instanceof ValidationError) {
+     const formattedErrors: PackageFormError = {};
+        err.inner.forEach((error) => {
+        const path = error.path || "";
+        if (path.startsWith("itinerary")) {
+              const match = path.match(/itinerary\[(\d+)\]\.(\w+)/);
+              if (match) {
+                const index = parseInt(match[1], 10);
+                const field = match[2] as keyof ItineraryItemError;
+    
+                if (!formattedErrors.itinerary) formattedErrors.itinerary = [];
+                if (!formattedErrors.itinerary[index])
+                  formattedErrors.itinerary[index] = {};
+                formattedErrors.itinerary[index]![field] = error.message;
+              }
+            } else {
+              const field = path as keyof PackageFormError;
+              formattedErrors[field] = error.message;
+            }
+          });
+    
+          setErrors(formattedErrors);
+        }
+    }finally {
       setIsSubmitting(false);
     }
   };
@@ -148,7 +148,6 @@ const EditPackage = () => {
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Package</h2>
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Package Info */}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>
@@ -248,7 +247,7 @@ const EditPackage = () => {
               <input
                 type="text"
                 name="night"
-                value={packageData.night || ""}
+                value={packageData.night || 0}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
                 placeholder="Night"
@@ -296,8 +295,7 @@ const EditPackage = () => {
     </label>
   </label>
  </div>
-     {/* New Image Preview */}
-          <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
             {images.map((file, index) => (
               <div key={index} className="relative w-24 h-24">
                 <img src={URL.createObjectURL(file)} alt="New Upload" className="w-4/6 h-full object-cover rounded-md" />
@@ -312,8 +310,6 @@ const EditPackage = () => {
             ))}
           </div>
         </div>
-
-        {/* Itinerary Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-800">Itinerary</h3>
           {(packageData.itinerary as {

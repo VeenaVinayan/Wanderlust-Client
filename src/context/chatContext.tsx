@@ -3,7 +3,9 @@ import { getChatUsers, getMessages } from '../services/Chat/ChatService';
 import { TChatUser, TMessage, TChatContextType } from '../types/chatTypes';
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
+
 const ChatContext = createContext<TChatContextType | null>(null);
+
 export const useChatContext = () => useContext(ChatContext)!;
 
 export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode }> = ({
@@ -13,35 +15,55 @@ export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode 
   const [chatUsers, setChatUsers] = useState<TChatUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<TChatUser | null>(null);
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const { role } = useSelector((state : RootState) => state.userData);
-  console.log("Role of user ::",role);
-  useEffect(() => {
-    console.log('Agent User ::',userId);
-    if(!userId) return;
-    const loadChats = async () => {
-      const data = await getChatUsers(userId,role); 
-      setChatUsers(data.users);
-    };
-    loadChats();
-  },[userId]);
+  const { id,role } = useSelector((state : RootState) => state.userData);
 
-  const selectUser = async (user: TChatUser) => {
+  useEffect(() => {
+  if (!userId || role === 'Admin' || chatUsers.length > 0) return;
+  const loadChats = async () => {
+    try{
+       const  users  = await getChatUsers(userId, role);
+       setChatUsers(users || []);
+    }catch (err) {
+       console.error("Failed to load chats", err);
+    }
+  };
+  loadChats();
+ },[userId, role, chatUsers.length]);
+
+ const selectUser = async (user: TChatUser) => {
+    console.log(`Sender ::  ${id} - Receiver :: ${user.id}`);
     setSelectedUser(user);
-    const data = await getMessages(userId, user._id,role);
+    const data = await getMessages(id, user.id,role);
+    setChatUsers((prev) => (
+      prev.map((u) =>
+        u.id === user.id ? { ...u, unreadCount: 0 } : u
+      ) 
+    ));
     setMessages(data.messages);
   };
 
   const addUserToChatList = (newUser: TChatUser) => {
-    const exists = chatUsers.find((u) => u._id === newUser._id);
-    if (!exists) {
-      setChatUsers((prev) => [...prev, newUser]);
-    }
-    selectUser(newUser);
-  };
-
-  return (
+   setChatUsers((prev) => {
+    const exists = prev.find((u) => u.id === newUser.id);
+    if (exists) return prev;
+    return [...prev, newUser];
+  });
+};
+  const clearChatState = () =>{
+     console.log("Inside clear chat state..... in context...")
+     setChatUsers([]);
+     setMessages([])
+ }
+ const sortChatList = () => {
+  const sortedChatList = [...chatUsers].sort((a, b) =>
+    new Date(b.lastMessageTime || 0).getTime() -
+    new Date(a.lastMessageTime || 0).getTime()
+  );
+  setChatUsers(sortedChatList);
+};
+ return (
     <ChatContext.Provider
-      value={{ chatUsers, selectedUser, messages, selectUser, addUserToChatList }}
+      value={{ chatUsers, setChatUsers, selectedUser, messages, selectUser, addUserToChatList,sortChatList ,clearChatState }}
     >
       {children}
     </ChatContext.Provider>

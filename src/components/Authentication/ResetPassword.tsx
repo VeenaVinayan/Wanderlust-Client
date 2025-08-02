@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import axiosInstance from "../../apiStore/authApi";
 import { useParams, Link } from 'react-router-dom';
+import Header from '../layout/Shared/Header';
+import { resetPassword } from "../../services/Auth/Auth";
+import { toast } from 'react-toastify';
 
 const ResetPassword: React.FC = () => {
-
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
   const params = useParams();
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+   try{  
      const regEx =/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
      if(!regEx.test(password)){
         setError('Invalid password sequence !');
@@ -22,25 +25,24 @@ const ResetPassword: React.FC = () => {
     }
     setSuccess(true);
     setError("");
-    const token = params.token;
-    axiosInstance({
-         method:'POST',
-         url:`/resetPassword`,
-         data:{
-            password,
-            token,
+    const token = params.token!;
+    const data = await resetPassword(password,token);
+    console.log("Response from reset password : ", data);
+    if(data?.status){
+       setSuccess(true);
+       toast.success("Password reset successfully!");
+      }
+    }catch(err : unknown){
+        if(err instanceof Error){
+          setError(err.message);
         }
-     })
-     .then((response) =>{
-        if(response.data.success){
-             setSuccess(true);
-        }
-     })
+    } 
   };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-purple-500 to-pink-500">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+   <>
+    <Header />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-10">
+      <div className="bg-white shadow-lg rounded-lg p-10 max-w-md w-full">
         {success ? (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-green-600">Password Reset Successful!</h2>
@@ -92,7 +94,7 @@ const ResetPassword: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 Reset Password
               </button>
@@ -101,6 +103,7 @@ const ResetPassword: React.FC = () => {
         )}
       </div>
     </div>
+   </>  
   );
 };
 export default ResetPassword;

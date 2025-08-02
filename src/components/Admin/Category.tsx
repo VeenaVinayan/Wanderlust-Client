@@ -3,22 +3,24 @@ import { PlusCircle, ImagePlus, Upload , DeleteIcon, Edit} from "lucide-react";
 import schema from "../../Validations/CategoryRegistrationForm";
 import { createCategory} from '../../services/Admin/Dashboard';
 import { toast } from "react-toastify";
-import { TCategory, CategoryData } from "../../types/categoryTypes";
+import { TCategory, TCategoryData } from "../../types/categoryTypes";
 import Table from '../common/Table';
-import { fetchAllCategory, deleteCategoryById , editCategoryById} from "../../services/Admin/Dashboard";
+import { fetchAllCategory, deleteCategoryById , editCategoryById, uploadImageCategoryEdit} from "../../services/Admin/Dashboard";
 import { Columns_Category } from "../../Constants/User";
 import { PER_PAGE } from "../../Constants/User";
 import Pagination from "../layout/Shared/Pagination";
 import Swal from 'sweetalert2';
 import Modal from '../common/Modal';
 import SearchFilter from '../layout/Shared/SearchFilter';
+import { ValidationError } from "yup";
+import  useSweetAlert  from '../../hooks/CustomHooks/SweetAlert';
 
 const Category: React.FC = () => {
   const [ isModalOpen, setIsModal] = useState<boolean>(false);
   const [ currentPage, setCurrentPage] = useState(1);
   const [ count, setCount ] = useState<number>(0);
   const [isCreate, setIsCreate] = useState<boolean>(false);
-  const [image, setImage] = useState<File | null | string>(null);
+  const [image, setImage] = useState<File | null >(null);
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -33,7 +35,8 @@ const Category: React.FC = () => {
       description:'',
       image:'',
   });
- const handlePage = async (page: number) =>{
+  const { showSuccess ,showError } = useSweetAlert();
+  const handlePage = async (page: number) =>{
      setCurrentPage(page);
   }
  const initializeState = () =>{
@@ -53,15 +56,17 @@ const Category: React.FC = () => {
     }
   };
   useEffect(() => {
-       fetchData(currentPage); 
+    fetchData(currentPage); 
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
     };
-  }, [imagePreview,currentPage,filters]);
+  }, [currentPage,filters]);
   
   const fetchData = async (page: number) =>{
-       const data = await fetchAllCategory(page,
+       const data = await fetchAllCategory(
         {
+          page,
+          perPage:PER_PAGE, 
           search: filters.keyword,
           sortBy: 'name',
           sortOrder : filters.sortOrder,
@@ -75,11 +80,14 @@ const Category: React.FC = () => {
   const handleCancel = () =>{
     setIsCreate(false);
   } 
-  const handleEditChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
-        setEditData((prev) => ({
-            ...prev, [e.target.name]: e.target.value
-        }))
-  }
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setEditData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
   const updataCategory = (id: string) =>{
       console.log('Updata category !!');
       setCategory((prev) =>
@@ -103,24 +111,13 @@ const Category: React.FC = () => {
           updataCategory(id);
           console.log("Response :: ",res);
           if (res) {
-            Swal.fire({
-              icon: "success",
-              title: "Category deleted successfully!",
-              timer: 1000,
-            });
+             showSuccess("Category Deleted Successfully","Category");
           } else {
-            Swal.fire({
-              icon: "error",
-              title: "Something went wrong!",
-            });
+             showError("Error occured !"," Error");
           }
         } catch (err: unknown) {
           console.error("Error deleting category:", err);
-          Swal.fire({
-            icon: "error",
-            title: "Failed to delete category!",
-            text: err instanceof Error ? err.message : "Please try again",
-          });
+           showError("Failed to delete Category !","Error !");
         }
       }
     });
@@ -139,16 +136,17 @@ const Category: React.FC = () => {
      e.preventDefault();
      try{
          setIsModal(false);
-         console.info('Handle Edit Submit !!');
-         if(!image){
-            setImage(editData.image);
+         if(image){ 
+            const url= await uploadImageCategoryEdit(image)
+            editData.image =url;
          }
          await schema.validate({ name:editData.name, description:editData.description, image }, { abortEarly: false });
-         const categoryEditData = {
-            id:editData._id,
+         const categoryEditData : TCategory = {
+            _id:editData._id,
             name: editData.name,
             description: editData.description,
-            image
+            status:true,
+            image:editData.image
          }
          console.log(' Category Edit Category ::',categoryEditData);
          const response = await editCategoryById(categoryEditData);
@@ -160,10 +158,10 @@ const Category: React.FC = () => {
          console.log("REsponse is ",response);
          setImagePreview(null);
          initializeState();
-     }catch(err){
-      if (err instanceof Error && "inner" in err) {
-        const newErrors: Record<string, string> = {};
-        (err as any).inner.forEach((e: any) => {
+     }catch(err : unknown){
+      if (err instanceof ValidationError) {
+         const newErrors: Record<string, string> = {};
+         err.inner.forEach((e) => {
           newErrors[e.path as string] = e.message;
         });
         setErrors(newErrors);
@@ -176,7 +174,11 @@ const Category: React.FC = () => {
       setIsModal(false);
       await schema.validate({ name, description, image }, { abortEarly: false });
       console.log("Form Submitted Successfully!");
-      const category : CategoryData = {
+      if (!(image instanceof File)) {
+        setErrors((prev) => ({ ...prev, image: "Please upload a valid image file." }));
+        return;
+      }
+      const category : TCategoryData = {
           name,
           description,
           image
@@ -188,10 +190,10 @@ const Category: React.FC = () => {
          toast.error("Category already Exist !!");
       }
       initializeState();
-    } catch (err) {
-      if (err instanceof Error && "inner" in err) {
+    } catch (err: unknown) {
+      if (err instanceof ValidationError) {
         const newErrors: Record<string, string> = {};
-        (err as any).inner.forEach((e: any) => {
+        err.inner.forEach((e) => {
           newErrors[e.path as string] = e.message;
         });
         setErrors(newErrors);
@@ -221,9 +223,7 @@ const Category: React.FC = () => {
                   <div className="flex flex-row py-5"> 
                      <button
                         onClick = {()=> deleteCategory(data._id)}
-                        className="m-2 shadow-md"
-                        // className="text-white px-5 py-2 rounded-lg font-semibold shadow-md hover:bg-red-500 focus:ring-2 focus:ring-red-400 transition flex-row"
-                      >
+                        className="m-2 shadow-md">
                         <DeleteIcon  size={24} />  
                      </button>
                      <button
@@ -242,6 +242,7 @@ const Category: React.FC = () => {
             perPage={PER_PAGE}
             length={count || 1}
             handlePage={handlePage}
+            currentPage={currentPage}
        />
        </div> 
        </>      
@@ -250,7 +251,6 @@ const Category: React.FC = () => {
         <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-2xl">
           <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Create Category</h2>
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {/* Name Input */}
             <div>
               <label className="block text-gray-600 font-medium mb-1">Name</label>
               <input
@@ -291,9 +291,7 @@ const Category: React.FC = () => {
               </label>
               {errors.image && <p className="text-red-500">{errors.image}</p>}
             </div>
-
-            {/* Submit Button */}
-            <button
+           <button
               type="submit"
               className="w-40 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"
             >
@@ -343,7 +341,7 @@ const Category: React.FC = () => {
               <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-purple-400">
                 <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                 {isImageUpdate ?
-                   (<img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-lg object-cover" />) :
+                   (<img src={imagePreview ?? undefined} alt="Preview" className="h-24 w-24 rounded-lg object-cover" />) :
                    (
                   <>  
                     <img src={editData.image} alt="Preview" className="h-24 w-24 rounded-lg object-cover" />

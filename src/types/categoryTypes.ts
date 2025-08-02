@@ -6,11 +6,17 @@ export type TCategory= {
     image: string;
 }
 
-export type CategoryData ={
+export type TCategoryData ={
     name:string;
     description:string;
-    image: File | null;
+    image: File ;
     status?:boolean;
+}
+
+export type TCategoryValue ={
+    name:string;
+    description:string;
+    image:string;
 }
 
 

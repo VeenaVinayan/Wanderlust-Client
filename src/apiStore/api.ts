@@ -1,11 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
 
 const URL = import.meta.env.VITE_APP_BASEURL;
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: `${URL}/user`,
+  baseURL: `${URL}`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -13,10 +12,9 @@ const axiosInstance: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor – add access token to headers
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('User_accessToken');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -24,8 +22,6 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-// Response interceptor – handle errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -33,8 +29,6 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status;
     const message =
       error.response?.data?.message || error.message || 'Unexpected error occurred';
-
-    // Handle token refresh
     if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
@@ -43,34 +37,30 @@ axiosInstance.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        localStorage.setItem('User_accessToken', data.accessToken);
+        localStorage.setItem('accessToken', data.accessToken);
         originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error('Refresh token expired or invalid');
-        localStorage.clear();
+        localStorage.removeItem("accessToken");
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
-    
-    switch (status) {
+   switch (status) {
       case 400:
-        toast.error(`Bad Request: ${message}`);
-        break;
-      case 401:
-        toast.error(message);
+        toast.error(`${message}`);
         break;
       case 403:
         toast.error(message);
-        localStorage.removeItem("User_accessToken");
+        localStorage.removeItem("accessToken");
         window.location.assign("/login");
         break;
       case 404:
-        toast.error(`Not Found: ${message}`);
+        toast.error(message);
         break;
       case 409:
-        toast.error(`Conflict: ${message}`);
+        toast.error(message);
         break;
       default:
         if (status >= 500) {
@@ -82,5 +72,4 @@ axiosInstance.interceptors.response.use(
    return Promise.reject(error);
   }
 );
-
 export default axiosInstance;

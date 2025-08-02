@@ -6,19 +6,19 @@ import { UserData, TResetPassword } from '../../types/userTypes';
 import Modal from '../../components/common/Modal';
 import {toast } from 'react-toastify';
 import { updateProfile , resetPassword } from '../../services/User/UserProfile';
-import { setUserData , resetUserData} from '../../features/authentication/userSlice';
+import { setUserData } from '../../features/authentication/userSlice';
 import schema from '../../Validations/UserPasswordReset';
-import {  useNavigate } from 'react-router-dom';
 import Header from '../../components/layout/Shared/Header';
+import { ValidationError } from 'yup';
 
 const UserProfile : React.FC  = () => {
+
   const [ user, setUser ] = useState<UserData>();
   const [ isModalOpen , setIsModalOpen] = useState<boolean>(false);
   const [ isPasswordModal, setIsPasswordModal] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const userInfo = useSelector((state : RootState) => state.userData);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [ updateUser , setUpdateUser ] = useState({
        name: "",
        phone: "",
@@ -29,6 +29,7 @@ const UserProfile : React.FC  = () => {
      confirmPassword:'',
  }
  const [password, setPassword ] = useState(initialState);
+
   useEffect (() =>{
        setUser(userInfo);
        setUpdateUser({name:userInfo.name,phone:userInfo.phone});
@@ -83,27 +84,18 @@ const passwordResetSubmit = async(e: FormEvent) =>{
                toast.error("Not successfuly reset password !");
             }
        }catch(err : unknown){
-         console.log('Error in ',err);
-         if( err instanceof Error && "inner" in err){
+        if( err instanceof ValidationError){
             const newErrors: Record<string, string> = {};
-            (err as any).inner.forEach((e: any) =>{
-                newErrors[e.path as string] = e.message;
-            });
+            err.inner.forEach((e) => { 
+                if(e.path){
+                  newErrors[e.path ] = e.message;
+                }
+              }
+          );
             setErrors(newErrors);
          }
        } 
-    }
-  const handleLogout = async () => {
-    try{
-        console.log("Logout user !!");
-        localStorage.removeItem("User_accessToken");
-        dispatch(resetUserData());
-        toast.success('Logout Succesfully');
-        navigate('/login');
-     }catch(err){
-       console.error(err);
-    }
- }
+      }
   return( 
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
     <Header />
@@ -194,7 +186,6 @@ const passwordResetSubmit = async(e: FormEvent) =>{
   </form>
  </Modal>
 
- {/* Reset password Modal */}
  <Modal
         isOpen={isPasswordModal}
         closeModal={togglePasswordModal}
@@ -225,7 +216,6 @@ const passwordResetSubmit = async(e: FormEvent) =>{
           {errors.newPassword && <p className="text-red-500">{errors.newPassword}</p>}
       </div>
 
-      {/* Confirm Password Field */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
         <input
@@ -237,8 +227,6 @@ const passwordResetSubmit = async(e: FormEvent) =>{
         />
           {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
       </div>
-
-      {/* Submit Button */}
       <button
         type="submit"
         className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition"

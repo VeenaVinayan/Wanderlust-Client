@@ -16,7 +16,6 @@ const initialState: AgentFormDataType = {
         country:'',
         zipcode:'',
      },    
-   //  image:'',
 }
 
 const agentRegisterSlice = createSlice({

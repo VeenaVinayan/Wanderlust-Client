@@ -13,7 +13,7 @@ interface Agent {
   license: string;
 }
 
-const AgentCard: React.FC<{ agent: Agent }> = () => {
+const AgentCard: React.FC = () => {
     const [isOpen, setIsOpen ] = useState<boolean>(false);
     const [agent, setAgent] = useState<Agent>({
           _id:'',

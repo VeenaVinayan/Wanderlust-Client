@@ -1,21 +1,25 @@
 import { createSlice, createAsyncThunk , PayloadAction } from '@reduxjs/toolkit';
-import axiosInstance from '../../apiStore/userApi';
-import { TPackage, TPackageState } from '../../types/packageTypes'; 
+import axiosInstance from '../../apiStore/api';
+import { TPackage, TPackageAllData, TPackageState } from '../../types/packageTypes'; 
 
 const initialState: TPackageState = {
      packages: [],
      status:"idle",
      error:null,
 }
-export const fetchPackages = createAsyncThunk<TPackage[], void, {rejectValue: string}>(
+export const fetchPackages = createAsyncThunk<TPackageAllData[], void, {rejectValue: string}>(
    "packages/fetchPackages",
   async(_, {rejectWithValue}) =>{
     try{
-          const response = await axiosInstance.get('/packages');
+          const response = await axiosInstance.get('/user/packages');
           console.log("Data Values ::",response.data.data);
           return response.data.data;
-     }catch(error: any){
-         return rejectWithValue(error.response?.data || "Failed to fetch packages");
+     }catch(error: unknown){
+         let errorMessage = "Failed to fetch packages";
+         if (typeof error === "object" && error !== null && "message" in error) {
+             errorMessage = (error as { message?: string }).message || errorMessage;
+         }
+         return rejectWithValue(errorMessage);
      }
 }   
 );

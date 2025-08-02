@@ -1,23 +1,22 @@
-import axiosInstance  from "../apiStore/agentApi";
-import { TPackageData , TPackage} from "../types/packageTypes";
+import axiosInstance  from "../apiStore/api";
+import { TPackageData , TPackage, TPackageUpload} from "../types/packageTypes";
 import { SearchParams, TCategoryValue } from "../types/agentTypes";
-import axiosInstanceAdmin from '../apiStore/adminApi';
 import axios from "axios";
 
 class PackageApi{
-   async addPackage(packageData : TPackage): Promise<boolean>{
+   async addPackage(packageData : TPackageUpload): Promise<boolean>{
          console.log(" DAta is :",packageData);
-         const response = await axiosInstance.post('/packages',packageData);
+         const response = await axiosInstance.post('/agent/packages',packageData);
          return response.data;
     }
    async getCategories(): Promise<TCategoryValue[]> {
         console.log('Get Category :::');
-        const response = await axiosInstance.get('/categories');
+        const response = await axiosInstance.get('/agent/categories');
         console.log("REsponse is",response.data.categories);
         return response.data.categories; 
     }
    async getSignedUrl(imageTypes: string[]) {
-       const{ data } = await axiosInstance.post("/getPresignedUrls",{
+       const{ data } = await axiosInstance.post("/agent/getPresignedUrls",{
             fileTypes: imageTypes
        });
        return data;
@@ -44,7 +43,7 @@ class PackageApi{
  async packageEdit(packageId : string,packageData: TPackage): Promise<boolean>{
    try{
         console.log('Edit package !!');
-        const response = await axiosInstance.patch(`/edit-package/${packageId}`,packageData);
+        const response = await axiosInstance.patch(`/agent/edit-package/${packageId}`,packageData);
         return response.status === 200 ;
      }catch(err : unknown){
       console.error('Error in Edit-package',err);
@@ -53,7 +52,7 @@ class PackageApi{
  }
  async deleteS3Image(deleteImages : string[]):Promise<void> {
     try{
-        const res = await axiosInstance.patch('/delete-image',deleteImages);
+        const res = await axiosInstance.patch('/agent/delete-image',deleteImages);
         console.log('Response ::',res);
     }catch(err: unknown){
        console.error('Error in Delete Image in S3 !',err);
@@ -62,7 +61,7 @@ class PackageApi{
  }
  async deletePackageByAgent(packageId: string) : Promise<boolean> {
     try{
-         const response = await axiosInstance.patch(`/delete-package/${packageId}`);
+         const response = await axiosInstance.patch(`/agent/delete-package/${packageId}`);
          if(response.status === 200) return true;
          else return false;
     }catch(err: unknown){
@@ -73,7 +72,7 @@ class PackageApi{
  async getPackages(agent:string, params : SearchParams): Promise<TPackageData> {
   try{
       console.log('Get Packages :::');
-      const response = await axiosInstance.get(`/packages/${agent}`,
+      const response = await axiosInstance.get(`/agent/packages/${agent}`,
          {params});
       console.log("REsponse is",response.data);
       return response.data.data; 
@@ -82,10 +81,10 @@ class PackageApi{
       throw new Error("Failed to Get Packages !");
    } 
  }
- async verifyPackage(packageId: string): Promise<boolean> {
+ async verifyPackage(packageId: string,value:string): Promise<boolean> {
       try{
          console.log('Verify Package !!');
-         const response = await axiosInstanceAdmin.patch(`/packages/verify/${packageId}`);
+         const response = await axiosInstance.patch(`/admin/packages/verify/${packageId}`,{value});
          return response.status === 200;
       }catch (err: unknown) {
          console.error('Error in Verify Package !!', err);

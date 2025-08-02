@@ -1,27 +1,39 @@
-// export default AgentDashboard;
-import React from "react";
+
+import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { resetAgentData } from "../../features/authentication/AgentDataSlice";
 import { Outlet, NavLink } from "react-router-dom";
-import { MessageCircle } from 'lucide-react';
-
+import { resetUserData } from '../../features/authentication/userSlice';
+import NotificationBell from "../../components/Notification/NotificationBell";
+import { RootState } from "../../app/store";
+import { logoutUser } from "../../services/Auth/Auth";
+import { toast } from "react-toastify";
 const AgentDashboard: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const handleLogout = () => {
+  const agent = useSelector((state: RootState) => state.agentSliceData);
+  const handleLogout = async() => {
     dispatch(resetAgentData());
-    localStorage.removeItem("Agent_accessToken");
-    localStorage.removeItem('userId');
-    navigate("/login");
-  };
+    dispatch(resetUserData());
+    const res = await logoutUser();
+    if (res) {
+      toast.success("Logout Successfully");
+      navigate('/login');
+    } else {
+      console.error('Logout failed');
+    } 
+ };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar (Fixed) */}
-      <aside className="w-64 bg-white shadow-md flex flex-col fixed top-0 left-0 h-full">
+    <div className="flex min-h-screen bg-gray-100">
+     <aside
+        className={`bg-white shadow-md fixed top-0 left-0 z-30 h-full w-64 transform transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
         <div className="h-20 flex items-center justify-center border-b">
-          <h1 className="text-3xl text-center font-bold text-gradient bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text">
+          <h1 className="text-3xl font-bold text-gradient bg-gradient-to-r from-emerald-400 via-violet-300 to-gray-500 text-transparent bg-clip-text">
             Wanderlust
           </h1>
         </div>
@@ -29,64 +41,111 @@ const AgentDashboard: React.FC = () => {
           <ul className="space-y-4">
             <NavLink
               to="/agent/agentDashboard"
-              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
+              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
-              🏠 Dashboard
+              Dashboard
             </NavLink>
             <NavLink
               to="bookingData"
-              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
+              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
-              📦 Bookings
-            </NavLink>
-            <NavLink
-              to="notification"
-              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
-            >
-              🔔 Notifications
+              Bookings
             </NavLink>
             <NavLink
               to="package"
-              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
+              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
-              🎁 Packages
+              Packages
             </NavLink>
             <NavLink
               to="chat"
-              className="block p-3 bg-pink-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
+              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
             >
-              <MessageCircle size={12} /> Chats
+              Chats
             </NavLink>
             <button
               onClick={handleLogout}
-              className="w-full block p-3  bg-pink-200 text-red-600 hover:bg-red-100 rounded-lg font-semibold text-left"
+              className="w-full block p-3 bg-emerald-200 text-gray-600 hover:bg-red-100 rounded-lg font-semibold text-left"
             >
               ⚙️ Logout
             </button>
           </ul>
         </nav>
       </aside>
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      <div className="flex-1 flex flex-col md:ml-64 w-full">
+         {/* <header className="bg-white shadow-md p-4 flex justify-between items-center fixed w-full md:w-[calc(100%-16rem)] md:left-64 top-0 z-10 h-16">
+          <div className="flex items-center gap-4">
+            <button
+              className="md:hidden text-gray-700 focus:outline-none"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              ☰
+            </button>
+            <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
+          </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col ml-64">
-        {/* Header (Fixed) */}
-        <header className="bg-white shadow-md p-4 flex justify-between items-center fixed w-[calc(100%-16rem)] top-0 left-64 z-10 h-16">
-          <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
           <div className="flex items-center space-x-4">
-            <span className="text-gray-600">Welcome, Agent</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 text-4xl font-bold tracking-wide">
-              {"Riya".charAt(0).toUpperCase()}
+            <span className="font-medium text-gray-700 tracking-wide">
+              Welcome,{" "}
+              <span className="font-semibold text-gray-600">
+                {agent?.name}
+              </span>
+            </span>
+            <NotificationBell />
+            <div className="w-10 h-10 bg-green-300 rounded-full flex items-center justify-center">
+              <span className="text-gray-700 text-2xl font-medium tracking-wide">
+                {agent?.name?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+        </header>  */}
+       <header className="fixed top-0 left-0 w-full md:left-64 md:w-[calc(100%-16rem)] h-16 z-20 bg-white shadow-md p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            className="md:hidden text-gray-700 text-2xl focus:outline-none"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            aria-label="Toggle sidebar"
+          >
+            ☰
+          </button>
+
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+            Dashboard
+          </h2>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:block font-medium text-gray-700 tracking-wide">
+            Welcome,{" "}
+            <span className="font-semibold text-gray-600">
+              {agent?.name}
+            </span>
+          </span>
+
+          <NotificationBell />
+
+          <div className="w-10 h-10 bg-green-300 rounded-full flex items-center justify-center">
+            <span className="text-gray-700 text-lg font-semibold">
+              {agent?.name?.charAt(0).toUpperCase()}
             </span>
           </div>
-        </header>
-
-        {/* Content Area (No Scrollbar) */}
-        <main className="flex-1 p-6 mt-16">
-          <Outlet />
+        </div>
+      </header>
+     <main className="flex-1 px-4 sm:px-6 lg:px-8 mt-16">
+          <div className="min-h-[calc(100vh-220px)] bg-white rounded-xl shadow-md p-4 sm:p-6 lg:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
   );
 };
+ export default AgentDashboard;
 
-export default AgentDashboard;
+
+

@@ -12,8 +12,28 @@ export type TPdfProps ={
      night:number;
      itinerary: TItinerary[];
 }
+export type TPackageValue = {
+    name:string;
+    description: string;
+    price:number;
+    day:number;
+    night:number;
+    images:File[];
+    category:string;
+    status?:boolean;
+    agent:string;
+    totalCapacity:number;
+    discount?:number;
+    itinerary:TItinerary[];
+    isVerified:string;
+}
+
+export type TPackageUpload = Omit<TPackageValue,'images'>& {
+   images : string[];
+}
+
 export type TPackage = {
-    _id?:string;
+    _id:string;
     name:string;
     description: string;
     price:number;
@@ -26,8 +46,16 @@ export type TPackage = {
     totalCapacity:number;
     discount?:number;
     itinerary:TItinerary[];
-    isVerified:boolean
+    isVerified:string;
 }
+export type TPackageAllData = Omit<TPackage,'agent'> &{
+   agent:{
+     _id:string,
+     name:string;
+     email:string;
+     phone:string;
+   }
+} 
 export type TCategoryValue = {
     _id: string;
     name:string;
@@ -40,7 +68,7 @@ export type TPackageState = {
   export type TPackageUpdate = Omit<TPackage, '_id' | 'status'>;
 
   export type TPackageData = {
-     packages: TPackage[],
+     packages: TPackageAllData[],
      totalCount : number,
   }
   export type TPackageResponse = {
@@ -75,3 +103,12 @@ export type TPackageState = {
     } [],
      totalCount : string;
   }
+
+  export type ItineraryItem = {
+   day: number;
+   description: string;
+   meals?: string[];
+   activities: string;
+   stay?: string;
+   transfer?: string;
+};

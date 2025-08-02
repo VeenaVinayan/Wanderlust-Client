@@ -1,13 +1,13 @@
 import React ,{ useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TBookingResponse } from '../../types/bookingTypes';
-import { CheckCircle, Calendar, Mail, Phone, User, CreditCard, Pen } from 'lucide-react';
+import { Calendar, Mail, Phone, User, CreditCard, Pen } from 'lucide-react';
 import { updateBookingStatusByAgent } from '../../services/Booking/BookingService';
 import { toast } from 'react-toastify';
 import  useSweetAlert  from '../../hooks/CustomHooks/SweetAlert';
 
 const BookingView : React.FC = () => {
-  const [ booking, setBooking] = useState<TBookingResponse | null>(null); 
+  const [ booking, setBooking]  = useState<TBookingResponse | null>(null);
   const [ isEditing, setIsEditing] = useState<boolean>(false);
   const { showConfirm } = useSweetAlert();
   const location = useLocation();
@@ -34,7 +34,7 @@ const BookingView : React.FC = () => {
    
  useEffect(() => {
       setBooking(data);
-  },[data,booking]);
+   },[data,booking]);
   return (
   <>
   { !booking ?( <p>No Booking data Avilable !!</p> ) : (
@@ -95,16 +95,19 @@ const BookingView : React.FC = () => {
   }   
   </div>
   <div className="grid gap-8 sm:grid-cols-2">
-  {/* User Details */}
+
   <div className="bg-white rounded-xl p-6 border shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 mb-4">👤 Customer Details</h3>
     <div className="space-y-3 text-gray-700 text-sm">
       <p className="flex items-center gap-2">
         <User className="w-4 h-4 text-gray-500" />
         <strong className="whitespace-nowrap">Name:</strong>
-        <span className="truncate">{booking.userId?.name}</span>
+        <span className="truncate">{booking.email.split('@')[0]
+                                      ?.replace(/[0-9]/g, '')
+                                      .replace(/^([a-zA-Z])/, (match) => match.toUpperCase()) 
+                                   } 
+       </span>
       </p>
-
       <p className="flex items-center gap-2">
         <Mail className="w-4 h-4 text-gray-500" />
         <strong>Email:</strong>
@@ -119,7 +122,6 @@ const BookingView : React.FC = () => {
     </div>
   </div>
 
-  {/* Booking Details */}
   <div className="bg-white rounded-xl p-6 border shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 mb-4">📅 Booking Details</h3>
     <div className="space-y-3 text-gray-700 text-sm">
@@ -162,18 +164,7 @@ const BookingView : React.FC = () => {
   </div>
 </div>
 
-
-    {/* Action */}
-    {/* {(booking.tripStatus !== 'Completed' && booking.tripStatus !== 'Cancelled') && (
-      <button
-        onClick={handleStatusUpdate}
-        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition-colors"
-      >
-        <CheckCircle className="w-4 h-4" />
-        Mark as Completed
-      </button> */}
-    {/* )} */}
-  </div>
+</div>
 </div>
 
    ) }

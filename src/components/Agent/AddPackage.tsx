@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from "react";
 import { Delete } from "lucide-react";
 import { addPackage } from "../../services/Agent/PackageService";
-import { TPackage } from "../../types/packageTypes";
+import { TPackageValue } from "../../types/packageTypes";
 import { getCategories } from '../../services/Agent/PackageService';
 import { TCategoryValue } from "../../types/agentTypes";
 import { toast } from 'react-toastify';
@@ -11,19 +11,19 @@ import { RootState } from "../../app/store";
 import schema from '../../Validations/PackageRegister';
 import { ValidationError } from 'yup';
 import {  PackageInitialState } from "../../Constants/InitialState";
+import { PackageFormError , ItineraryItemError} from '../../types/errorTypes';
 
 const AddPackage: React.FC = ()  => {
   const [files, setFiles] = useState<File[]>([]);
   const [ categories, setCategories ] = useState<TCategoryValue[]>([]);
   const agentData = useSelector((state: RootState) => state.agentSliceData);
-  const [ errors, setErrors ] = useState<Record<string, string>>({});;
-  const [packageData, setPackageData] = useState<TPackage>(PackageInitialState);
+  const [ errors, setErrors ] = useState<PackageFormError>({ });
+  const [packageData, setPackageData] = useState<TPackageValue>(PackageInitialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   const { name, value } = e.target;
     setPackageData((prev) => ({ ...prev, [name]: value }));
   };
-
   const navigate = useNavigate();
   useEffect (() =>{
       const fetchAllCategory = async () =>{
@@ -37,10 +37,10 @@ const AddPackage: React.FC = ()  => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
       setFiles(selectedFiles);
-      setPackageData((prev) => ({ ...prev, images: [...prev.images, ...selectedFiles] }));
+      // Do not update packageData.images here, as it expects string[] (URLs or paths), not File[]
     }
   };
-  // Handle Itinerary Updates
+  
   const handleItineraryChange = (index: number, field: string, value: string | string[]) => {
     const updatedItinerary = [...packageData.itinerary];
     updatedItinerary[index] = { ...updatedItinerary[index], [field]: value };
@@ -62,21 +62,21 @@ const AddPackage: React.FC = ()  => {
       ],
     }));
   };
-  // Remove Itinerary Day
+  
   const removeItineraryDay = (index: number) => {
     setPackageData((prev) => ({
       ...prev,
       itinerary: prev.itinerary.filter((_, i) => i !== index),
     }));
   };
-  // Remove Image
+
   const removeImage = (index: number) => {
     setPackageData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
   }; 
-  // Submit Handler
+  
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
    try{  
@@ -93,21 +93,33 @@ const AddPackage: React.FC = ()  => {
      }else{
        toast.error("Error occured create Package !!");
      }
-   }catch(err: unknown) {
+   }catch (err) {
     if (err instanceof ValidationError) {
-      console.log("Error s ",err);
-      const newErrors: Record<string, string> = {};
-      err.inner.forEach((e) => {
-      if (e.path) {
-          newErrors[e.path] = e.message;
-       }
+      console.log('Error in package Add ::',err)
+      const formattedErrors: PackageFormError = {};
+      err.inner.forEach((error) => {
+        const path = error.path || "";
+
+        if (path.startsWith("itinerary")) {
+          const match = path.match(/itinerary\[(\d+)\]\.(\w+)/);
+          if (match) {
+            const index = parseInt(match[1], 10);
+            const field = match[2] as keyof ItineraryItemError;
+
+            if (!formattedErrors.itinerary) formattedErrors.itinerary = [];
+            if (!formattedErrors.itinerary[index])
+              formattedErrors.itinerary[index] = {};
+            formattedErrors.itinerary[index]![field] = error.message;
+          }
+        } else {
+          const field = path as keyof PackageFormError;
+          formattedErrors[field] = error.message;
+        }
       });
-     setErrors(newErrors);
-     console.log("Errors :: ",errors);
-    }else{
-         throw err
+
+      setErrors(formattedErrors);
     }
-  } 
+  }
 }
  const cancelHandleClick = (e: React.FormEvent) =>{
        e.preventDefault();
@@ -244,7 +256,6 @@ const AddPackage: React.FC = ()  => {
     <div className=" my-6">
        <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
     </div> 
-       {/* Itinerary Section */}
         <div className="col-span-2">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Itinerary</h2>
           {packageData.itinerary.map((day, index) => (
@@ -253,17 +264,16 @@ const AddPackage: React.FC = ()  => {
               <button onClick={() => removeItineraryDay(index)} className="ml-4 px-3 py-1  text-white rounded-lg hover:bg-red-600">
               <Delete size={12} />
               </button>
-
               <div className="mt-2">
                 <label className="block text-gray-700 font-medium">Description</label>
                 <input type="text" value={day.description} onChange={(e) => handleItineraryChange(index, "description", e.target.value)} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter description" />
-                {errors.itinerary?.[index]?.description && <p className="text-red-500">{errors.itinerary?.[index]?.description}</p>}
+                {errors.itinerary?.[index]?.description && <p className="text-red-400 font-thin">{errors.itinerary?.[index]?.description}</p>}
               </div>
               <div className="mt-2">
                 <label className="block text-gray-700 font-medium">Activities</label>
                 <textarea value={day.activities} onChange={(e) => handleItineraryChange(index, "activities", e.target.value)} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., City Tour" />
-                {errors.itinerary?.[index]?.description && (
-                    <p className="text-red-500">{errors.itinerary[index].description}</p>
+                {errors.itinerary?.[index]?.activities && (
+                    <p className="text-red-400 text-thin">{errors.itinerary?.[index]?.activities}</p>
                  )}
               </div>
             <div className="mt-2 flex flex-row gap-4 items-center">
@@ -277,9 +287,10 @@ const AddPackage: React.FC = ()  => {
       className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" 
       placeholder="e.g., Hotel Stay" 
     />
+   
     {errors.itinerary?.[index]?.stay && (
-         <p className="text-red-500">{errors.itinerary[index].stay}</p>
-    )}
+      <p className="text-red-400 font-thin">{errors.itinerary[index].stay}</p> 
+)}
   </div> 
   <div className="flex-1">
     <label className="block text-gray-700 font-medium">Transfer</label>
@@ -291,7 +302,7 @@ const AddPackage: React.FC = ()  => {
       placeholder="e.g., Taxi Ride" 
     />
      {errors.itinerary?.[index]?.transfer && (
-         <p className="text-red-500">{errors.itinerary[index].transfer}</p>
+         <p className="text-red-400 font-thin">{errors.itinerary[index].transfer}</p>
     )}
   </div>
 </div>
@@ -315,12 +326,11 @@ const AddPackage: React.FC = ()  => {
                      </label>
                      
                    ))}
-                   {errors.itinerary?.[index]?.meals && <p className="text-red-500">{errors.itinerary[index].meals}</p>} 
+                   {errors.itinerary?.[index]?.meals && <p className="text-red-400 font-thin">{errors.itinerary[index].meals}</p>} 
                  </div>
                </div>
             </div>
           ))}
-      {errors.itinerary && <p className="text-red-500">{errors.itinerary}</p>}
           <button 
                  type="button" 
                  onClick={addItineraryDay} 
@@ -329,9 +339,9 @@ const AddPackage: React.FC = ()  => {
                   +Add Day
           </button>
         </div>
-        {/* Submit Button */}
+
         <div className="flex flex-row">
-         <div className="col-span-2 text-center mt-4">
+         <div className="col-span-2 justify-center text-center mt-4">
           <button type="submit" className="w-40 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-800">Add Package</button>
          </div>
          <div className="col-span-2 text-center mt-4">

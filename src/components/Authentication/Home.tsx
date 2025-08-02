@@ -46,8 +46,6 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
-
-      {/* Testimonials */}
       <section className="bg-gray-100 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
         <div className="flex overflow-x-scroll space-x-6 px-8">
@@ -59,8 +57,6 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
-
-      {/* Call-to-Action Section */}
      <Footer /> 
     </div>
   );

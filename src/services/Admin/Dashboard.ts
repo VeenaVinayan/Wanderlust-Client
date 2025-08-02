@@ -1,15 +1,16 @@
-import axiosInstance from "../../apiStore/adminApi";
+import axiosInstance from "../../apiStore/api";
 import { PER_PAGE } from '../../Constants/User';
 import { DataResponse } from "../../types/userTypes";
-import { TCategory } from '../../types/categoryTypes';
+import { TCategory, TCategoryData , TCategoryValue} from '../../types/categoryTypes';
 import axios from 'axios';
 import apiHelper from "../../helper/apiHelper";
-import { TPackageData ,TAgentPackage } from "../../types/packageTypes";
-import { SearchParams, TAgentData } from '../../types/agentTypes';
+import { TPackageData } from "../../types/packageTypes";
+import { SearchParams } from '../../types/agentTypes';
 import packageApi from "../../helper/packageApi";
+
 export const fetchData = async (user: string,page : number, params: SearchParams): Promise< DataResponse | null> => {
   try {
-    const response = await axiosInstance.get(`getData/${user}/${PER_PAGE}/${page}`,{params});
+    const response = await axiosInstance.get(`/admin/users/${user}/${PER_PAGE}/${page}`,{params});
     return response.data.users;
   } catch (err) {
     console.error("Error in API call for Fetch User!", err);
@@ -17,7 +18,7 @@ export const fetchData = async (user: string,page : number, params: SearchParams
   }
 };
 export const adminLogout = async (): Promise<void> =>{
-   localStorage.removeItem("Admin_accessToken");
+   localStorage.removeItem("accessToken");
    localStorage.removeItem("userId");
    console.log('Inside logout from service !!');
 }
@@ -27,7 +28,7 @@ export const blockOrUnblock = async (id: string, role : string)=>{
    try{
         const response = await axiosInstance({
         method:'patch',
-        url:'/blockOrUnblock',
+        url:'/admin/blockOrUnblock',
              data:{
               id,
               role
@@ -38,13 +39,13 @@ export const blockOrUnblock = async (id: string, role : string)=>{
       console.log(err);
     } 
 }
-export const createCategory = async (category: TCategory) => {
+export const createCategory = async (category: TCategoryData) => {
   try {
     const isExist = await apiHelper.isExistCategory(category.name);
     if (!isExist) return false;
-
-    console.log("Category details ::", category.image.type, category.name, category.description);
-    const { data } = await axiosInstance.post("/getPresignedUrl", {
+    if (category.image && category.image instanceof File)
+      console.log("Category details ::", category.image.type, category.name, category.description);
+    const { data } = await axiosInstance.post("/admin/getPresignedUrl", {
       fileType: category.image.type,
     });
 
@@ -59,9 +60,12 @@ export const createCategory = async (category: TCategory) => {
       console.error("Failed to upload image to S3.");
       return false;
     }
-     
-    category.image = publicUrl;
-    const res = await axiosInstance.post("addCategory", category);
+     const categoryValue : TCategoryValue ={
+        name:category.name,
+        description:category.description,
+        image:publicUrl,
+     }
+    const res = await axiosInstance.post("/admin/addCategory", categoryValue);
     return res.status === 200 ? res : false;
   }catch (err) {
     console.error("Error in createCategory:", err);
@@ -69,9 +73,9 @@ export const createCategory = async (category: TCategory) => {
   }
 };
 
-export const  fetchAllCategory = async (page : number,params: SearchParams) => {
+export const  fetchAllCategory = async (params: SearchParams) => {
     try{
-      const response = await axiosInstance.get(`/categories/${PER_PAGE}/${page}`,{params});
+      const response = await axiosInstance.get(`/admin/categories`,{params});
       if(response.status === 200){
           return response.data;
       }
@@ -89,28 +93,31 @@ export const  fetchAllCategory = async (page : number,params: SearchParams) => {
           return false;
       }
   } 
+  export const uploadImageCategoryEdit = async (image : File) : Promise<string>=>{
+      try{
+          console.log("Category :: Values  ",image);
+          const  { data } = await axiosInstance.post("/admin/getPresignedUrl", {
+          fileType:image.type 
+            })
+          const { signedUrl, publicUrl } = data.response;
+          const uploadResponse = await axios.put(signedUrl,image,{
+                         headers: {"Content-Type":image.type}
+          });
+        if(uploadResponse.status !==200){
+             console.error("Failed to Upload Image to S3 !");
+         return "";
+      }
+      return publicUrl;
+     }catch(err){
+        console.log("Error occured ::",err);
+        throw err;
+      }
+  }
+   
 export const editCategoryById = async (category : TCategory) =>{
   try{ 
-   console.log("Category :: Values  ",category);
-   if(category.image instanceof File){
-      console.log("It's a file !! ",category.image);
-      const  { data } = await axiosInstance.post("/getPresignedUrl", {
-          fileType:category.image.type
-      })
-     const { signedUrl, publicUrl } = data.response;
-      const uploadResponse = await axios.put(signedUrl,category.image,{
-          headers: {"Content-Type":category.image.type}
-      });
-      if(uploadResponse.status !==200){
-         console.error("Failed to Upload Image to S3 !");
-         return false;
-      }
-      category.image=publicUrl;
-    }
-    console.log('Before Api Call !');
-    const res = await axiosInstance.patch(`/category-edit/${category.id}`,category);
+    const res = await axiosInstance.patch(`/admin/category-edit/${category._id}`,category);
     return res.status === 200 ? res : false;
-    
   }catch(err){
        console.error("Error in Edit Category !!",err);
        return false;
@@ -163,19 +170,15 @@ export const getPackages = async (params: SearchParams) : Promise<TPackageData> 
     return response;
 }
 
-export const getAgentPackages = async (params : SearchParams) : Promise<TAgentPackage> =>{
-   const response :TAgentPackage  = await apiHelper.getAgentPackages(params);
-   return response;
-}
 
 export const getDashboard = async() => {
   const response = await apiHelper.getDashboard();
   return response;
 }
 
-export const verifyPackage = async (packageId : string) =>{
+export const verifyPackage = async (packageId : string,value: string) =>{
    try{
-      const response = await packageApi.verifyPackage(packageId);
+      const response = await packageApi.verifyPackage(packageId,value);
       return response;
    }catch(err){
       console.error('Error in verify Package !!',err);

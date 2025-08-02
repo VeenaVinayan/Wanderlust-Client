@@ -6,7 +6,6 @@ import Pagination from '../../components/layout/Shared/Pagination';
 import SearchFilter from '../layout/Shared/SearchFilter';
 import { PER_PAGE, BookingAgentData } from '../../Constants/User';
 import { getBookingData } from '../../services/Agent/BookingService';
-import { TBookingResponse } from '../../types/bookingTypes';
 import { useNavigate } from 'react-router-dom';
 import { TBookingAgentResponse } from '../../types/bookingTypes';
 
@@ -27,7 +26,7 @@ const BookingData : React.FC= () => {
               page,
               perPage:PER_PAGE,
               search:filters.keyword,
-              sortBy:'tripDate',
+              sortBy:'bookingDate',
               sortOrder:filters.sortOrder, 
          });  
          if(data){
@@ -41,11 +40,10 @@ const BookingData : React.FC= () => {
 
   return (
     <>
-       
         { bookingData.length > 0 ? (
             <>
             <SearchFilter onFilterChange={setFilters} />
-              <Table <TBookingAgentResponse>
+              <Table<TBookingAgentResponse>
                 data={bookingData}
                 columns={BookingAgentData}
                 role={'Booking Data'}
@@ -64,6 +62,7 @@ const BookingData : React.FC= () => {
                         perPage={PER_PAGE}
                         length={ count || 1}
                         handlePage= {handlePage}
+                        currentPage={currentPage}
                   />      
              </div>
             </>

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 const BASE_URL = import.meta.env.VITE_APP_BASEURL;
-console.log("Base url ::",BASE_URL);
+
 interface SocketContextType {
   socket: Socket | null;
 }
@@ -39,7 +39,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ userId, children
     });
 
     setSocket(newSocket);
-
     return () => {
       newSocket.disconnect();
       console.log("Socket disconnected");

@@ -9,11 +9,12 @@ import { RootState } from '../../app/store';
 import { bookPackage } from '../../services/Booking/BookingService'
 import { useDispatch } from 'react-redux';
 import { resetBookingData } from '../../features/authentication/BookingSlice'; 
+import { TBooking } from '../../types/bookingTypes';
 
 const Success: React.FC = () => {
   const { width, height } = useWindowSize();
   const checkBooking = useRef(false);
-  const booking = useSelector((state: RootState) => state.booking);
+  const booking : TBooking = useSelector((state: RootState) => state.booking);
   const dispatch = useDispatch();
   
   useEffect(() => {
