@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlusCircle, ImagePlus, Upload , DeleteIcon, Edit} from "lucide-react";
 import schema from "../../Validations/CategoryRegistrationForm";
+import editSchema from "../../Validations/EditCategory";
 import { createCategory} from '../../services/Admin/Dashboard';
 import { toast } from "react-toastify";
 import { TCategory, TCategoryData } from "../../types/categoryTypes";
@@ -56,12 +57,12 @@ const Category: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchData(currentPage); 
+    const id =setTimeout(()=>fetchData(currentPage),900); 
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
+      clearTimeout(id);
     };
   }, [currentPage,filters]);
-  
   const fetchData = async (page: number) =>{
        const data = await fetchAllCategory(
         {
@@ -77,8 +78,10 @@ const Category: React.FC = () => {
          setCount(data?.data?.totalCount)
       }
    }
-  const handleCancel = () =>{
+  const handleCancel = (e: React.FormEvent<HTMLFormElement>) =>{
+   e.preventDefault();
     setIsCreate(false);
+    setIsEdit(false);
   } 
   const handleEditChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -140,7 +143,7 @@ const Category: React.FC = () => {
             const url= await uploadImageCategoryEdit(image)
             editData.image =url;
          }
-         await schema.validate({ name:editData.name, description:editData.description, image }, { abortEarly: false });
+         await editSchema.validate({ name:editData.name, description:editData.description, image }, { abortEarly: false });
          const categoryEditData : TCategory = {
             _id:editData._id,
             name: editData.name,
@@ -152,14 +155,20 @@ const Category: React.FC = () => {
          const response = await editCategoryById(categoryEditData);
          if(response){
            toast.success("Category successfully Edited !");
-          }else{
-             toast.error("Error in Edit Category !!");
-          }
+           setCategory((prev) => {
+              return prev.map((item) => 
+               item._id === categoryEditData._id ? { ...item, ...categoryEditData } : item
+             );
+            });
+        }else{
+          toast.error("Error in Edit Category !!");
+        }
          console.log("REsponse is ",response);
          setImagePreview(null);
          initializeState();
      }catch(err : unknown){
       if (err instanceof ValidationError) {
+         console.log("ERrors in Edit Category ::",err);
          const newErrors: Record<string, string> = {};
          err.inner.forEach((e) => {
           newErrors[e.path as string] = e.message;
@@ -187,7 +196,7 @@ const Category: React.FC = () => {
       if(response){
          toast.success("Successfully created category !!");
       }else{
-         toast.error("Category already Exist !!");
+         toast.error("Error in create Category !!");
       }
       initializeState();
     } catch (err: unknown) {
@@ -360,7 +369,7 @@ const Category: React.FC = () => {
               Submit
             </button>
 
-            <button onClick={handleCancel} className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"> Cancel</button>
+            <button onClick={(e : React.MouseEvent<HTMLButtonElement>) =>handleCancel(e)} className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"> Cancel</button>
           </form>
         </Modal>
          )

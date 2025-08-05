@@ -79,33 +79,7 @@ const AgentDashboard: React.FC = () => {
         />
       )}
       <div className="flex-1 flex flex-col md:ml-64 w-full">
-         {/* <header className="bg-white shadow-md p-4 flex justify-between items-center fixed w-full md:w-[calc(100%-16rem)] md:left-64 top-0 z-10 h-16">
-          <div className="flex items-center gap-4">
-            <button
-              className="md:hidden text-gray-700 focus:outline-none"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              ☰
-            </button>
-            <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <span className="font-medium text-gray-700 tracking-wide">
-              Welcome,{" "}
-              <span className="font-semibold text-gray-600">
-                {agent?.name}
-              </span>
-            </span>
-            <NotificationBell />
-            <div className="w-10 h-10 bg-green-300 rounded-full flex items-center justify-center">
-              <span className="text-gray-700 text-2xl font-medium tracking-wide">
-                {agent?.name?.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          </div>
-        </header>  */}
-       <header className="fixed top-0 left-0 w-full md:left-64 md:w-[calc(100%-16rem)] h-16 z-20 bg-white shadow-md p-4 flex items-center justify-between">
+        <header className="fixed top-0 left-0 w-full md:left-64 md:w-[calc(100%-16rem)] h-16 z-20 bg-white shadow-md p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             className="md:hidden text-gray-700 text-2xl focus:outline-none"
@@ -136,7 +110,7 @@ const AgentDashboard: React.FC = () => {
           </div>
         </div>
       </header>
-     <main className="flex-1 px-4 sm:px-6 lg:px-8 mt-16">
+     <main className="flex-1 px-3 sm:px-6 lg:px-5 mt-4">
           <div className="min-h-[calc(100vh-220px)] bg-white rounded-xl shadow-md p-4 sm:p-6 lg:p-8">
             <Outlet />
           </div>

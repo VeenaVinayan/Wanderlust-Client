@@ -103,7 +103,6 @@ const AgentCard: React.FC = () => {
               onClick={() => setIsOpen(false)}
             >
               <div className="relative max-w-4xl p-4">
-                {/* Close Button */}
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-4 right-4 text-white hover:text-gray-300"

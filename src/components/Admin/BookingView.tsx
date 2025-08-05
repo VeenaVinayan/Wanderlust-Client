@@ -2,7 +2,6 @@ import React ,{ useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TBookingResponse } from '../../types/bookingTypes';
 import { CheckCircle, Calendar, Mail, Phone, User ,UsersRound , IndianRupee} from 'lucide-react';
-import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 
 const BookingView : React.FC = () => {
@@ -21,9 +20,8 @@ const BookingView : React.FC = () => {
   {!booking ? (
     <p className="text-center text-gray-600 mt-10 text-lg font-semibold">No Booking Data Available!</p>
   ) : (
-    <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 mb-10 shadow-xl border border-gray-200">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+     <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 mb-10 shadow-xl border border-gray-200">
+       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800">{booking?.packageId.name}</h2>
         <span
           className={`text-sm font-semibold px-4 py-1 rounded-full shadow-md 
@@ -39,7 +37,6 @@ const BookingView : React.FC = () => {
         </span>
       </div>
 
-      {/* Image */}
       <div className="w-full h-72 rounded-2xl overflow-hidden mb-6 shadow-lg">
         <img
           src={data?.packages.images[0] || 'https://via.placeholder.com/600x400'}
@@ -48,13 +45,11 @@ const BookingView : React.FC = () => {
         />
       </div>
 
-      {/* Package Details */}
       <div className="mb-10">
         <h3 className="text-xl font-semibold text-gray-700 mb-2">{data?.packages.name}</h3>
         <hr className="my-4" />
       </div>
 
-      {/* Customer Info */}
       <div className="space-y-3 text-gray-700 text-sm">
         <p className="flex items-center gap-2">
           <User className="w-4 h-4 text-gray-500" />
@@ -85,7 +80,6 @@ const BookingView : React.FC = () => {
           <strong>Total Guests:</strong> <span className="ml-1">{booking.totalGuest}</span>
         </p>
 
-        {/* Travellers Breakdown */}
         <div className="mt-4 bg-gray-50 p-4 rounded-xl border">
           <p className="flex items-center gap-2 mb-2">
             <UsersRound className="w-5 h-5 text-gray-600" />

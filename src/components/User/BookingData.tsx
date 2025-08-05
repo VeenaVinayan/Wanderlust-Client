@@ -59,8 +59,8 @@ const BookingData : React.FC = () => {
                 </>
               )}
            />
-             <div className="flex justify-center mt-6">
-            <Pagination
+            <div className="flex justify-center mt-6">
+             <Pagination
               perPage={PER_PAGE}
               length={count || 1}
               handlePage={handlePage}

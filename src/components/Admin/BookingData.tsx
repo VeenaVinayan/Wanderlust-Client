@@ -31,7 +31,8 @@ const BookingData :React.FC = () => {
              setCount(data.totalCount);
           }
      }  
-     fetchData(currentPage);
+     const id = setTimeout(() =>  fetchData(currentPage),900);
+     return ()=> clearTimeout(id);
   },[currentPage,filters]);
 
   return(

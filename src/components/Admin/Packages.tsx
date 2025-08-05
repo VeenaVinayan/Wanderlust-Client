@@ -32,7 +32,9 @@ const Packages : React.FC = () => {
          setPackages(packages);
          setCount(totalCount);
       }
-     fetchData(currentPage);
+     const id = setTimeout(()=> fetchData(currentPage));
+
+     return ()=> clearTimeout(id);
   },[currentPage,filters]);
 
   const handlePage = async (page: number) => {

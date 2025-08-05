@@ -49,16 +49,12 @@ const Wishlist : React.FC = () => {
                 {item.packageId.day} Days/{item.packageId.night} Nights
               </p>
               <div className="flex justify-between items-center mt-3">
-                <span className="text-yellow-500 font-semibold text-sm">
-                  ⭐ {item.packageId.rating}
-                </span>
-                <span className="text-green-600 font-bold text-sm">
+               <span className="text-green-600 font-bold text-sm">
                   ₹{item.packageId.price}
                 </span>
               </div>
             </div>
         
-            {/* Buttons */}
             <div className="mt-4 flex justify-between items-center">
               <button
                 onClick={() => navigate('/user/packageDetails', { state: item.packageId})}

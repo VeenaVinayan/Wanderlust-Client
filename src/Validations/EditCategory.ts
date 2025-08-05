@@ -12,21 +12,7 @@ const schema = yup.object().shape({
     .string()
     .required("Description required!")
     .min(20, "One valid sentence needed!")
-    .max(200,"Description limit exceed"),
-
-  image: yup
-    .mixed()
-    .test("required", "Image is required", (value) => {
-      return value instanceof File; 
-    })
-    .test("fileType", "Only image files are allowed", (value) => {
-      const file = value as File;
-      if (!value) return false; 
-      return ["image/jpeg", "image/png", "image/jpg"].includes(file.type);
-    }),
+    .max(150,"Description limit exceed"),
 });
 
 export default schema;
-
-
-

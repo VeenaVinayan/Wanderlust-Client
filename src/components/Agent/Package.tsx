@@ -44,7 +44,8 @@ import { RootState } from '../../app/store';
               }
             }
           }
-         fetchPackages(currentPage);
+        const id = setTimeout(()=> fetchPackages(currentPage),900);
+        return ()=> clearTimeout(id);
    },[currentPage, filters, agent.id]);
 
    const handleDelete = async (packageData: TPackageAllData) =>{
@@ -65,8 +66,8 @@ import { RootState } from '../../app/store';
      navigate('/agent/agentDashboard/editPackage',{state:packages});
    }
    return (
-   <>
-   <div className="bg-white p-5 shadow-lg rounded-xl min-h-[300px] flex flex-col">
+    <>
+    <div className="bg-white p-5 shadow-lg rounded-xl min-h-[300px] flex flex-col">
     <div className="flex justify-between items-center mb-4">
      <Link to="/agent/agentDashboard/addPackage">
         <button
@@ -131,7 +132,9 @@ import { RootState } from '../../app/store';
        )
     } 
   </div>
-</>
+</> 
+
+
  );
 }
 export default Package;

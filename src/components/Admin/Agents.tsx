@@ -22,11 +22,12 @@ const Agents: React.FC = () => {
   const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortData:sortData });
 
   useEffect(() => {
-    getAgentData(currentPage);
+    const id = setTimeout(()=> getAgentData(currentPage), 900);
+    return () => clearTimeout(id);
   },[currentPage, filters]);
 
   const getAgentData = async (page: number) => {
-    const data = await fetchData('Agent', page, 
+    const data = await fetchData('Agent',page, 
       {
         search: filters.keyword,
         sortBy: 'name',

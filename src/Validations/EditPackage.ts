@@ -10,8 +10,8 @@ const editPackageSchema = Yup.object().shape({
   description: Yup.string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters long")
-    .max(1000, "Description must not exceed 1000 characters")
-   .matches(/^[a-zA-Z\s\-&,.]*$/, "Special characters are not allowed"),
+    .max(1000, "Description must not exceed 1000 characters"),
+    //.matches(/^[a-zA-Z\s\-&,.']*$/, "Special characters are not allowed"),
    
   category: Yup.string()
     .required("Category is required")
@@ -39,8 +39,8 @@ const editPackageSchema = Yup.object().shape({
       Yup.object().shape({
        description: Yup.string()
           .min(5, "Itinerary description must be at least 5 characters long")
-          .required("Itinerary description is required")
-          .matches(/^[a-zA-Z ]*$/, "Special characters are not allowed"),
+          .required("Itinerary description is required"),
+          //.matches(/^[a-zA-Z ]*$/, "Special characters are not allowed"),
         activities: Yup.string().required("Activities are required"),
         meals: Yup.array()
           .min(1, "At least one meal option must be selected")

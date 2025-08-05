@@ -15,10 +15,11 @@ export const Columns : Column <Agent | User>[]= [
       label: "Status",
       render: (value: boolean | string) => {
         if (typeof value === "boolean") {
+          const mainClass=`rounded-full px-2 py-1 bg-green-100`
           return value ? (
-            <span className="text-green-800">Active</span>
+            <span className={`${mainClass}text-green-800"`}>Active</span>
           ) : (
-            <span className="text-red-800">Inactive</span>
+            <span className={`${mainClass}text-red-800`}>Inactive</span>
           );
         }
         return "Unknown";
@@ -28,7 +29,24 @@ export const Columns : Column <Agent | User>[]= [
 
 export const Columns_Category: Column<TCategory>[] = [
    { key: "name", label: "Name" },
-   { key: "description", label: "Description" },
+  {
+  key: "description",
+  label: "Description",
+  render: (value) => {
+    if (typeof value === "string") {
+      return (
+        <span
+          className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
+          title={value}
+        >
+          {value}
+        </span>
+      );
+    }
+    return null;
+  },
+},
+
    { 
       key: "status", 
       label: "Status", 
@@ -103,11 +121,19 @@ export const PackageColumn : Column <TPackage>[]=[
   { key:"description", 
     label:"Description",
     render:(value) =>{ 
-       { if(typeof value === "string") { 
-        return (
-          <span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
-        )}
-     } }
+      { if(typeof value === "string") { 
+         return (
+    //      // <span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
+    //      <span 
+    <span
+          className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
+          title={value}
+    >
+      {value}
+    </span>
+   )}
+      } 
+}
 },
   { key:"price", label: "Price"},
   { key:"day", label: "Days"},
@@ -160,7 +186,13 @@ export const PackageColumn : Column <TPackage>[]=[
     render:(value) =>{ 
        { if(typeof value === "string") { 
         return (
-          <span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
+          //<span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
+          <span
+          className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
+          title={value}
+    >
+      {value}
+    </span>
         )}
      } }
 },
@@ -169,12 +201,12 @@ export const PackageColumn : Column <TPackage>[]=[
   { key :"status",
     label:"Status",
     render: (value, row) => {
-      if (row.isVerified === "Pending") return <span className="text-red-400 font-thin">Awaiting Verification</span>;
+      if (row.isVerified === "Pending") return <span className="text-orange-500 bg-yellow-200 font-thin rounded-full px-3 py-1">Pending</span>;
       else if(row.isVerified === "Rejected") return <span className='text-orange-600 font-thin'>Rejected</span>
       else{ 
       if (typeof value === "boolean") {
         return value ? (
-          <span className="rounded-full bg-teal-200 border-spacing-1 text-white">Active</span>
+          <span className="rounded-full bg-green-200 border-spacing-1 text-green-800 px-3 py-1">Active</span>
         ) : (
           <span className="text-white rounded-full">Inactive</span>
         )
@@ -198,7 +230,21 @@ export const PackageColumn : Column <TPackage>[]=[
       },
      {key:"email", label:"Email"},
      {key:"totalGuest", label:"Travellers"},
-     {key:"tripStatus", label:"Trip Status"},  
+     { key:"tripStatus",
+       label:"Trip Status",
+       render:(value)=>{
+         if(typeof value !== "string") return null;
+         const baseClass="py-1 px-3 rounded-full inline-block font-light text-sm";
+         const StatusStyle : Record<string,string> ={
+           Cancelled:"bg-red-100 text-red-600",
+           Completed:"bg-green-100 text-green-700",
+           Pending:"bg-yellow-300 text-orange-600"
+         };
+         return(
+          <span className={`${baseClass} ${StatusStyle[value] || ""}`}>{value}</span>
+         )
+       }
+      },  
   ] 
   export const BookingColumnData : Column<TBookingResponse>[]=[
      { key:"bookingId", label:"Booking ID"},
@@ -215,8 +261,25 @@ export const PackageColumn : Column <TPackage>[]=[
       },
      {key:"email", label:"Email"},
      {key:"totalGuest", label:"Travellers"},
-     {key:"tripStatus", label:"Trip Status"},  
-  ] 
+     { key:"tripStatus",
+       label:"Trip Status",
+       render: (value ) => {
+          if(typeof value !== "string") return null
+           const baseClass =
+             "px-3 py-1 text-sm font-light rounded-full inline-block";
+           const statusStyles: Record<string, string> = {
+              Cancelled: "bg-red-100 text-red-700",
+              Completed: "bg-green-100 text-green-700",
+              Pending: "bg-yellow-100 text-orange-500",
+          };
+        return (
+          <span className={`${baseClass} ${statusStyles[value] || ""}`}>
+            {value}
+          </span>
+      );
+    },
+  },  
+ ] 
   export const BookingAgentData  : Column<TBookingAgentResponse>[]=[
     { key:"packageName", label:'Package Name'},
     { key: "totalBooking", label:'Total Booking'}

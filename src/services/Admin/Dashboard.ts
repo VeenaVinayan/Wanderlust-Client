@@ -8,7 +8,7 @@ import { TPackageData } from "../../types/packageTypes";
 import { SearchParams } from '../../types/agentTypes';
 import packageApi from "../../helper/packageApi";
 
-export const fetchData = async (user: string,page : number, params: SearchParams): Promise< DataResponse | null> => {
+export const fetchData = async (user: string,page:number,params: SearchParams): Promise< DataResponse | null> => {
   try {
     const response = await axiosInstance.get(`/admin/users/${user}/${PER_PAGE}/${page}`,{params});
     return response.data.users;
@@ -55,7 +55,7 @@ export const createCategory = async (category: TCategoryData) => {
     const uploadResponse = await axios.put(signedUrl, category.image, {
       headers: { "Content-Type": category.image.type },
     });
-    
+    console.log('Response after upload ::',uploadResponse.status)
    if(uploadResponse.status !== 200) {
       console.error("Failed to upload image to S3.");
       return false;
@@ -116,12 +116,13 @@ export const  fetchAllCategory = async (params: SearchParams) => {
    
 export const editCategoryById = async (category : TCategory) =>{
   try{ 
+    console.log("Edit Category!!");
     const res = await axiosInstance.patch(`/admin/category-edit/${category._id}`,category);
     return res.status === 200 ? res : false;
   }catch(err){
        console.error("Error in Edit Category !!",err);
        return false;
-    }
+  }
 }
 
 export const fetchPendingAgents = async (page : number) =>{

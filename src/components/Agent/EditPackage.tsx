@@ -42,7 +42,7 @@ const EditPackage = () => {
       setExistingImages(packages.images || []);
       fetchCategories();
     }
-  }, []);
+  },[]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement| HTMLSelectElement>) => {
     e.preventDefault();
@@ -78,7 +78,6 @@ const EditPackage = () => {
     const newItinerary: TItinerary = { day: 1,description: "", activities: "", meals: [], stay: "", transfer: "" };
     setPackageData({ ...packageData, itinerary: [...packageData.itinerary, newItinerary] });
   };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.files) {
@@ -115,6 +114,7 @@ const EditPackage = () => {
       }
    }catch(err: unknown){
      if (err instanceof ValidationError) {
+     console.log("Errors ",err); 
      const formattedErrors: PackageFormError = {};
         err.inner.forEach((error) => {
         const path = error.path || "";
@@ -134,7 +134,7 @@ const EditPackage = () => {
               formattedErrors[field] = error.message;
             }
           });
-    
+          console.log("Errors are ::",formattedErrors);
           setErrors(formattedErrors);
         }
     }finally {

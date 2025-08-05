@@ -17,7 +17,8 @@ const Users : React.FC = () => {
  const [filters, setFilters] = useState({ keyword: '', sortOrder: '' });
 
  useEffect(() =>{
-     getUserData(currentPage);
+   const id = setTimeout(()=> getUserData(currentPage),900);
+   return (()=> clearTimeout(id));  
  },[currentPage,filters]); 
    
    const getUserData  = async (page:number) =>{

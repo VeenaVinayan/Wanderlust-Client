@@ -21,6 +21,7 @@ const BookingPackageData: React.FC = () => {
           setCurrentPage(page)
     }
     useEffect(() => {
+       console.log("Booking package Data !!");
         const fetchData = async (page : number,packageId : string) => {
               const response  = await getPackageBooking(packageId,{
                  page,
@@ -35,7 +36,8 @@ const BookingPackageData: React.FC = () => {
                   setCount(response.data.totalCount)
               }
         } 
-        fetchData(currentPage,packageId);
+        const id = setTimeout(()=> fetchData(currentPage,packageId),900);
+        return ()=> clearTimeout(id);
    }, [packageId,filters,currentPage]);
    return(
     <>
@@ -44,8 +46,8 @@ const BookingPackageData: React.FC = () => {
        <SearchFilter onFilterChange={setFilters} />
         <Table <TBookingResponse>
             data = {bookings}
-            columns = {BookingColumnData}
-            role = {bookings[0]?.packageId.name}
+            columns ={BookingColumnData}
+            role ={bookings[0]?.packageId.name}
             renderActions={(value) =>(
                 <>
                     <button 
@@ -68,7 +70,7 @@ const BookingPackageData: React.FC = () => {
         ):(
             <div className="flex items-center justify-center h-60 bg-gray-50 rounded-xl shadow-inner">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-300 tracking-wide">
-                🚫 No Booking Data Available
+                🚫 No Booking Package.... Data Available
                </h2>
             </div>
         ) 

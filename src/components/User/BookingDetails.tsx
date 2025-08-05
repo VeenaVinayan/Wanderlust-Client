@@ -138,7 +138,6 @@ const handleEditSubmit = async (data: TReview) => {
       adult:bookingValue?.travellers.adult|| 1,
       children:bookingValue?.travellers.children || 0,
       infant:bookingValue?.travellers.infant || 0,
-      tripDate:bookingValue?.tripDate || new Date(),
       bookingDate: bookingValue?.bookingDate || new Date(),
     }
     const blob = await pdf(
@@ -191,11 +190,14 @@ const handleEditSubmit = async (data: TReview) => {
           Cancel Booking
         </button>
       )}
-      <button 
-            className='flex items-center gap-2 justify-end py-2 px-4 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-semibold rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-in-out mb-4'
-            onClick={handleInvoice}>
-          Invoice
-      </button>
+      { (bookingValue.tripStatus ==="Pending") &&( 
+            <button 
+                className='flex items-center gap-2 justify-end py-2 px-4 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-semibold rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-in-out mb-4'
+                onClick={handleInvoice}>
+              Invoice
+          </button>
+        
+      )}
       </div>
       <div>
          <h2 className="text-2xl font-semibold text-gray-700 mb-4">{bookingValue?.packageId.name}</h2>
@@ -271,7 +273,7 @@ const handleEditSubmit = async (data: TReview) => {
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking Status</span>
-          <span className={`text-lg font-bold ${bookingValue?.tripStatus === 'Completed' ? 'text-gray-600' : 'text-red-600'}`}>
+          <span className={`text-lg font-bold  px-3 py-1${bookingValue?.tripStatus === 'Completed' ? 'text-green-600' : 'text-red-600'}`}>
             {bookingValue?.tripStatus || 'Pending'}
           </span>
         </div>
