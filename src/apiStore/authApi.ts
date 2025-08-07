@@ -12,25 +12,33 @@ const axiosInstance : AxiosInstance = axios.create({
      },
      withCredentials:true,
 });
-
 axiosInstance.interceptors.response.use(
+    
     (response) => response,
     (error) =>{
+          
          if(error.response) {
-             console.log(error);
+             const message =
+                   error.response?.data?.message || error.message || 'Unexpected error occurred';
+             console.log("Error in Auth response ",error.response);
              switch(error.response.status) {
                  case 400:
-                     toast.error(error.response.data.message);
+                     toast.error(message);
                      break;
                  case 401:
-                     toast.error(error.response.data.message);
+                     toast.error(message);
                      break;
                 case 403:
-                     toast.error(error.response.data.message);
+                     toast.error(message);
                      break;
                 case 404:
-                     toast.error(error.response.data.message);
+                     toast.error(message);
                      break;
+                case 409:
+                      toast.error(message);
+                      console.log(message)
+                      //window.location.assign("/login");   
+                      break;
                 case 500:
                     toast.error("Internal Server Error !");
                     break;

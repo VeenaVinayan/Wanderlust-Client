@@ -44,13 +44,37 @@ const EditPackage = () => {
     }
   },[]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement| HTMLSelectElement>) => {
-    e.preventDefault();
-    if (!packageData) return;
-      console.log("Value is ::",e.target.value);
-      setPackageData({ ...packageData, [e.target.name]: e.target.value });
-  };
-  
+const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => {
+  e.preventDefault();
+  if (!packageData) return;
+
+  const { name, value } = e.target;
+  console.log("Value is ::", value);
+
+  if (["longitude", "latitude"].includes(name)) {
+    setPackageData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        coordinates: {
+          ...prev.coordinates,
+          [name]: value,
+        },
+      };
+    });
+  } else {
+    setPackageData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  }
+};
+
   const selectCategory = () : TCategoryValue =>{
     const selected = categories.find(category => category._id === packageData!.category);
     console.log(" Selected :",selected);
@@ -97,6 +121,7 @@ const EditPackage = () => {
     console.log('Edit package ::',packageData);
     setIsSubmitting(true);
     try {
+      
       packageData!.images = existingImages;
       packageData!.agent = agentData.id;
       await schema.validate(packageData,{ abortEarly:false})
@@ -172,7 +197,7 @@ const EditPackage = () => {
               rows={4}
             />
             {errors.description && <p className="text-red-500">{errors.description}</p>}
-          </div>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Price</label>
@@ -256,6 +281,48 @@ const EditPackage = () => {
              </div>
          </div>
         </div>
+        <div className="w-full">
+  <label className="block text-gray-700 font-semibold mb-2">Location Coordinates</label>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="latitude" className="block text-sm font-medium text-gray-600 mb-1">Latitude (-90 to 90)</label>
+      <input
+        type="number"
+        id="latitude"
+        name="latitude"
+        value={packageData?.coordinates?.latitude || 0}
+        onChange={handleChange}
+        className="w-full px-3 py-2 border rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        min={-90}
+        max={90}
+        step="any"
+        placeholder="Enter latitude"
+      />
+      {errors.coordinates?.latitude && (
+        <p className="text-red-500 text-sm mt-1">{errors.coordinates?.latitude}</p>
+      )}
+    </div>
+    <div>
+      <label htmlFor="longitude" className="block text-sm font-medium text-gray-600 mb-1">Longitude (-180 to 180)</label>
+      <input
+        type="number"
+        id="longitude"
+        name="longitude"
+        value={packageData?.coordinates?.longitude || 0}
+        onChange={handleChange}
+        className="w-full px-3 py-2 border rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        min={-180}
+        max={180}
+        step="any"
+        placeholder="Enter longitude"
+      />
+      {errors?.coordinates?.longitude && (
+        <p className="text-red-500 text-sm mt-1">{errors.coordinates?.longitude}</p>
+      )}
+    </div>
+   </div>
+  </div>
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-800">Images</h3>
             <div className="flex flex-wrap gap-2">

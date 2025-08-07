@@ -134,8 +134,8 @@ const InvoicePdf: React.FC<TBookingPdfProps> = (booking : TBookingPdfProps ) => 
       <Text style={styles.text}><Text style={styles.label}>Title:</Text> {booking.title}</Text>
       <Text style={styles.text}><Text style={styles.label}>Duration:</Text> {booking.day} Days / {booking.night} Nights</Text>
       <Text style={styles.text}><Text style={styles.label}>Price:</Text> ₹{booking.price}</Text>
-      <Text style={styles.text}><Text style={styles.label}>Trip Date:</Text> {new Date(booking.tripDate)?.toString() || ''}</Text>
-      <Text style={styles.text}><Text style={styles.label}>Booking Date:</Text> {new Date(booking.bookingDate)?.toString() || ''}</Text>
+      <Text style={styles.text}><Text style={styles.label}>Trip Date:</Text> {new Date(booking.tripDate)?.toLocaleDateString() || ''}</Text>
+      <Text style={styles.text}><Text style={styles.label}>Booking Date:</Text> {new Date(booking.bookingDate)?.toLocaleDateString() || ''}</Text>
     </View>
 
     <View style={styles.section}>

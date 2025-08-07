@@ -22,7 +22,6 @@ const packageValidationSchema = Yup.object().shape({
     )
     .min(1, "At least one image is required")
     .required("Images are required"),
-
   category: Yup.string()
     .required("Category is required")
     .matches(/^[0-9a-fA-F]{24}$/, "Invalid category ID"),
@@ -31,7 +30,7 @@ const packageValidationSchema = Yup.object().shape({
     .required("Number of days is required")
     .min(1, "Day count must be at least 1")
     .max(10, "Day count must not exceed 10"),
-
+ 
   night: Yup.number()
     .required("Number of nights is required")
     .min(0, "Night count must be at least 0")
@@ -44,8 +43,15 @@ const packageValidationSchema = Yup.object().shape({
         return night === day - 1;
       }
     ),
-
-  price: Yup.number()
+  latitude:Yup.number()
+            .required()
+            .min(-90, 'Latitude must be between -90 and 90')
+            .max(90, 'Latitude must be between -90 and 90'),
+  longitude:Yup.number()
+            .required()
+            .min(-180, 'Latitude must be between -180 and 180')
+            .max(180, 'Latitude must be between -180 and 180'),
+   price: Yup.number()
     .required("Price is required")
     .min(500, "Price must be at least 500"),
 

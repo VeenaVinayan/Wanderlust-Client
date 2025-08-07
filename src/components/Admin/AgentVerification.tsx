@@ -6,28 +6,36 @@ import  Pagination  from '../layout/Shared/Pagination';
 import { TAgentVerification } from '../../types/agentTypes';
 import { AgentVerificationColumn } from '../../Constants/User';
 import { useNavigate } from 'react-router-dom';
+import SearchFilter from '../layout/Shared/SearchFilter';
 
 const AgentVerification : React.FC = () => {
  const [ agentDataPending ,setAgentData ] = useState<TAgentVerification[]>([]);
  const [ currentPage, setCurrentPage] = useState(1);
  const [count, setCount] = useState<number>(0);
+ const [ filters, setFilters] = useState({keyword:'',sortOrder:'',sortData:''})
  const navigate = useNavigate();
 
  useEffect(() =>{
-  getAgentData(currentPage);
-}, [currentPage]);
+     const id = setTimeout(()=> getAgentData(currentPage),1000);
+     return ()=> clearTimeout(id);
+}, [currentPage,filters]);
   
  const handlePage = async (page: number) =>{
     setCurrentPage(page); 
  } 
   const getAgentData = async (page : number)=>{
   console.log('Fetch Agent data to be Verified !!');
-  const response = await fetchPendingAgents(page);
-  console.log('Agent pending data ::',response);
-
-  const {  metadata, data } = response[0];
+  const response = await fetchPendingAgents({
+      search: filters.keyword,
+      sortBy: 'name',
+      sortOrder: filters.sortOrder,
+      page: page,
+      perPage: PER_PAGE,
+  });
+   const {  data,totalCount } = response;
+    console.log('Agent pending data ::',data,totalCount);
   setAgentData(data);
-  setCount(metadata[0].total);
+  setCount(totalCount);
   console.log(' Agents ::', agentDataPending);
 }
 
@@ -41,7 +49,17 @@ return (
     <div>
        { agentDataPending.length > 0 ? 
        ( 
-         <> 
+        <> 
+          <div> 
+            <SearchFilter
+              onFilterChange={({ keyword, sortOrder }) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  keyword,
+                  sortOrder,
+                }))
+              } />   
+          </div>    
           <Table
              data={agentDataPending}
              columns={AgentVerificationColumn}

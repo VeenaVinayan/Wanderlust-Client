@@ -26,6 +26,10 @@ export type TPackageValue = {
     discount?:number;
     itinerary:TItinerary[];
     isVerified:string;
+    coordinates:{
+       latitude:number,
+       longitude:number,
+    }
 }
 
 export type TPackageUpload = Omit<TPackageValue,'images'>& {
@@ -47,6 +51,10 @@ export type TPackage = {
     discount?:number;
     itinerary:TItinerary[];
     isVerified:string;
+    coordinates:{
+       latitude:number,
+       longitude:number,
+    }
 }
 export type TPackageAllData = Omit<TPackage,'agent'> &{
    agent:{

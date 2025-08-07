@@ -7,6 +7,10 @@ export type ItineraryItemError = {
   stay?: FieldError;
   transfer?: FieldError;
 };
+export type CoordinatesError ={
+   latitude?: FieldError;
+   longitude?:FieldError;
+}
 
 export interface PackageFormError {
   name?: FieldError;
@@ -18,5 +22,7 @@ export interface PackageFormError {
   price?: FieldError;
   totalCapacity?: FieldError;
   itinerary?: ItineraryItemError[];
-  [key: string]: string | ItineraryItemError[]|undefined;
+  corrdinates?:CoordinatesError;
+  [key: string]: string | ItineraryItemError[]| undefined | Coord;
+ 
 }

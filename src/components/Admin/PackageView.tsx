@@ -29,6 +29,10 @@ const [expandedDay, setExpandedDay] = useState<number | null>(null);
         stay:'',
         transfer:'',
     }],
+    coordinates:{
+      latitude:0,
+      longitude:0,
+    },
     isVerified:'',
     agent:{
        _id:'',
@@ -107,8 +111,6 @@ return (
   )}
 
   <p className="text-gray-600 text-lg leading-relaxed">{packageData.description}</p>
-
-  {/* Price & Duration */}
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4">
     <div className="text-xl font-semibold text-green-600">
       Price: ₹ {packageData.price}
@@ -174,8 +176,6 @@ return (
             )}
           </div>
         </div>
-
-  {/* Agent Info Card */}
   <div className="w-full max-w-md mx-auto p-6 bg-white border border-gray-200 rounded-2xl shadow-md">
     <h2 className="text-xl font-semibold text-gray-800 mb-4">Agent Details</h2>
     <div className="space-y-3 text-gray-700">

@@ -17,7 +17,11 @@ export const PackageInitialState = {
         activities:'',
         stay:'',
         transfer:'',
-    }]
+    }],
+    coordinates:{
+        latitude:0,
+        longitude:0,
+    }
 }
 export const EditPackageInitialState = {
     _id:'',
@@ -39,7 +43,11 @@ export const EditPackageInitialState = {
         activities:'',
         stay:'',
         transfer:'',
-    }]
+    }],
+    coordinates:{
+         latitude:0,
+         longitude:0
+    }
 }
 export const FormErrorInitialState = {
         name: "",

@@ -1,5 +1,4 @@
 import axiosInstance from "../apiStore/api";
-import { PER_PAGE} from '../Constants/User';
 import { SearchParams } from "../types/agentTypes";
 import { TPackageData} from "../types/packageTypes";
 
@@ -30,9 +29,9 @@ class ApiHelper {
              return false;
          }
     }
-    async fetchPendingAgentData(page : number) {
+    async fetchPendingAgentData(params: SearchParams) {
          try{
-             const response = await axiosInstance.get(`/admin/agent-pending/${PER_PAGE}/${page}`);
+             const response = await axiosInstance.get(`/admin/agent-pending`,{params});
              console.log(" REsponse is :::",response.data);
              return response.data;
          }catch(err){
@@ -72,10 +71,6 @@ class ApiHelper {
         const response = await axiosInstance.get(`/admin/packages`,{params});
         return response.data.data;
   }
-//   async getAgentPackages(params : SearchParams) : Promise<TAgentPackage>{
-//      const response = await axiosInstance.get('/admin/packages',{params});
-//      return response.data.data;
-//   }
   async getDashboard(){
      const response = await axiosInstance.get('/admin/dashboard');
      console.log("DAta is ::",response.data);

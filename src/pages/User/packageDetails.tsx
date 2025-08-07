@@ -10,6 +10,7 @@ import CancellationPolicy from "../../components/User/CancellationPolicy";
 import { policy } from '../../Constants/Packages';
 import { TReviews } from '../../types/packageTypes';
 import { ItineraryItem } from "../../types/packageTypes";
+import Mapper from '../../utils/Mapper';
 
 const PackageDetails: React.FC = () => {
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
@@ -22,6 +23,7 @@ const PackageDetails: React.FC = () => {
   const toggleDay = (index: number) => {
     setExpandedDay(expandedDay === index ? null : index);
   };
+  
   useEffect(() =>{
      const fetchData = async (packageId : string) =>{
           const response = await getReviews(packageId);
@@ -72,8 +74,7 @@ function renderStars(rating :number) {
   }
   return <div className="flex gap-1">{stars}</div>;
 }
-
- return (
+return (
     <div className="min-h-screen flex flex-col m-5">
       <Header />
       <div className="container mx-auto px-6 sm:px-6 lg:px-20 xl:px-32 py-10">
@@ -132,91 +133,99 @@ function renderStars(rating :number) {
                 onClick={() => navigate('/user/booking',{state:packageData})} >
                Book Now
              </button>
-          </div>
         </div>
-                
-        <div className="mt-10 w-full">
-          <h2 className="text-2xl font-bold mb-4">Itinerary</h2>
-          <div className="space-y-4">
-            {packageData.itinerary.length > 0 ? (
-              packageData.itinerary.map((day: ItineraryItem, index: number) => (
-                <div
-                  key={index}
-                  className="border-l-4 border-blue-500 bg-gray-50 shadow rounded-lg transition hover:shadow-lg"
-                >
-                  <button
-                    onClick={() => toggleDay(index)}
-                    className="w-full text-left p-4 font-semibold flex justify-between items-center bg-white rounded-t-lg"
-                  >
-                    <span className="text-lg">
-                      Day {day.day}: {day.description}
-                    </span>
-                    <span className="text-blue-500">
-                      {expandedDay === index ? "▲" : "▼"}
-                    </span>
-                  </button>
-                 {expandedDay === index && (
-                    <div className="p-4 space-y-2">
-                      <h4 className="font-semibold">Activities:</h4>
-                      <p className="text-gray-600">{day.activities}</p>
+     </div>
+  <div className="flex flex-col md:flex-row gap-6">
+  <div className="md:w-1/2 w-full">
+    <h2 className="text-2xl font-bold mb-4">Itinerary</h2>
+    <div className="space-y-4">
+      {packageData.itinerary.length > 0 ? (
+        packageData.itinerary.map((day: ItineraryItem, index: number) => (
+          <div
+            key={index}
+            className="border-l-4 border-blue-500 bg-gray-50 shadow rounded-lg transition hover:shadow-lg"
+          >
+            <button
+              onClick={() => toggleDay(index)}
+              className="w-full text-left p-4 font-semibold flex justify-between items-center bg-white rounded-t-lg"
+            >
+              <span className="text-lg">
+                Day {day.day}: {day.description}
+              </span>
+              <span className="text-blue-500">
+                {expandedDay === index ? "▲" : "▼"}
+              </span>
+            </button>
+            {expandedDay === index && (
+              <div className="p-4 space-y-2">
+                <h4 className="font-semibold">Activities:</h4>
+                <p className="text-gray-600">{day.activities}</p>
 
-                      {day.meals && (
-                        <div>
-                          <h4 className="font-semibold">Meals:</h4>
-                          <ul className="list-disc ml-5 text-gray-600">
-                            {day.meals.map((meal: string, i: number) => (
-                              <li key={i}>{meal}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                     {day.stay && (
-                        <div>
-                          <h4 className="font-semibold">Stay:</h4>
-                          <p className="text-gray-600">{day.stay}</p>
-                        </div>
-                      )}
-
-                      {day.transfer && (
-                        <div>
-                          <h4 className="font-semibold">Transfer:</h4>
-                          <p className="text-gray-600">{day.transfer}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No itinerary available.</p>
+                {day.meals && (
+                  <div>
+                    <h4 className="font-semibold">Meals:</h4>
+                    <ul className="list-disc ml-5 text-gray-600">
+                      {day.meals.map((meal: string, i: number) => (
+                        <li key={i}>{meal}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {day.stay && (
+                  <div>
+                    <h4 className="font-semibold">Stay:</h4>
+                    <p className="text-gray-600">{day.stay}</p>
+                  </div>
+                )}
+                {day.transfer && (
+                  <div>
+                    <h4 className="font-semibold">Transfer:</h4>
+                    <p className="text-gray-600">{day.transfer}</p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-        </div>
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        ))
+      ) : (
+        <p className="text-gray-500">No itinerary available.</p>
+      )}
+    </div>
+  </div>
+
+  <div className="md:w-1/2 w-full">
+    <Mapper
+      latitude={packageData?.coordinates?.latitude || 9.592228295308683}
+      longitude={packageData?.coordinates?.longitude || 76.82457549790492}
+      place="India"
+    />
+  </div>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
   <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
     <h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-      🧑‍💼 Agent Details
+       Agent Details
     </h2>
     <div className="space-y-4 text-sm text-gray-700">
   <div className="flex items-center gap-3">
-    <span className="text-gray-500 font-semibold w-20">👤 Name:</span>
+    <span className="text-gray-500 font-semibold w-20"> Name:</span>
     <span className="text-gray-800">{packageData.agent.name}</span>
   </div>
   <div className="flex items-center gap-3">
-    <span className="text-gray-500 font-semibold w-20">📧 Email:</span>
+    <span className="text-gray-500 font-semibold w-20"> Email:</span>
     <span className="text-gray-800 break-all">{packageData.agent.email}</span>
   </div>
   <div className="flex items-center gap-3">
-    <span className="text-gray-500 font-semibold w-20">📞 Phone:</span>
+    <span className="text-gray-500 font-semibold w-20"> Phone:</span>
     <span className="text-gray-800">{packageData.agent.phone}</span>
   </div>
 </div>
-       <button
+    <button
             onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent._id})}
-            className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
-       >
-          <span className="font-medium">Chat with Agent</span>
-        </button>
+            className="group flex items-center gap-2 bg-gray-500 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
+    >
+      <span className="font-medium">Chat with Agent</span>
+    </button>
   </div>
   <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
     <h4 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">

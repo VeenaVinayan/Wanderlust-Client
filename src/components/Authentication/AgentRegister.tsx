@@ -74,103 +74,188 @@ const AgentRegister :React.FC = () => {
   } ;
 
  return (
-  <div className="p-6 max-w-xl m-4 bg-white rounded-xl shadow-md space-y-6 items-center mx-auto gap-4">
-  <h2 className="text-2xl font-bold text-center text-gray-600">Agent Registration</h2>
-  <p className="text-red-500 text-center hidden">Error Message</p>
-  <form onSubmit={handleSubmit}>
-  <div className="space-y-4 gap-2">
-    <div className='flex flex-col p-1 gap-2'>
-     <div className="flex items-center border rounded=== p-2 gap-2">
-        <User color='gray' size={24} />
-        <input type="text" placeholder="Full Name" className="w-full outline-none" onChange={handleChange} name="name" />
-     </div>
-     {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>} 
-     </div>
-    <div className="flex items-center border rounded p-2 gap-2">
-      <Mail color='gray' size={20} />
-      <input type="email" placeholder="Email" className="w-full outline-none " onChange={handleChange} name="email"  />
-       
-    </div>
-    {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>} 
-    <div className="flex items-center border rounded p-2 gap-2">
-      <Key color='gray' size={20} />
-      <input type="password" name="password"
-              placeholder="Password" 
-              className="w-full outline-none"
-              onChange={handleChange}  />
-      </div>
-       {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>} 
-    <div className="flex items-center border rounded p-2 gap-2">
-      <Key color='gray' size={20} />
-      <input type="password" placeholder="Confirm Password" className="w-full outline-none" name="conPassword" onChange={handleChange} />
-    </div>
-     {errors.conPassword && <p className="text-red-500 text-xs">{errors.conPassword}</p>} 
-    <div className="flex items-center border rounded p-2 gap-2">
-      <Smartphone color='gray' size={20} />
-      <input type="text" name="phone" placeholder="Phone Number" className="w-full outline-none" onChange={handleChange}  />
-    </div>
-       {errors.phone && <p className="text-red-400 text-xs">{errors.phone}</p>} 
-  </div>
+<div className="p-6 max-w-2xl mx-auto bg-white rounded-xl shadow-md space-y-6">
+  <h2 className="text-2xl font-bold text-center text-gray-700">Agent Registration</h2>
 
-  <div className="space-y-4 border rounded-sm shadow-lg mx-auto p-3">
-    <h3 className="text-lg font-semibold text-gray">Address</h3>
-    <div className='flex items-center flex-row gap-2'>
-     <div>
+  {/* Global error message (optional) */}
+  <p className="text-red-500 text-center hidden">Error Message</p>
+
+  <form onSubmit={handleSubmit} className="space-y-5">
+    {/* Name */}
+    <div>
       <div className="flex items-center border rounded p-2 gap-2">
-           <House color='gray' size={20} />
-           <input type="text" placeholder="House Name" name="home" className="w-30 h-4 outline-none" onChange={handleChange}  />
+        <User color="gray" size={24} />
+        <input
+          type="text"
+          placeholder="Full Name"
+          className="w-full outline-none"
+          onChange={handleChange}
+          name="name"
+        />
       </div>
-        {errors.home && <p className="text-red-500 text-xs">{errors.home}</p>} 
-       </div> 
-      <div> 
-      <div className="flex items-center border rounded p-2 gap-2">
-          <Landmark color='gray' size={20} />
-          <input type="text" placeholder="Street" className="w-30 h-4 outline-none" onChange={handleChange} name="street"  />
-       </div>
-        {errors.street && <p className="text-red-500 text-xs">{errors.street}</p>} 
-       </div>  
+      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
     </div>
-    <div className='flex items-center flex-row gap-2'>
-      <div>
-        <div className="flex items-center border rounded p-2 gap-2">
-           <Landmark color='gray' size={20} />
-           <input type="text" placeholder="City" className="w-30 h-4 outline-none" onChange={handleChange} name="city" />
-        </div>
-         {errors.city && <p className="text-red-500 text-xs">{ errors.city}</p>} 
+
+    {/* Email */}
+    <div>
+      <div className="flex items-center border rounded p-2 gap-2">
+        <Mail color="gray" size={20} />
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full outline-none"
+          onChange={handleChange}
+          name="email"
+        />
       </div>
-      <div>
+      {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+    </div>
+
+    {/* Password */}
+    <div>
       <div className="flex items-center border rounded p-2 gap-2">
-          <Landmark color='gray' size={20} />
-          <input type="text" placeholder="State" className="w-30 h-4 outline-none" onChange={handleChange} name="state"  />
-       </div>
-       {errors.state && <p className="text-red-500 text-xs">{errors.state}</p>} 
-       </div>
+        <Key color="gray" size={20} />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          className="w-full outline-none"
+          onChange={handleChange}
+        />
+      </div>
+      {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
     </div>
-    <div className='flex items-center flex-row gap-2'>
-      <div>
-       <div className="flex items-center border rounded p-2 gap-2">
-           <LandPlot color='gray' size={20} />
-           <input type="text" placeholder="Country" className="w-30 h-4 outline-none" onChange={handleChange} name="country"  />
-        </div>
-        {errors.country && <p className="text-red-500 text-xs">{errors.country}</p>} 
-       </div> 
-       <div>
-        <div className="flex items-center border rounded p-2 gap-2">
-          <Code color='gray' size={20} />
-          <input type="text" placeholder="Zip Code" className=" outline-none w-30 h-4" onChange={handleChange} name="zipcode"  />
-        </div>
-          {errors.zipcode && <p className="text-red-500 text-xs">{errors.zipcode}</p>}
-       </div>    
+
+    {/* Confirm Password */}
+    <div>
+      <div className="flex items-center border rounded p-2 gap-2">
+        <Key color="gray" size={20} />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          name="conPassword"
+          className="w-full outline-none"
+          onChange={handleChange}
+        />
+      </div>
+      {errors.conPassword && <p className="text-red-500 text-xs mt-1">{errors.conPassword}</p>}
     </div>
-  </div>
-   
-    <button type="submit"
-        className="w-full bg-gray-700 text-white rounded p-2 hover:bg-gray-700 shadow-md transition">
-        Register
+
+    {/* Phone Number */}
+    <div>
+      <div className="flex items-center border rounded p-2 gap-2">
+        <Smartphone color="gray" size={20} />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone Number"
+          className="w-full outline-none"
+          onChange={handleChange}
+        />
+      </div>
+      {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+    </div>
+
+    {/* Address Section */}
+    <div className="border rounded shadow p-4 space-y-4">
+      <h3 className="text-lg font-semibold text-gray-700">Address</h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <House color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="House Name"
+              name="home"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.home && <p className="text-red-500 text-xs mt-1">{errors.home}</p>}
+        </div>
+
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <Landmark color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="Street"
+              name="street"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.street && <p className="text-red-500 text-xs mt-1">{errors.street}</p>}
+        </div>
+
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <Landmark color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="City"
+              name="city"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+        </div>
+
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <Landmark color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="State"
+              name="state"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
+        </div>
+
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <LandPlot color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="Country"
+              name="country"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
+        </div>
+
+        <div>
+          <div className="flex items-center border rounded p-2 gap-2">
+            <Code color="gray" size={20} />
+            <input
+              type="text"
+              placeholder="Zip Code"
+              name="zipcode"
+              className="w-full outline-none"
+              onChange={handleChange}
+            />
+          </div>
+          {errors.zipcode && <p className="text-red-500 text-xs mt-1">{errors.zipcode}</p>}
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      className="w-full bg-gray-700 text-white rounded p-2 hover:bg-gray-800 transition-all shadow"
+    >
+      Register
     </button>
-   </form>
- 
+  </form>
 </div>
+
  )
 }
 

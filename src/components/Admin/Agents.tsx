@@ -10,16 +10,12 @@ import { PER_PAGE } from '../../Constants/User';
 import SearchFilter from '../layout/Shared/SearchFilter';
 
 const Agents: React.FC = () => {
-  const sortData = [
-                    {label:'Package', value: 'name'},
-                    {label:'Date',value:'bookingDate'},
-                    {label:'Amout' ,value:'totalAmount'}
-               ];
+ 
   const [agentData, setAgentData] = useState<Agent[]>([]);
   const [count, setCount] = useState<number>(0);
   const { handleBlock, loading } = useBlockActions();
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortData:sortData });
+  const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortData:'' });
 
   useEffect(() => {
     const id = setTimeout(()=> getAgentData(currentPage), 900);
@@ -84,9 +80,6 @@ return (
                 >
                   <Ban color={'white'} size={10} />
                 </button>
-                {/* <button className="bg-gray-100 text-white px-4 m-2 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-200 transition gap-2">
-                  <ViewIcon color={'black'} size={10} />
-                </button> */}
                </>
             )}
           />

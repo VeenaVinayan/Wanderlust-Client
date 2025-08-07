@@ -17,12 +17,21 @@ const AddPackage: React.FC = ()  => {
   const [files, setFiles] = useState<File[]>([]);
   const [ categories, setCategories ] = useState<TCategoryValue[]>([]);
   const agentData = useSelector((state: RootState) => state.agentSliceData);
-  const [ errors, setErrors ] = useState<PackageFormError>({ });
+  const [ errors, setErrors ] = useState<PackageFormError>({});
   const [packageData, setPackageData] = useState<TPackageValue>(PackageInitialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
   const { name, value } = e.target;
-    setPackageData((prev) => ({ ...prev, [name]: value }));
+    if(['longitude','latitude'].includes(name)){
+        setPackageData((prev) => ({
+        ...prev,
+         coordinates: {
+               ...prev.coordinates,
+              [name]: value,
+          },
+        }));
+      }
+      setPackageData((prev) => ({ ...prev, [name]: value }));
   };
   const navigate = useNavigate();
   useEffect (() =>{
@@ -78,12 +87,12 @@ const AddPackage: React.FC = ()  => {
   }; 
   
   const handleSubmit = async(e: React.FormEvent) => {
-    e.preventDefault();
+   e.preventDefault();
    try{  
-     await schema.validate(packageData,{ abortEarly: false});
      console.log("Package Data:", packageData);
      packageData.images= files;
      packageData.agent= agentData.id;
+     await schema.validate(packageData,{ abortEarly: false});
      console.log("Package Data  :::",packageData)
      const response = await addPackage(packageData);
      if(response){
@@ -99,7 +108,9 @@ const AddPackage: React.FC = ()  => {
       const formattedErrors: PackageFormError = {};
       err.inner.forEach((error) => {
         const path = error.path || "";
-
+        if (!formattedErrors.coordinates) {
+          formattedErrors.coordinates = {};
+        }
         if (path.startsWith("itinerary")) {
           const match = path.match(/itinerary\[(\d+)\]\.(\w+)/);
           if (match) {
@@ -116,7 +127,7 @@ const AddPackage: React.FC = ()  => {
           formattedErrors[field] = error.message;
         }
       });
-
+      console.log("Errors::",formattedErrors);
       setErrors(formattedErrors);
     }
   }
@@ -201,13 +212,56 @@ const AddPackage: React.FC = ()  => {
                   min={0}
                   max={15}
                   className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-gray-400" placeholder="Nights" />
-          {errors.night && <p className="text-red-500">{errors.night}</p>}
+            {errors.night && <p className="text-red-500">{errors.night}</p>}
           </div>
          </div>
         </div>
-      <label>upload Images</label>
-      <div className="flex flex-col items-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-blue-500 transition duration-200 cursor-pointer">
-       <label htmlFor="file-upload" className="flex flex-col items-center gap-2 cursor-pointer">
+ <div className="w-full">
+  <label className="block text-gray-700 font-semibold mb-2">Location Coordinates</label>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {/* Latitude */}
+    <div>
+      <label htmlFor="latitude" className="block text-sm font-medium text-gray-600 mb-1">Latitude (-90 to 90)</label>
+      <input
+        type="number"
+        id="latitude"
+        name="latitude"
+        value={packageData.coordinates.latitude}
+        onChange={handleChange}
+        className="w-full px-3 py-2 border rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        min={-90}
+        max={90}
+        step="any"
+        placeholder="Enter latitude"
+      />
+      {errors.coordinates?.latitude && (
+        <p className="text-red-500 text-sm mt-1">{errors.coordinates?.latitude}</p>
+      )}
+    </div>
+    <div>
+      <label htmlFor="longitude" className="block text-sm font-medium text-gray-600 mb-1">Longitude (-180 to 180)</label>
+      <input
+        type="number"
+        id="longitude"
+        name="longitude"
+        value={packageData.coordinates.longitude}
+        onChange={handleChange}
+        className="w-full px-3 py-2 border rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        min={-180}
+        max={180}
+        step="any"
+        placeholder="Enter longitude"
+      />
+      {errors?.coordinates?.longitude && (
+        <p className="text-red-500 text-sm mt-1">{errors.coordinates?.longitude}</p>
+      )}
+    </div>
+   </div>
+  </div>
+  <label className="block text-sm font-medium text-gray-600 mb-1">upload Images</label>
+    <div className="flex flex-col items-center w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-blue-500 transition duration-200 cursor-pointer">
+     <label htmlFor="file-upload" className="flex flex-col items-center gap-2 cursor-pointer">
         <svg
           className="w-10 h-10 text-gray-400"
           xmlns="http://www.w3.org/2000/svg"

@@ -78,11 +78,17 @@ const Category: React.FC = () => {
          setCount(data?.data?.totalCount)
       }
    }
-  const handleCancel = (e: React.FormEvent<HTMLFormElement>) =>{
-   e.preventDefault();
-    setIsCreate(false);
-    setIsEdit(false);
-  } 
+  // const handleCancel = (e: React.FormEvent<HTMLFormElement>) =>{
+  //  e.preventDefault();
+  //   setIsCreate(false);
+  //   setIsEdit(false);
+  // } 
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  setIsCreate(false);
+  setIsEdit(false);
+};
+
   const handleEditChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -307,7 +313,9 @@ const Category: React.FC = () => {
               <Upload className="inline-block w-5 h-5 mr-2" />
               Submit
             </button>
-            <button onClick={handleCancel} className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"> Cancel</button>
+            <button onClick={(e) => handleCancel(e)}
+                  className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300">
+               Cancel</button>
           </form>
         </div>
        )}
@@ -369,7 +377,7 @@ const Category: React.FC = () => {
               Submit
             </button>
 
-            <button onClick={(e : React.MouseEvent<HTMLButtonElement>) =>handleCancel(e)} className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"> Cancel</button>
+            <button onClick={(e) =>handleCancel(e)} className="w-40 ml-7 py-3 justify-center text-md font-semibold text-white bg-black rounded-full shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-pink-300"> Cancel</button>
           </form>
         </Modal>
          )

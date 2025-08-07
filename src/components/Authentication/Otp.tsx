@@ -65,8 +65,7 @@ const Otp : React.FC = () => {
 
   const handleResend = async () => {
     try {
-      // const response = await axiosInstance.post("/resendOtp", { email: formData?.email });
-      const data = await resendOtp(formData!.email);
+     const data = await resendOtp(formData!.email);
       if (data.success) {
         toast.success("OTP resent!");
         setOtp(Array(6).fill(""));

@@ -3,25 +3,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { approveAgent } from "../../services/Admin/Dashboard";
 import { toast } from "react-toastify";
 import { X } from 'lucide-react';
-
-interface Agent {
-  _id:string;  
-  name: string;
-  email: string;
-  phone: string;
-  address?: string;
-  license: string;
-}
+import { TAgentVerification } from '../../types/agentTypes';
 
 const AgentCard: React.FC = () => {
     const [isOpen, setIsOpen ] = useState<boolean>(false);
-    const [agent, setAgent] = useState<Agent>({
+    const [agent, setAgent] = useState<TAgentVerification>({
           _id:'',
           name:'',
           email:'',
           phone:'',
-          address:'',
-          license:''
+          address:{
+             home:'',
+             street:'',
+             city:'',
+             state:'',
+             country:'',
+             zipcode:'',
+          },
+          license:'',
+          isVerified:''
     });
     const navigate = useNavigate();
     const location = useLocation();
@@ -44,29 +44,31 @@ const AgentCard: React.FC = () => {
              toast.error(respone.message);
          }
     }
-    const rejectRequest = async () =>{
-        const respone = await rejectAgentRequest(agent._id);
-        if(respone){
-             toast.success(respone.message);
-              navigate('/admin/adminDashboard/verification');
-        }else{
-            toast.error(respone.message);
-        }
-    }
-
-  return (
+   return (
     <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-300 p-6 flex flex-col md:flex-row items-center md:items-start">
-        <div className="w-full md:w-2/3 flex flex-col justify-center p-6">
-        <h2 className="text-3xl font-bold text-gray-800">{agent.name}</h2>
-        <p className="text-gray-700 text-lg mt-2">
-          📧 <span className="font-medium">{agent.email}</span>
-        </p>
-        <p className="text-gray-700 text-lg mt-2">
-          📞 <span className="font-medium">{agent.phone}</span>
-        </p>
-        <p className="text-gray-700 text-lg mt-2">
-          📍 <span className="font-medium">{agent?.address}</span>
-        </p>
+       
+       <div className="w-full md:w-2/3 flex flex-col justify-center p-6 space-y-4 bg-white rounded-xl shadow-md">
+        <h2 className="text-3xl font-bold text-gray-900">{agent.name}</h2>
+
+        <div className="text-gray-700 text-lg">
+          <p>
+            <span className="font-semibold">Email:</span> {agent.email}
+          </p>
+          <p>
+            <span className="font-semibold">Phone:</span> {agent.phone}
+          </p>
+        </div>
+
+        <div className="text-gray-700 text-lg">
+          <p className="font-semibold mb-1">Address:</p>
+          <div className="ml-4 space-y-1">
+            <p>{agent.address.home}</p>
+            <p>{agent.address.street}</p>
+            <p>{agent.address.city}, {agent.address.state}</p>
+            <p>{agent.address.country} - {agent.address.zipcode}</p>
+          </div>
+        </div>
+    
       <div className="flex space-x-3 p-4">
         <button 
                  className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-md hover:bg-green-900 transition shadow"
@@ -74,12 +76,7 @@ const AgentCard: React.FC = () => {
                  >
               ✅ Verify
         </button>
-        <button 
-                className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600 transition shadow"
-                onClick={rejectRequest}
-             >
-              ❌ Reject
-          </button>
+       
         <button 
                  className="px-4 py-2 bg-gray-500 text-white text-sm font-semibold rounded-md hover:bg-gray-600 transition shadow"
                  onClick={()=> navigate('/admin/adminDashboard/verification')}>

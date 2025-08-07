@@ -125,10 +125,10 @@ export const editCategoryById = async (category : TCategory) =>{
   }
 }
 
-export const fetchPendingAgents = async (page : number) =>{
+export const fetchPendingAgents = async (params:SearchParams) =>{
    try{
         console.log(' Fetch Pending Agent data !!');
-        const response = await apiHelper.fetchPendingAgentData(page);
+        const response = await apiHelper.fetchPendingAgentData(params);
         console.log('Data is ::',response.agentData);
         return response.agentData;  
    }catch(err){

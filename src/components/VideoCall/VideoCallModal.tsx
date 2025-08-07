@@ -11,7 +11,7 @@ const VideoCallModal: React.FC = () => {
     (state: RootState) => state.videoCall
   );
   const userId = useSelector((state: RootState) => state.userData.id);
-  
+  console.log("Modals :",localVideoRef,remoteVideoRef);
   const handleEndCall = () =>{
      console.log(`Calleee :: ${calleeId} || CallerId:: ${callerId}`);
      const to = userId === callerId ? calleeId : callerId;

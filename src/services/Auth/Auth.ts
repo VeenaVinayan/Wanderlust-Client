@@ -46,6 +46,7 @@ export const resetPassword = async(password : string,token: string) =>{
 
 export const  otpVerification = async (otp : string,data: FormDataType | AgentFormDataType, user:string) =>{
      try{
+         console.log("Values :: after verify otp ::",data);
          const res = await apiHelper.otpVerification(otp,data,user);
          return res;
      }catch(err: unknown){
