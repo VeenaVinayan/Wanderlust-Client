@@ -80,7 +80,6 @@ const NotificationBell = () => {
                       className={`p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition ${
                         msg.isRead ? 'text-gray-500' : 'text-gray-800 font-medium'
                       }`}
-                      // onClick={() => markNotificationRead(msg._id)}
                     >
                       <div className="flex flex-col gap-1">
                         <span className="text-sm">{msg.message}</span>

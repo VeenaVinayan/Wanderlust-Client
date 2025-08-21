@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@stripe/react-stripe-js": "^3.6.0",
     "@types/axios": "^0.14.4",
+    "@zegocloud/zego-uikit-prebuilt": "^2.15.1",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",

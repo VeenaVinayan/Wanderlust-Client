@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getCategories, advanceSearch } from "../../services/User/UserServices";
-import {  TPackageAllData } from "../../types/packageTypes";
+import { TPackageDataValue} from "../../types/packageTypes";
 import { TCategoryValue } from "../../types/userTypes";
 import { toast } from "react-toastify";
 import Header from "../../components/layout/Shared/Header";
@@ -12,7 +12,7 @@ import { PER_PAGE } from '../../Constants/User';
 const SearchPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [count, setCount] = useState<number>(0);
-  const [packages, setPackages] = useState<TPackageAllData[]>([]);
+  const [packages, setPackages] = useState<TPackageDataValue[]>([]);
   const [categories, setCategories] = useState<TCategoryValue[]>([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("");
@@ -43,9 +43,9 @@ const SearchPage: React.FC = () => {
       params.append("page", currentPage.toString());
       params.append("perPage", PER_PAGE.toString());
       const queryString = params.toString();
-      const { packages, totalCount } = await advanceSearch(queryString);
+      const { packages, totalPackages } = await advanceSearch(queryString);
       setPackages(packages);
-      setCount(totalCount);
+      setCount(totalPackages);
     } catch (err) {
       toast.error(`Error in fetching packages: ${err}`);
     }
@@ -62,7 +62,7 @@ const SearchPage: React.FC = () => {
 
   const handleClear = () => setFilters({ budget: "", categories: [] });
 
-  const handlePackage = (pkg: TPackageAllData) => navigate("/user/packageDetails", { state: pkg });
+  const handlePackage = (pkg: TPackageDataValue) => navigate("/user/packageDetails", { state: pkg });
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -188,7 +188,7 @@ const SearchPage: React.FC = () => {
             {packages.length > 0 ? (
               packages.map((pkg) => (
                 <div
-                  key={pkg._id}
+                  key={pkg.id}
                   onClick={() => handlePackage(pkg)}
                   className="cursor-pointer bg-white shadow-lg rounded-xl overflow-hidden transition duration-300 hover:scale-105 hover:shadow-2xl"
                 >

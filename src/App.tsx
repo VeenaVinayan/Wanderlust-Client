@@ -4,12 +4,21 @@ import { ToastContainer } from 'react-toastify';
 import { ChatProvider } from './context/chatContext';
 import NotificationProvider from './context/notificationProvider';
 import { NotificationProviderContext } from './context/NotificationContext';
-import IncomingCallModal from './components/VideoCall/IncomingCallModal';
-import VideoCallModal from './components/VideoCall/VideoCallModal';
-
+import OutgoingVideoCall from './components/Agent/OutgoingVideoCall';
+import IncomingVideoCall from './components/VideoCall/CallModal';
+import VideoCallUser  from './components/VideoCall/VideoCall';
+import VideoCallAgent from './components/Agent/VideoCall';
+import { useSelector } from 'react-redux';
+import { RootState } from './app/store';
 const App: React.FC = () => {
  const userId = localStorage.getItem('userId') || ''; 
  console.log('UserId ::',userId);
+ const { showVideoCallUser }  = useSelector((state:RootState)=> state.videoCall);
+ const { showVideoCallAgent } = useSelector((state:RootState) => state.agentVideoCall);
+// const {role} = useSelector((state: RootState) => state.userData);
+
+ console.log('vidoecaallllllll',VideoCallUser);
+ 
  return (
     <>
       <main className="py-10 bg-h-screen">
@@ -18,12 +27,15 @@ const App: React.FC = () => {
            <NotificationProviderContext>
             <NotificationProvider />
              <AppRouter />
-             <IncomingCallModal />
-             <VideoCallModal />
-          </NotificationProviderContext>
+             <OutgoingVideoCall /> 
+             <IncomingVideoCall />
+          { showVideoCallAgent && <VideoCallAgent /> }
+          { showVideoCallUser && <VideoCallUser /> }
+             </NotificationProviderContext>
        </ChatProvider> 
       </main>
     </>
   )
+
 }
 export default App

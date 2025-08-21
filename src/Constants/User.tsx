@@ -15,16 +15,16 @@ export const Columns : Column <Agent | User>[]= [
       label: "Status",
       render: (value: boolean | string) => {
         if (typeof value === "boolean") {
-          const mainClass=`rounded-full px-2 py-1 bg-green-100`
+          const mainClass = `rounded-full px-2 py-1 bg-green-100 `;
           return value ? (
-            <span className={`${mainClass}text-green-800"`}>Active</span>
+            <span className={`${mainClass} text-green-800`}>Active</span>
           ) : (
-            <span className={`${mainClass}text-red-800`}>Inactive</span>
+            <span className={`${mainClass} text-red-800`}>Inactive</span>
           );
         }
         return "Unknown";
-      },
-    }
+     },     
+   }
  ];
 
 export const Columns_Category: Column<TCategory>[] = [
@@ -46,8 +46,7 @@ export const Columns_Category: Column<TCategory>[] = [
     return null;
   },
 },
-
-   { 
+{ 
       key: "status", 
       label: "Status", 
       render: (value) => { 
@@ -83,11 +82,12 @@ export const AgentVerificationColumn : Column<TAgentVerification>[] =[
   { key: "license",
     label:"License",
     render: (value) =>( 
+      typeof value === "string" &&( 
       <img 
            src={value}
            alt={"Certificate"}
            className='h-16 w-16 object-cover rounded-lg'
-      />     
+      /> )    
     ),
   }
 ]
@@ -123,16 +123,14 @@ export const PackageColumn : Column <TPackage>[]=[
     render:(value) =>{ 
       { if(typeof value === "string") { 
          return (
-    //      // <span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
-    //      <span 
-    <span
-          className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
-          title={value}
-    >
-      {value}
-    </span>
+        <span
+              className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
+              title={value}
+        >
+          {value}
+        </span>
    )}
-      } 
+  } 
 }
 },
   { key:"price", label: "Price"},
@@ -186,7 +184,6 @@ export const PackageColumn : Column <TPackage>[]=[
     render:(value) =>{ 
        { if(typeof value === "string") { 
         return (
-          //<span className="text-sm text-gray-700">  {value.split(' ').slice(0, 10).join(' ')}...</span>
           <span
           className="text-sm text-gray-700 line-clamp-2 max-w-[200px] overflow-hidden"
           title={value}
@@ -289,7 +286,7 @@ export const PackageColumn : Column <TPackage>[]=[
     { key: "bookingId",
       label:"Booking ID",
       render: (value) => {
-        return typeof value === "string" ? value : (value?.toString() ?? '__00AA1__');
+        return typeof value === "string" ? value : (value?.toString() ?? '3423590WER1');
       }
     },
     {key: "description", label: "Description" },
@@ -307,9 +304,6 @@ export const PackageColumn : Column <TPackage>[]=[
     },
     { key: "amount", label: "Amount" }, 
   ]
-//  export const AgentPackage : Column<TAgentPackage>[] =[
-//  { key: "packageName", label: "Agent Name"},
-//  { key: "totalCount", label:"Total Packages"},
-//  ];
+
   
  

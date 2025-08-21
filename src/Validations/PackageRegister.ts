@@ -43,6 +43,7 @@ const packageValidationSchema = Yup.object().shape({
         return night === day - 1;
       }
     ),
+  coordinates: Yup.object().shape({   
   latitude:Yup.number()
             .required()
             .min(-90, 'Latitude must be between -90 and 90')
@@ -51,6 +52,7 @@ const packageValidationSchema = Yup.object().shape({
             .required()
             .min(-180, 'Latitude must be between -180 and 180')
             .max(180, 'Latitude must be between -180 and 180'),
+  }),
    price: Yup.number()
     .required("Price is required")
     .min(500, "Price must be at least 500"),
@@ -58,7 +60,7 @@ const packageValidationSchema = Yup.object().shape({
   totalCapacity: Yup.number()
     .required("Total capacity field is required!")
     .min(1, "At least 1 is required!")
-    .max(15, "Maximum capacity is 15"),
+    .max(10, "Maximum capacity is 15"),
 
   itinerary: Yup.array()
     .of(
@@ -68,8 +70,8 @@ const packageValidationSchema = Yup.object().shape({
           .matches(/^[a-zA-Z ]*$/, "Special characters are not allowed")
           .min(5, "Itinerary description must be at least 5 characters long"),
         activities: Yup.string()
-                       .required("Activities are required")
-                       .matches(/^[a-zA-Z0-9 ]*$/, "Special characters are not allowed"),
+                       .required("Activities are required"),
+                      //  .matches(/^[a-zA-Z0-9 ]*$/, "Special characters are not allowed"),
         meals: Yup.array().min(1, "At least one meal option must be selected"),
         stay: Yup.string().required("Stay details are required")
                           .matches(/^[a-zA-Z ]*$/, "Special characters are not allowed"),

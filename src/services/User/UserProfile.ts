@@ -1,10 +1,9 @@
 import axiosInstance  from "../../apiStore/api";
 import { TUserUpdateData, TResetPassword } from "../../types/userTypes";
 
-export const updateProfile = async ( data : TUserUpdateData,id : string) =>{
+export const updateProfile = async ( data : TUserUpdateData,userId : string) =>{
     try{
-        console.log("Inside user update profile  !",id);
-        const response = await axiosInstance.patch(`/user/users/update/${id}`, data);
+         const response = await axiosInstance.patch(`/user/users/update/${userId}`, data);
         console.log('REsponse is ::',response.data);
         if(response.status === 200){
            return response.data;
@@ -15,12 +14,11 @@ export const updateProfile = async ( data : TUserUpdateData,id : string) =>{
 }
 
 
-export const resetPassword = async (password: TResetPassword, id: string) => {
+export const resetPassword = async (password: TResetPassword, userId: string) => {
   try {
-    console.log("Inside password reset service ::", password, id);
-    const response = await axiosInstance.patch(`/user/users/update-password/${id}`, password);
+    const response = await axiosInstance.patch(`/user/users/update-password/${userId}`, password);
     console.log('Response in reset password:', response.data);
-    return response.data; // Return response on success
+    return response.data; 
   } catch (error: unknown) {
     console.log('Error occurred in reset password!', error);
     return error || { message: 'Unexpected error occurred' };

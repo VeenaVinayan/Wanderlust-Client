@@ -69,7 +69,7 @@ export type TCategoryValue = {
     name:string;
 }
 export type TPackageState = {
-    packages: TPackage[];
+    packages: TPackageDataValue[];
     status: "idle" | "succeeded" | "failed" | "loading";
     error: string | null;
 }
@@ -120,3 +120,39 @@ export type TPackageState = {
    stay?: string;
    transfer?: string;
 };
+
+export type TPackageDataValue ={
+    id:string;
+    name:string;
+    agent:{
+        id:string;
+        name:string;
+        email:string;
+        phone:string;
+    },
+    category:string;
+    description:string;
+    images:string[];
+    status:boolean;
+    day:number;
+    night:number;
+    price:number;
+    totalCapacity:number;
+    discount?:number;
+    itinerary:{
+        day:number;
+        description:string;
+        activities:string;
+        meals:string[];
+        stay:string;
+        transfer:string;
+      }[],
+      coordinates?:{
+        latitude:number,
+        longitude:number,  
+    } 
+}
+export type TPackagePack ={
+   packages: TPackageDataValue[];
+   totalPackages:number;
+}

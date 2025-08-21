@@ -57,8 +57,9 @@ return (
                   ...prev,
                   keyword,
                   sortOrder,
-                }))
-              } />   
+                })) }
+              values ={['name','email','createdAt' ]}
+              />   
           </div>    
           <Table
              data={agentDataPending}

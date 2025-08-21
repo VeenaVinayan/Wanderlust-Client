@@ -14,7 +14,7 @@ const Users : React.FC = () => {
  const { handleBlock} = useBlockActions();
  const [count, setCount] = useState<number>(0); 
  const [ currentPage, setCurrentPage] = useState(1);
- const [filters, setFilters] = useState({ keyword: '', sortOrder: '' });
+ const [filters, setFilters] = useState({ keyword: '',sortBy:'', sortOrder: '' });
 
  useEffect(() =>{
    const id = setTimeout(()=> getUserData(currentPage),900);
@@ -26,7 +26,7 @@ const Users : React.FC = () => {
        page,
        perPage : PER_PAGE,
        search : filters.keyword,
-       sortBy:'name',
+       sortBy:filters.sortBy,
        sortOrder: filters.sortOrder,
     });
     console.log('In User Page !!',data);
@@ -51,7 +51,10 @@ const Users : React.FC = () => {
  } 
   return (
     <>
-       <SearchFilter onFilterChange={setFilters} />
+       <div className="bg-white p-5 shadow-lg rounded-xl min-h-[300px] flex flex-col">
+       <SearchFilter onFilterChange={setFilters}
+                     values={['name','createdAt']} 
+       />
        { userData.length >0 ? ( 
         <> 
         <Table<User>
@@ -82,6 +85,7 @@ const Users : React.FC = () => {
         <h2 className='text-3xl font-bold text-center text-blue-600 my-4'> No user avilable </h2>
        )
      }
+     </div>
     </>
   )
 }

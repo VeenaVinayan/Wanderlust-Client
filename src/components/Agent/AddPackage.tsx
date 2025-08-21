@@ -46,7 +46,6 @@ const AddPackage: React.FC = ()  => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
       setFiles(selectedFiles);
-      // Do not update packageData.images here, as it expects string[] (URLs or paths), not File[]
     }
   };
   
@@ -220,8 +219,7 @@ const AddPackage: React.FC = ()  => {
   <label className="block text-gray-700 font-semibold mb-2">Location Coordinates</label>
 
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    {/* Latitude */}
-    <div>
+   <div>
       <label htmlFor="latitude" className="block text-sm font-medium text-gray-600 mb-1">Latitude (-90 to 90)</label>
       <input
         type="number"

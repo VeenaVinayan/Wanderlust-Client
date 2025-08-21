@@ -15,7 +15,7 @@ const BookingPackageData: React.FC = () => {
     const packageId = location.state;
     console.log('Package Id ::',packageId);
     const navigate = useNavigate();
-    const [ filters, setFilters] = useState({keyword:'',sortOrder:''});
+    const [ filters, setFilters] = useState({keyword:'',sortBy:'',sortOrder:''});
 
     const handlePage =( page : number) =>{
           setCurrentPage(page)
@@ -27,7 +27,7 @@ const BookingPackageData: React.FC = () => {
                  page,
                  perPage: PER_PAGE,
                  search: filters.keyword,
-                 sortBy:'tripDate',
+                 sortBy:filters.sortBy,
                  sortOrder: filters.sortOrder,
               });
               console.log('Pacakge data is ::',response);
@@ -43,7 +43,10 @@ const BookingPackageData: React.FC = () => {
     <>
      { bookings.length > 0 ? ( 
        <> 
-       <SearchFilter onFilterChange={setFilters} />
+       <SearchFilter onFilterChange={setFilters}
+                      values={['bookingId','tripDate','createdAt']}      
+        />
+       <div className="overflow-x-auto"> 
         <Table <TBookingResponse>
             data = {bookings}
             columns ={BookingColumnData}
@@ -66,6 +69,7 @@ const BookingPackageData: React.FC = () => {
                 currentPage={currentPage}
             />
           </div>  
+        </div>  
         </> 
         ):(
             <div className="flex items-center justify-center h-60 bg-gray-50 rounded-xl shadow-inner">
@@ -78,6 +82,5 @@ const BookingPackageData: React.FC = () => {
     </>
   )
 }
-
 export default BookingPackageData
 

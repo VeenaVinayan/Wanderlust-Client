@@ -24,15 +24,15 @@ const GenericTable = <T extends { _id: string }>({
   }, [data]);
 
   return (
-   <div className="overflow-x-auto px-4 md:px-10 mt-6">
-   {role && (
-    <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800">
-      {role}
-    </h2>
-   )}
+   <div className="px-4 md:px-10 mt-6">
+   { role && (
+     <h2 className="text-xl md:text-2xl font-bold mb-4 text-gray-800">
+        {role}
+     </h2>
+    )}
    <div className="min-w-full inline-block align-middle">
     <div className="overflow-hidden border border-gray-200 shadow-md rounded-lg">
-      <table className="min-w-full divide-y divide-gray-200 table-auto">
+      <table className="min-w-full divide-y divide-gray-200 table-auto overflow-x-auto sm:overflow-x-visible">
         <thead className="bg-gray-700 text-white">
           <tr>
             {columns.map((col) => (

@@ -1,7 +1,7 @@
 import React, { useState ,useEffect } from "react";
 import { IndianRupee, CalendarDays, Star } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { TPackageAllData } from "../../types/packageTypes";
+import { TPackageDataValue } from "../../types/packageTypes";
 import Header from "../../components/layout/Shared/Header";
 import Footer from '../../components/layout/Shared/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,7 @@ const PackageDetails: React.FC = () => {
   const [ reviews, setReviews] = useState<TReviews[]>([]);
   const [rating, setRating] = useState(0);
   const location = useLocation();
-  const packageData: TPackageAllData = location.state;
+  const packageData: TPackageDataValue = location.state;
   const navigate = useNavigate();
   const toggleDay = (index: number) => {
     setExpandedDay(expandedDay === index ? null : index);
@@ -31,8 +31,8 @@ const PackageDetails: React.FC = () => {
           setReviews(response);
           handleRating(response);
      }
-     if(packageData && packageData._id) {
-         fetchData(packageData._id);
+     if(packageData && packageData.id) {
+         fetchData(packageData.id);
      }
   },[]);
   if (!packageData) {
@@ -221,7 +221,7 @@ return (
   </div>
 </div>
     <button
-            onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent._id})}
+            onClick={() => navigate(`/user/userProfile/chat`,{state:packageData.agent.id})}
             className="group flex items-center gap-2 bg-gray-500 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:from-indigo-600 hover:to-purple-600"
     >
       <span className="font-medium">Chat with Agent</span>

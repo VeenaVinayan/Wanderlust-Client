@@ -110,12 +110,12 @@ const AgentDashboard: React.FC = () => {
           </div>
         </div>
       </header>
-     <main className="flex-1 px-3 sm:px-6 lg:px-5 mt-4">
+      <main className="flex-1 px-3 sm:px-6 lg:px-5 mt-10">
           <div className="min-h-[calc(100vh-220px)] bg-white rounded-xl shadow-md p-4 sm:p-6 lg:p-8">
             <Outlet />
           </div>
-        </main>
-      </div>
+      </main>
+     </div>
     </div>
   );
 };

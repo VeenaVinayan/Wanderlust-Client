@@ -55,8 +55,7 @@ export const editPackage = async (packageData: TPackage, images: File[], deleteI
        throw err;
     }
  };
-
- export const agentDeletePackage = async (packageId : string):Promise<boolean> =>{
+export const agentDeletePackage = async (packageId : string):Promise<boolean> =>{
      try{ 
          const response = await packageApi.deletePackageByAgent(packageId);
          if(response) return true;

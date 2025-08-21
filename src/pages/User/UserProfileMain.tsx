@@ -72,7 +72,7 @@ const UserProfile: React.FC = () => {
               ))}
             </ul>
           </aside>
-          <main className="flex-1 p-4 sm:px-6 lg:px-8 mt-16">
+          <main className="flex-1 p-4 sm:px-6 lg:px-8 mt-10">
             <div className="min-h-[calc(100vh-200px)] bg-white rounded-lg shadow p-4 md:p-6">
               <Outlet />
             </div>

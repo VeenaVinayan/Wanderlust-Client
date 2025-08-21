@@ -1,6 +1,6 @@
 
 import userApi from '../../helper/userApi';
-import { TPackage, TPackageData } from '../../types/packageTypes';
+import { TPackage,  TPackagePack } from '../../types/packageTypes';
 import { TCategoryValue } from '../../types/userTypes';
 import {TBookingType } from '../../types/bookingTypes';
 import { TReview } from '../../types/userTypes';
@@ -26,10 +26,9 @@ export const getPackageData = async(): Promise<TPackage[]> =>{
     }
 }
 
-export const advanceSearch = async (queryString: string): Promise<TPackageData> => {
+export const advanceSearch = async (queryString: string): Promise<TPackagePack> => {
     try {
         console.log("Searching packages with query:", queryString);
-
         const response = await userApi.getPackges(queryString);
         return response; 
     } catch (err) {
@@ -70,10 +69,10 @@ export const getWishlist = async(userId : string) =>{
         throw err;
     }
 }
-export const deleteWishlist = async(id : string) => {
+export const deleteWishlist = async(wishlistId : string) => {
     try{
          console.log('Delete Wishlisst !!');
-         const response = await userApi.deleteWishlist(id);
+         const response = await userApi.deleteWishlist(wishlistId);
          return response;
     }catch(err){
         console.log('Error in Delete Wishlist !',err);

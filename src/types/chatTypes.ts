@@ -39,3 +39,6 @@ export type TChatContextType = {
   addUserToChatList: (user: TChatUser) => void;
   clearChatState: ()=> void;
 }
+export type TVideoCall ={
+   roomId:string;
+}

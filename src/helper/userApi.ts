@@ -1,6 +1,6 @@
 import axiosInstance from "../apiStore/api";
 import { TCategoryValue } from "../types/userTypes";
-import { TPackage ,TPackageData } from '../types/packageTypes';
+import { TPackage ,TPackagePack } from '../types/packageTypes';
 import { TBookingType,TBookingData } from "../types/bookingTypes";
 import { TReviewData, TReview } from '../types/userTypes';
 import { SearchParams } from '../types/agentTypes';
@@ -25,7 +25,7 @@ class UserApi{
             throw Error(`Get Package Error !! ${err}`);
         }
      }
-    async getPackges(queryString : string) : Promise<TPackageData>{
+    async getPackges(queryString : string) : Promise<TPackagePack>{
          try{
               const response = await axiosInstance.get(`/user/advance-search?${queryString}`);
               console.log(' Searched Packages !!',response);
@@ -70,7 +70,7 @@ class UserApi{
     async deleteWishlist(id : string){
          try{
              console.log('Delete Wishlist !');
-             const res = await axiosInstance.delete(`/user/wishlist?id=${id}`);
+             const res = await axiosInstance.delete(`/user/wishlist?wishlistId=${id}`);
              return res.data;
          }catch(err){
             console.log('Error in delete Wishlist ',err);

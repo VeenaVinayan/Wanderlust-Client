@@ -13,8 +13,8 @@ export  const  getChatUsers = async (userId : string,role : string):Promise<TCha
 }
 export const getChatUserDetails = async(userId :string) =>{
      try{
-            const data = await chatApi.getChatUserDetails(userId);
-            return data;
+        const data = await chatApi.getChatUserDetails(userId);
+        return data;
      }catch(err){
          console.log('Error occured :',err);
          throw err;

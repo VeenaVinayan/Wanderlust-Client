@@ -4,7 +4,7 @@ import { RootState } from '../../app/store';
 import { getBookingData } from '../../services/Booking/BookingService';
 import Table from '../common/Table';
 import { BookingColumn } from '../../Constants/User';
-import { TBookingResponse } from '../../types/bookingTypes';
+import { TBookingValue } from '../../types/bookingTypes';
 import SearchFilter from '../layout/Shared/SearchFilter';
 import Pagination from '../layout/Shared/Pagination';
 import { PER_PAGE } from '../../Constants/User';
@@ -12,13 +12,13 @@ import { useNavigate } from 'react-router-dom';
  
 const BookingData : React.FC = () => {
      const [ bookingData, setBookingData ] = useState([]);
-     const [ filters, setFilters ] = useState({ keyword: '', sortOrder: ''});
+     const [ filters, setFilters ] = useState({ keyword: '',sortBy:'', sortOrder: ''});
      const [ count, setCount ] = useState<number>(0);
      const [ currentPage, setCurrentPage] = useState(1);
      const navigate = useNavigate();
      const user = useSelector((state : RootState) => state.userData);
      const handlePage = (page : number) =>{
-         setCurrentPage(page);
+        setCurrentPage(page);
      }
     useEffect(() => {
       if (!user?.id) return; 
@@ -27,7 +27,7 @@ const BookingData : React.FC = () => {
           page,
           perPage: PER_PAGE,
           search: filters.keyword,
-          sortBy: 'tripDate',
+          sortBy: filters.sortOrder,
           sortOrder: filters.sortOrder,
         });
         if (data) {
@@ -40,10 +40,12 @@ const BookingData : React.FC = () => {
     }, [currentPage,filters]);
   return (
     <>
-       <SearchFilter onFilterChange={setFilters} />
+       <SearchFilter onFilterChange={setFilters}
+                      values={['bookingId','tripDate','totalAmount','totalGuest']}
+       />
        {bookingData.length > 0 ? (  
           <> 
-            <Table<TBookingResponse>
+            <Table<TBookingValue>
               data={bookingData}
               columns={BookingColumn}
               role={'Booking'}

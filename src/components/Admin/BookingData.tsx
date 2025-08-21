@@ -11,7 +11,7 @@ const BookingData :React.FC = () => {
   const  [ currentPage, setCurrentPage ] = useState(1);
   const [ booking, setBooking ] = useState([]);
   const [count, setCount] = useState<number>(0)
-  const [ filters, setFilters] = useState({keyword:'',sortOrder:''});
+  const [ filters, setFilters] = useState({keyword:'',sortBy:'',sortOrder:''});
   const navigate = useNavigate();
   
   const handlePage = (page : number) =>{
@@ -23,7 +23,7 @@ const BookingData :React.FC = () => {
                page,
                perPage: PER_PAGE,
                search:filters.keyword,
-               sortBy:'tripDate',
+               sortBy:filters.sortBy,
                sortOrder:filters.sortOrder,
             })
            if(data){
@@ -39,7 +39,9 @@ const BookingData :React.FC = () => {
    <>
       { booking.length > 0 ? ( 
        <>
-        <SearchFilter onFilterChange={setFilters} />
+        <SearchFilter onFilterChange={setFilters} 
+                      values={['bookingId','tripDate','totalGuest','tripStatus','totalAmount']}          
+        />
         <Table <TBookingResponse>
           data={booking}
           columns={BookingColumnData}

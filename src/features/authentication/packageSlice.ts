@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk , PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../apiStore/api';
-import { TPackage, TPackageAllData, TPackageState } from '../../types/packageTypes'; 
+import { TPackageState,TPackageDataValue } from '../../types/packageTypes'; 
 
 const initialState: TPackageState = {
      packages: [],
      status:"idle",
      error:null,
 }
-export const fetchPackages = createAsyncThunk<TPackageAllData[], void, {rejectValue: string}>(
+export const fetchPackages = createAsyncThunk<TPackageDataValue[], void, {rejectValue: string}>(
    "packages/fetchPackages",
   async(_, {rejectWithValue}) =>{
     try{
@@ -27,10 +27,10 @@ const packageSlice = createSlice({
      name:"packages",
      initialState,
      reducers: {
-           updatePackageInStore: (state, action: PayloadAction<TPackage>) => {
-           const index = state.packages.findIndex(pkg => pkg._id === action.payload._id);
+           updatePackageInStore: (state, action: PayloadAction<TPackageDataValue>) => {
+           const index = state.packages.findIndex(pkg => pkg.id === action.payload.id);
            if (index !== -1) {
-               state.packages[index] = action.payload; // 🔹 Update the package in the store
+               state.packages[index] = action.payload; 
              }
        },
      },
@@ -39,7 +39,7 @@ const packageSlice = createSlice({
             .addCase(fetchPackages.pending, (state) =>{
                   state.status = "loading";
             })
-            .addCase(fetchPackages.fulfilled, (state, action: PayloadAction<TPackage[]>) =>{
+            .addCase(fetchPackages.fulfilled, (state, action: PayloadAction<TPackageDataValue[]>) =>{
                   state.status = "succeeded";
                   state.packages = action.payload;
             })

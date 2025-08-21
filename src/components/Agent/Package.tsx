@@ -20,7 +20,7 @@ import { RootState } from '../../app/store';
    const [isCreate, setIsCreate] = useState<boolean>(false); 
    const [packages , setPackages ] = useState<TPackageAllData []>([]);
    const [ count , setCount ] = useState<number>(0);
-   const [ filters, setFilters] = useState({keyword:'',sortOrder:''});
+   const [ filters, setFilters] = useState({keyword:'',sortBy:'',sortOrder:''});
    const navigate = useNavigate();
    const { showConfirm } = useSweetAlert();
    const agent = useSelector((state:RootState) => state.agentSliceData);
@@ -33,7 +33,7 @@ import { RootState } from '../../app/store';
                 page,
                 perPage:PER_PAGE,
                 search: filters.keyword,
-                sortBy: 'name',
+                sortBy: filters.sortBy,
                 sortOrder: filters.sortOrder,
             });
              if(data){
@@ -54,8 +54,7 @@ import { RootState } from '../../app/store';
        if(response){
           toast.success("Successfully delete package !");
           packageData.status = !packageData.status;
-        //  dispatch(updatePackageInStore(packageData));
-       }else{
+     }else{
          toast.error("Delete not working properly !!");
        }
      }
@@ -90,7 +89,9 @@ import { RootState } from '../../app/store';
 
   { packages.length > 0 ? ( 
     <>
-    <SearchFilter onFilterChange={setFilters} /> 
+    <SearchFilter onFilterChange={setFilters} 
+                  values={['name','createdAt','price']}
+    /> 
      <div className="overflow-x-auto">
       <Table<TPackageAllData>
         data={packages}
@@ -122,6 +123,7 @@ import { RootState } from '../../app/store';
         />
       </div> 
     </div> 
+  
     </> 
       ): (
            <div className="flex items-center justify-center h-60 bg-gray-50 rounded-xl shadow-inner">

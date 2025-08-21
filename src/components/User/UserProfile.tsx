@@ -11,8 +11,6 @@ import { setUserData } from '../../features/authentication/userSlice';
 import schema from '../../Validations/UserPasswordReset';
 import editProfileSchema from '../../Validations/EditProfile';
 
-import Header from '../layout/Shared/Header';
-
 const UserProfile : React.FC  = () => {
   const [ user, setUser ] = useState<UserData>();
   const [ isModalOpen , setIsModalOpen] = useState<boolean>(false);
@@ -55,10 +53,8 @@ const UserProfile : React.FC  = () => {
   const handleSubmit =  async (e : FormEvent) =>{
       e.preventDefault();
      try{
-        console.log(" User Id  update profile : ",userInfo.id);
         await editProfileSchema.validate(updateUser, { abortEarly: false });
         const response = await updateProfile(updateUser,userInfo.id);
-        console.log("REsponse after Edit ::",response.data)
         setIsModalOpen(false);
         if(response){
           dispatch(setUserData(response.data));
@@ -67,7 +63,6 @@ const UserProfile : React.FC  = () => {
           toast.error("Error occur while update !");
       }
     }catch(err : unknown){
-        console.log('Error in password reset submission:', err);
         if (err instanceof ValidationError) {
           const newErrors: Record<string, string> = {};
           err.inner.forEach((e) => {
@@ -95,7 +90,6 @@ const passwordResetSubmit = async (e: FormEvent) => {
       }   
     
  } catch (err: unknown) {
-    console.log('Error in password reset submission:', err);
     if (err instanceof ValidationError) {
       const newErrors: Record<string, string> = {};
       err.inner.forEach(e => {
@@ -108,10 +102,9 @@ const passwordResetSubmit = async (e: FormEvent) => {
   }
 };
 
-  return( 
+return( 
     <div className="min-h-screen flex flex-col items-center  bg-gray-100 p-4">
-    <Header />
-    <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl overflow-hidden">
+     <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl overflow-hidden">
         <div className="p-6">
           <div className="space-y-6">
            <div className="flex items-center space-x-4 border-b pb-4">
@@ -146,8 +139,7 @@ const passwordResetSubmit = async (e: FormEvent) => {
               Edit Profile
             </button>
           </div>
-          
-          </div>
+        </div>
       </div>
       <Modal
          isOpen= {isModalOpen}
@@ -194,8 +186,7 @@ const passwordResetSubmit = async (e: FormEvent) => {
   </form>
  </Modal>
 
- {/* Reset password Modal */}
- <Modal
+   <Modal
         isOpen={isPasswordModal}
         closeModal={togglePasswordModal}
         title={"Reset Password"} >
@@ -212,7 +203,6 @@ const passwordResetSubmit = async (e: FormEvent) => {
         />
           {errors.oldPassword && <p className="text-red-500">{errors.oldPassword}</p>}
       </div>
-    
       <div>
         <label className="block text-sm font-medium text-gray-700">New Password</label>
         <input
@@ -225,7 +215,6 @@ const passwordResetSubmit = async (e: FormEvent) => {
           {errors.newPassword && <p className="text-red-500">{errors.newPassword}</p>}
       </div>
 
-      {/* Confirm Password Field */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
         <input
@@ -238,17 +227,16 @@ const passwordResetSubmit = async (e: FormEvent) => {
           {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition"
       >
         Reset Password
       </button>
-    </form>
+      </form>
+    </div>
+   </Modal>
   </div>
- </Modal>
-</div>
 )
 }
 

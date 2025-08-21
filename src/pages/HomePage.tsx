@@ -1,7 +1,5 @@
 import { Link , useNavigate } from "react-router-dom";
 import React , { useEffect, useState } from 'react';
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import { Navigation, Pagination ,Autoplay, EffectCoverflow} from "swiper/modules";
 import { getCategories } from "../services/User/UserServices";
 import { TCategoryValue } from '../types/userTypes';
 import { fetchPackages } from "../features/authentication/packageSlice";
@@ -16,7 +14,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import "../css/video.css";
-import { TPackage } from "../types/packageTypes";
+import { TPackageDataValue } from "../types/packageTypes";
 import Header from '../components/layout/Shared/Header';
 import { addToWishlist } from "../services/User/UserServices";
 import { toast } from 'react-toastify';
@@ -132,7 +130,6 @@ const handleThemeSearch = (categoryId : string) =>{
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         </div>
 
-        {/* Text Section */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-white">
           <h3 className="text-lg font-bold">{category.name}</h3>
         </div>
@@ -149,9 +146,9 @@ const handleThemeSearch = (categoryId : string) =>{
               Explore  Packages Here!
    </h2>
    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-  {packages.map((pkg: TPackage) => (
+  {packages.map((pkg: TPackageDataValue) => (
     <div
-      key={pkg._id}
+      key={pkg.id}
       className="relative bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
     >
       {/* Image Container */}
@@ -165,7 +162,7 @@ const handleThemeSearch = (categoryId : string) =>{
 
         <div 
              className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition"
-             onClick={() => handleWishlist(pkg._id)}>
+             onClick={() => handleWishlist(pkg.id)}>
           <HeartIcon size={24} className="text-red-500" />
         </div>
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col items-center"

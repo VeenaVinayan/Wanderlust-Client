@@ -7,7 +7,8 @@ import agentRegisterReducer from '../features/authentication/AgentSlice';
 import agentDataSlice from '../features/authentication/AgentDataSlice';
 import packageReducer from '../features/authentication/packageSlice';
 import bookingReducer from '../features/authentication/BookingSlice';
-import videoCallReducer from '../features/authentication/videoCallSlice';
+import videoCallReducer from '../features/authentication/Video';
+import agentVideoCall from '../features/authentication/VideoCallAgent';
 
 const persistConfig = {
   key: 'root', 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   packages : packageReducer,
   booking: bookingReducer,
   videoCall: videoCallReducer,
+  agentVideoCall:agentVideoCall,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

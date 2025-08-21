@@ -12,17 +12,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { ValidationError } from 'yup';
 import { getPackageBookingDataValue } from '../../services/Booking/BookingService';
-import { TPackageAllData } from '../../types/packageTypes';
+import {  TPackageDataValue } from '../../types/packageTypes';
 import CancellationPolicy from '../../components/User/CancellationPolicy';
-// import { validateBooking } from '../../services/Booking/BookingService';
-// import { toast } from 'react-toastify';
 
 const Booking : React.FC = ()  => {
-  const [packageValue, setPackageValue ] = useState<TPackageAllData>();
+  const [packageValue, setPackageValue ] = useState<TPackageDataValue>();
   const [totalCapcity, setTotalCapacity ] = useState<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const packageData : TPackageAllData = location.state;
+  const packageData : TPackageDataValue = location.state;
   const {email ,phone} = useSelector((state: RootState) => state.userData);
   let availabilityMap : Record<string,number> ;
   const [ errors, setErrors ] = useState<Record<string, string>>({
@@ -53,8 +51,8 @@ const Booking : React.FC = ()  => {
    }));
       (async () => {
           const today = new Date();
-          if (packageData && packageData._id) {
-            const data : TBookingValidationData= await getPackageBookingDataValue(packageData._id, today);
+          if (packageData && packageData.id) {
+            const data : TBookingValidationData= await getPackageBookingDataValue(packageData.id, today);
             console.log(data);
             if(!data?.tripDate){
                 setTotalCapacity(data.totalCapacity);
@@ -117,14 +115,8 @@ const Booking : React.FC = ()  => {
  try{
      await schema.validate(bookingData, { abortEarly: false })
      console.log('Booking Data : ', bookingData);
-    //  const response = await validateBooking(bookingData);
-    //  if(response.success){
-        navigate('/user/payment', { state: { bookingData, packageValue } });
-    //  }else{
-    //     toast.error('Validation Faild ! ',response.message);
-    //     return;
-    //  }
- }catch (err: unknown) {
+     navigate('/user/payment', { state: { bookingData, packageValue } });
+  }catch (err: unknown) {
   if (err instanceof ValidationError) {
     const newErrors: Record<string, string> = {};
     err.inner.forEach((e) => {

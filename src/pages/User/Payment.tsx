@@ -23,10 +23,15 @@ const Payment: React.FC = () => {
 
   useEffect(() => {
     console.log('Details ::', packageValue, bookingData,user);
+    if(!packageValue || !bookingData || !user) {
+      console.error('Missing packageValue, bookingData, or user in Payment component');
+      return;
+    }
+    console.log('Package Value ::', packageValue);
     const Booking : TBooking ={
           userId:user?.id,
           packageId: packageValue?._id,
-          totalGuest: bookingData?.travellers?.adult + bookingData?.travellers?.children ,
+          totalGuest: bookingData?.travellers?.adult + bookingData?.travellers?.children + bookingData?.travellers?.infant,
           travellers: bookingData?.travellers,
           totalAmount: bookingData?.totalAmount,
           tripDate: bookingData?.tripDate,

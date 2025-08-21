@@ -19,7 +19,7 @@ const UserRoute : React.FC = () =>{
       <>
        <Routes> 
           <Route path="/" element={<HomePage/>} />
-          <Route path="/userProfile" element={<UserProfile/>}>
+           <Route path="/userProfile" element={<UserProfile/>}>
               <Route index element={<User />} />
               <Route path="booking" element={<BookingData/>} />
               <Route path="bookingDetails" element={<BookingDetails/>} />

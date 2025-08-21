@@ -14,7 +14,6 @@ import { cancelBooking } from '../../services/Booking/BookingService';
 import { editReview } from '../../services/User/UserServices';
 import ItineraryPdf from '../../utils/Pdf/ItineraryPdf'; 
 import  InvoicePdf from '../../utils/Pdf/InvoicePdf';
-
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { TPdfProps} from '../../types/packageTypes';
@@ -32,7 +31,6 @@ const BookingDetails: React.FC = () => {
   const location = useLocation();
   const bookingData = location.state;
   const { showConfirm } = useSweetAlert();
-
   useEffect(() => {
       setBookingValue(bookingData);
       console.log('Booking DAta ::',bookingData);
@@ -122,7 +120,7 @@ const handleEditSubmit = async (data: TReview) => {
     toast.success(result);
   }
 };
-  const handleInvoice = async () =>{
+const handleInvoice = async () =>{
     console.log('Download INVoice PDF !!');
     const booking: TBookingPdfProps = {
       title : bookingValue?.packageId.name || 'Package' ,
@@ -198,6 +196,7 @@ const handleEditSubmit = async (data: TReview) => {
           </button>
         
       )}
+     
       </div>
       <div>
          <h2 className="text-2xl font-semibold text-gray-700 mb-4">{bookingValue?.packageId.name}</h2>
@@ -210,14 +209,15 @@ const handleEditSubmit = async (data: TReview) => {
           className="w-full h-full object-cover rounded-xl"
         />
       </div>
-
+     
       <div className="mb-10">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-2">Package Description</h2>
+        <div className="flex flex-col p-4 bg-white shadow-sm border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-800">Package Description</h2>
+        </div>
         <p className="text-gray-600 leading-relaxed">
           {bookingValue?.packageId.description || 'No description available for this package.'}
         </p>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking ID</span>
@@ -226,7 +226,6 @@ const handleEditSubmit = async (data: TReview) => {
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Traveler Count</span>
           <span className="text-lg font-bold">{bookingValue?.totalGuest || 'N/A'}</span>
-        
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Travellers</span>

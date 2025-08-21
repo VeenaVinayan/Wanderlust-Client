@@ -13,8 +13,6 @@ import BookingView from '../components/Admin/BookingView';
 import DashboardData from '../components/Admin/Dashboard';
 import Notification from '../components/Notification/Notification';
 
-//import AgentPackages from '../components/Admin/AgentPackages';
-
 const AdminRoute : React.FC = () =>{
     return(
         <Routes>

@@ -1,22 +1,3 @@
-// import React from "react";
-// import AuthRoute from'./AuthRoute' ;
-// import AdminRoute from './AdminRoute'
-// import UserRoute from './UserRoute';
-// import AgentRoute from './AgentRoute';
-
-
-// const AppRouter : React.FC = () =>{
-//    return(
-//     <>
-//       {AuthRoute}
-//       {AdminRoute}
-//       {UserRoute}
-//       {AgentRoute}
-//     </>
-//    )
-// }
-
-// export default AppRouter;
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthRoute from "./AuthRoute";

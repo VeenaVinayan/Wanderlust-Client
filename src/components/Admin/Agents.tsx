@@ -15,7 +15,7 @@ const Agents: React.FC = () => {
   const [count, setCount] = useState<number>(0);
   const { handleBlock, loading } = useBlockActions();
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortData:'' });
+  const [filters, setFilters] = useState({ keyword: '', sortOrder: '',sortBy:'' });
 
   useEffect(() => {
     const id = setTimeout(()=> getAgentData(currentPage), 900);
@@ -26,7 +26,7 @@ const Agents: React.FC = () => {
     const data = await fetchData('Agent',page, 
       {
         search: filters.keyword,
-        sortBy: 'name',
+        sortBy: filters.sortBy,
         sortOrder: filters.sortOrder,
         page: page,
         perPage: PER_PAGE,
@@ -57,16 +57,19 @@ const Agents: React.FC = () => {
 return (
     <div>
       <SearchFilter
-        onFilterChange={({ keyword, sortOrder }) =>
+        onFilterChange={({ keyword, sortBy,sortOrder }) =>
           setFilters((prev) => ({
             ...prev,
             keyword,
+            sortBy,
             sortOrder,
           }))
         }
+        values={['name','createdAt']}
       />
       {agentData.length > 0 ? (
         <>
+           <div className="overflow-x-auto">
           <Table<Agent>
             data={agentData}
             columns={Columns}
@@ -90,6 +93,7 @@ return (
               handlePage={handlePage}
               currentPage={currentPage}
             />
+          </div>
           </div>
         </>
       ) : (

@@ -11,7 +11,7 @@ import { TBookingAgentResponse } from '../../types/bookingTypes';
 
 const BookingData : React.FC= () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [ filters, setFilters] = useState({keyword:'',sortOrder:''})
+    const [ filters, setFilters] = useState({keyword:'',sortBy:'',sortOrder:''})
     const [ count, setCount ] = useState<number>(0);
     const agent = useSelector((state:RootState) => state.agentSliceData);
     const [ bookingData, setBookingData ] = useState<TBookingAgentResponse []>([]);
@@ -27,7 +27,7 @@ const BookingData : React.FC= () => {
               page,
               perPage:PER_PAGE,
               search:filters.keyword,
-              sortBy:'bookingDate',
+              sortBy:filters.sortBy,
               sortOrder:filters.sortOrder, 
          });  
          if(data){
@@ -42,9 +42,12 @@ const BookingData : React.FC= () => {
 
   return (
     <>
+      <div className="bg-white p-5 shadow-lg rounded-xl min-h-[300px] flex flex-col">
         { bookingData.length > 0 ? (
             <>
-            <SearchFilter onFilterChange={setFilters} />
+            <SearchFilter onFilterChange={setFilters} 
+                          values={['name']}  />
+              <div className="overflow-x-auto">            
               <Table<TBookingAgentResponse>
                 data={bookingData}
                 columns={BookingAgentData}
@@ -67,14 +70,17 @@ const BookingData : React.FC= () => {
                         currentPage={currentPage}
                   />      
              </div>
+            </div>  
             </>
-        ):(
+           ):(
             <div className="flex items-center justify-center h-60 bg-gray-50 rounded-xl shadow-inner">
               <h2 className="text-2xl md:text-3xl font-semibold text-gray-300 tracking-wide">
                 🚫 No Booking Data Available
                </h2>
             </div>
         )}
+        </div>
+      
     </>
   )
 }

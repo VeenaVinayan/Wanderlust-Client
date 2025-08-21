@@ -25,8 +25,7 @@ const Register: React.FC = () => {
   };
   const validateForm = () :boolean  =>{
        const errors: FormError = {};
- // Validations for Name      
-       if(!formData.name.trim()){
+      if(!formData.name.trim()){
            errors.name = 'Name required !'
        }else if(formData.name.length <3){
           errors.name = 'Name must be atlest 3 characters !'
@@ -45,7 +44,7 @@ const Register: React.FC = () => {
       }else if(!/^\d{10}$/.test(formData.phone)){
           errors.phone='Phone number must be 10 digits !';
       }   
-  // Password confirmation
+ 
   if(!formData.password){
       errors.password = 'Password is Required !';
   }

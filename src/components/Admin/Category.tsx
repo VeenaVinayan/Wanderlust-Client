@@ -29,7 +29,7 @@ const Category: React.FC = () => {
   const [ isImageUpdate, setIsImageUpdate ] = useState<boolean>(false);
   const [category, setCategory ] = useState<TCategory[]>([]);
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
-  const [ filters, setFilters ] = useState({keyword:'', sortOrder: ''});
+  const [ filters, setFilters ] = useState({keyword:'',sortBy:'', sortOrder: ''});
   const [ editData, setEditData] = useState({
       _id:'',
       name:'',
@@ -69,20 +69,15 @@ const Category: React.FC = () => {
           page,
           perPage:PER_PAGE, 
           search: filters.keyword,
-          sortBy: 'name',
+          sortBy: filters.sortBy,
           sortOrder : filters.sortOrder,
        }
       );
        if(data){
-         setCategory(data?.data?.data);
+         setCategory(data?.data?.categories);
          setCount(data?.data?.totalCount)
       }
    }
-  // const handleCancel = (e: React.FormEvent<HTMLFormElement>) =>{
-  //  e.preventDefault();
-  //   setIsCreate(false);
-  //   setIsEdit(false);
-  // } 
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
   e.preventDefault();
   setIsCreate(false);
@@ -228,7 +223,9 @@ const Category: React.FC = () => {
       </button>
       { !isCreate && 
       <>
-      <SearchFilter onFilterChange={setFilters} />
+      <SearchFilter onFilterChange={setFilters}
+                    values={['name','createdAt']}
+      />
       <Table<TCategory> 
                 data={category}
                 columns= {Columns_Category}
@@ -325,7 +322,7 @@ const Category: React.FC = () => {
                   isOpen={isModalOpen}
                   closeModal={toggleModal}
                   title="Edit Category"
-           >
+            >
           <form className="space-y-5" onSubmit={handleEditSubmit}>
             <div>
               <label className="block text-gray-600 font-medium mb-1">Name</label>

@@ -3,9 +3,9 @@ import { useSocket } from "../../context/SocketContext";
 import { useChatContext } from "../../context/chatContext";
 import { TMessage,  TMessageSent } from "../../types/chatTypes";
 import { VideoIcon } from "lucide-react";
-import { initiateCall } from "../../features/authentication/videoCallSlice";
-import { useDispatch } from "react-redux";
-import { useWebRTC } from "../../hooks/CustomHooks/useWebRTC";
+import { setVideoCall } from "../../features/authentication/VideoCallAgent";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 interface Props {
    currentUserId: string;
@@ -17,11 +17,10 @@ const ChatBox: React.FC<Props> = ({ currentUserId, selectedUserId }) => {
   const [chatMessages, setMessages] = useState<TMessage[]>([]);
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { makeCall } = useWebRTC();
   const dispatch = useDispatch();
-
+  const agent = useSelector((state:RootState) => state.userData);
   selectedUserId = selectedUser!.id;
-
+  const { role } = useSelector((state:RootState)=> state.userData)
   useEffect(() => {
     setMessages(messages);
   }, [messages]);
@@ -80,12 +79,20 @@ useEffect(() => {
     setText("");
   };
   const lastTen = chatMessages.slice(-15);
+
   const handleCall = () => {
     if(!selectedUser) return;
     console.log("Handle call in ChatBox ----> Handel Call::::", selectedUser.id);
-    dispatch(initiateCall({ calleeId: selectedUser.id ,callerId: currentUserId }));
-    makeCall(selectedUser.id);
-  };
+    dispatch(setVideoCall({
+            userID:selectedUser.id,
+            type:"out-going",
+            callType:"video",
+            roomId:`${Date.now()}`,
+            agentName:agent.name,
+            userName:selectedUser.name
+          }
+          ));
+    };
   const isToday = (someDate: Date) => {
     const today = new Date();
     return (
@@ -103,9 +110,11 @@ useEffect(() => {
     <span className="font-semibold text-sm truncate">
       {selectedUser?.name}
     </span>
-    <div className="ml-auto cursor-pointer" onClick={handleCall}>
-      <VideoIcon size={26} color={"gray"} />
-    </div>
+    { role==="Agent" && ( 
+        <div className="ml-auto cursor-pointer" onClick={handleCall}>
+          <VideoIcon size={26} color={"gray"} />
+        </div>
+    )}
   </div>
   <div className="flex-1 overflow-y-auto p-2 md:p-4 bg-gray-50 text-sm max-h-[calc(100vh-250px)]">
     {lastTen.map((msg, idx) => (

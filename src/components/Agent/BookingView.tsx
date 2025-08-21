@@ -10,6 +10,9 @@ const BookingView : React.FC = () => {
   const [ booking, setBooking]  = useState<TBookingResponse | null>(null);
   const [ isEditing, setIsEditing] = useState<boolean>(false);
   const { showConfirm } = useSweetAlert();
+  const name = booking?.email.split('@')[0]
+                                      ?.replace(/[0-9]/g, '')
+                                      .replace(/^([a-zA-Z])/, (match) => match.toUpperCase());
   const location = useLocation();
   const data : TBookingResponse = location.state;
   console.info('Data :: in views  ',data); 
@@ -30,7 +33,7 @@ const BookingView : React.FC = () => {
     });
    }
   });
-};
+ };
    
  useEffect(() => {
       setBooking(data);
@@ -39,6 +42,7 @@ const BookingView : React.FC = () => {
   <>
   { !booking ?( <p>No Booking data Avilable !!</p> ) : (
    <div className="mx-auto max-w-full sm:max-w-2xl lg:max-w-4xl bg-white border shadow-lg rounded-2xl overflow-hidden">
+    
     <div className="w-full h-48 sm:h-56 lg:h-72 overflow-hidden">
      <img
       src={booking.packageId.images[0]}
@@ -46,8 +50,7 @@ const BookingView : React.FC = () => {
       className="w-full h-full object-cover m-2 transition-transform duration-300 hover:scale-105"
      />
   </div>
-
-  <div className="p-5 sm:p-6 lg:p-8 space-y-6">
+   <div className="p-5 sm:p-6 lg:p-8 space-y-6">
    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
         {booking.packageId.name}
@@ -89,8 +92,7 @@ const BookingView : React.FC = () => {
                 </div> 
               </> 
             )}
-         
-       </div>
+        </div>
     )
   }   
   </div>
@@ -102,10 +104,7 @@ const BookingView : React.FC = () => {
       <p className="flex items-center gap-2">
         <User className="w-4 h-4 text-gray-500" />
         <strong className="whitespace-nowrap">Name:</strong>
-        <span className="truncate">{booking.email.split('@')[0]
-                                      ?.replace(/[0-9]/g, '')
-                                      .replace(/^([a-zA-Z])/, (match) => match.toUpperCase()) 
-                                   } 
+        <span className="truncate">{name                            } 
        </span>
       </p>
       <p className="flex items-center gap-2">
@@ -113,7 +112,6 @@ const BookingView : React.FC = () => {
         <strong>Email:</strong>
         <span className="truncate">{booking.email}</span>
       </p>
-
       <p className="flex items-center gap-2">
         <Phone className="w-4 h-4 text-gray-500" />
         <strong>Phone:</strong>
@@ -163,13 +161,12 @@ const BookingView : React.FC = () => {
     </div>
   </div>
 </div>
-
 </div>
 </div>
-
-   ) }
-    </>
-  )
+)
+}
+</>
+)
 }
 
 export default BookingView
