@@ -23,8 +23,7 @@ const NotificationBell = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   const viewAllNotification = ()=>{
-     console.log(user.role); 
-     if(user.role ==="Admin"){
+    if(user.role ==="Admin"){
         navigate('/admin/adminDashboard/notification');
      }else if(user.role === "Agent"){
        navigate('/agent/agentDashboard/notification');

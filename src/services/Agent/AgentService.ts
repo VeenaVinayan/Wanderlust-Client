@@ -3,22 +3,17 @@ import agentHelper from '../../helper/agentApi';
 import axios from 'axios';
 
 export const uploadCertificate =  async (userId : string, image :File) =>{
-    console.log("Inside  upload certificate !! ",userId,File);
-     try{
+   try{
           const response = await axiosInstance.post('/agent/getPresignedUrl',{
              fileType:image.type
           });
-          console.log(' After upload url !!',response);
-          if(response.status === 200){
-              const { signedUrl, fileKey,publicUrl } = response.data.response;
-              console.log('  url !! :: ',signedUrl, fileKey);
+         if(response.status === 200){
+              const { signedUrl, publicUrl } = response.data.response;
               const res = await axios.put(signedUrl, image, {
                 headers: { "Content-Type": image.type },
              });
-          console.log(' Result : response from S3 :: ',res);  
           if(res.status === 200){
-              console.log("Image upload successfully !!");
-              const result = await axiosInstance.patch(`/agent/upload-certificate/${userId}`,
+             const result = await axiosInstance.patch(`/agent/upload-certificate/${userId}`,
                  {publicUrl});
               if(result.status === 200) return "true";
               else return false;

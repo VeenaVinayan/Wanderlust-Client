@@ -22,7 +22,6 @@ const Wishlist : React.FC = () => {
   },[]); 
 
   const handleDelete =  async (id : string) =>{
-     console.log('Delete !',id);
      const data = await deleteWishlist(id);
      if(data){
          toast.success(data);

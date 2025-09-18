@@ -8,7 +8,6 @@ import { SearchParams } from '../../types/agentTypes';
 
 export const getCategories = async() : Promise<TCategoryValue[]>=> {
     try{
-        console.log('Fetch Category for Landing Page !!'); 
         const data = await userApi.getAllCategories();
         return data;
      }catch(err){
@@ -28,7 +27,6 @@ export const getPackageData = async(): Promise<TPackage[]> =>{
 
 export const advanceSearch = async (queryString: string): Promise<TPackagePack> => {
     try {
-        console.log("Searching packages with query:", queryString);
         const response = await userApi.getPackges(queryString);
         return response; 
     } catch (err) {
@@ -49,9 +47,7 @@ export const stripePayment = async (bookingData : TBookingType ) =>{
 
 export const addToWishlist = async(userId: string,bookingId  : string) => {
      try{
-         console.log('Wishlist :: ',bookingId);
          const res = await userApi.addToWishlist(userId,bookingId);
-         console.log("REsponse in wishlist :: ",res);
          return res;
      }catch(err){
          console.error("error in searching packages !",err);
@@ -60,9 +56,7 @@ export const addToWishlist = async(userId: string,bookingId  : string) => {
 }
 export const getWishlist = async(userId : string) =>{
     try{
-         console.log('Get wishlist !!');
          const data = await userApi.getWishlists(userId);
-         console.log("Data in Get Wishlist ||",data);
          return data;
     }catch(err){
         console.log('Error in get Packages !!');
@@ -71,7 +65,6 @@ export const getWishlist = async(userId : string) =>{
 }
 export const deleteWishlist = async(wishlistId : string) => {
     try{
-         console.log('Delete Wishlisst !!');
          const response = await userApi.deleteWishlist(wishlistId);
          return response;
     }catch(err){
@@ -98,8 +91,7 @@ export const getReview = async(userId: string , packageId:string) =>{
 }
 export const deleteReview = async(reviewId : string) =>{
      try{
-         console.log('Deelte review service !');
-         return await userApi.deleteReview(reviewId);
+        return await userApi.deleteReview(reviewId);
      }catch(err){
         console.log('Error in Delete Review !!');
         throw err;
@@ -107,8 +99,7 @@ export const deleteReview = async(reviewId : string) =>{
 }
 export const getReviews = async (packageId : string) =>{
      try{
-         console.log('Get Review of a package !');
-         return await userApi.getReviews(packageId);
+        return await userApi.getReviews(packageId);
      }catch(err){
          console.log('Error in get Review s ');
          throw err;
@@ -124,8 +115,7 @@ export const getWallet = async( userId : string,params: SearchParams) =>{
 }
 export const editReview = async(data : TReview , reviewId : string) =>{
      try{
-          console.log('Edit Review Service !');
-          return await userApi.editReview(data,reviewId);
+        return await userApi.editReview(data,reviewId);
      }catch(err){
         console.log('Error in Edit Review !!');
         throw err;
@@ -134,7 +124,6 @@ export const editReview = async(data : TReview , reviewId : string) =>{
 
 export const getAgentData = async(agentId : string) =>{
      try{
-         console.log("Agent Id:",agentId);
          const data = await userApi.getAgentData(agentId);
          return data;
      }catch(err){

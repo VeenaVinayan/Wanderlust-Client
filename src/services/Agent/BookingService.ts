@@ -2,9 +2,7 @@ import bookingApi from '../../helper/bookingApi';
 import { SearchParams } from '../../types/agentTypes';
 
 export const getBookingData = async(agentId : string, params: SearchParams) => {
-        console.log('Booking Data of Agent :: in service ');
         const data = await bookingApi.getAgentBookingData(agentId,params);
-        console.log("Data Booking of agent ::",data);
         return data;
 }
 

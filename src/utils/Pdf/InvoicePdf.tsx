@@ -101,7 +101,7 @@ const InvoicePdf: React.FC<TBookingPdfProps> = (booking : TBookingPdfProps ) => 
   const adultPrice = booking.adult * booking.price;
   const total = adultPrice + childPrice;
   const invoiceNumber = generateInvoiceNumber();
-  const billingDate = new Date(booking.bookingDate).toLocaleDateString();
+  const billingDate = new Date(booking.bookingDate).toLocaleDateString("en-IN");
   return (
    
   <Document>
@@ -134,8 +134,8 @@ const InvoicePdf: React.FC<TBookingPdfProps> = (booking : TBookingPdfProps ) => 
       <Text style={styles.text}><Text style={styles.label}>Title:</Text> {booking.title}</Text>
       <Text style={styles.text}><Text style={styles.label}>Duration:</Text> {booking.day} Days / {booking.night} Nights</Text>
       <Text style={styles.text}><Text style={styles.label}>Price:</Text> ₹{booking.price}</Text>
-      <Text style={styles.text}><Text style={styles.label}>Trip Date:</Text> {new Date(booking.tripDate)?.toLocaleDateString() || ''}</Text>
-      <Text style={styles.text}><Text style={styles.label}>Booking Date:</Text> {new Date(booking.bookingDate)?.toLocaleDateString() || ''}</Text>
+      <Text style={styles.text}><Text style={styles.label}>Trip Date:</Text> {new Date(booking.tripDate)?.toLocaleDateString("en-IN") || ''}</Text>
+      <Text style={styles.text}><Text style={styles.label}>Booking Date:</Text> {new Date(booking.bookingDate)?.toLocaleDateString("en-IN") || ''}</Text>
     </View>
 
     <View style={styles.section}>

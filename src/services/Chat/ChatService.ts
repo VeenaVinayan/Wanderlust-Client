@@ -3,7 +3,6 @@ import { TChatUser } from '../../types/chatTypes';
 
 export  const  getChatUsers = async (userId : string,role : string):Promise<TChatUser[] | null >=>{
     try{
-         console.log("User Id ::", userId);
          const  users  = await chatApi.getChatUsers(userId,role);
          return users;
     }catch(err){

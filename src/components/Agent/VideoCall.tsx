@@ -17,9 +17,6 @@ function AgentVideoCall() {
   const { socket } = useSocket();
   useEffect(() => {
     if (!roomIdAgent) return;
-
-    console.log("🎥 AgentVideoCall component mounted with room:", roomIdAgent);
-
     const appID = Number(import.meta.env.VITE_APP_ZEGOCLOUD_APP_ID);
     const serverSecret = import.meta.env.VITE_APP_ZEGOCLOUD_SERVER_SECRET;
 
@@ -34,7 +31,6 @@ function AgentVideoCall() {
     const zp = ZegoUIKitPrebuilt.create(kitToken);
 
     const handleLeave = () => {
-      console.log("📴 Agent leaving call room.");
       zp.destroy();
       dispatch(setShowVideoCall(false));
       dispatch(setRoomId(null));
@@ -60,8 +56,6 @@ function AgentVideoCall() {
     socket?.on("user-left", handleLeave);
 
     return () => {
-      console.log("🧹 Cleaning up AgentVideoCall...");
-    
       socket?.off("user-left", handleLeave);
       zp.destroy();
     };

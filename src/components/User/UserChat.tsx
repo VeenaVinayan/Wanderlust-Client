@@ -13,8 +13,7 @@ const UserChat: React.FC = () => {
   const agentId = location.state;
   useEffect(() => {
     const init = async () => {
-      console.log(`SelectedUser --->${selectedUser} and Current Used Id :::${currentUserId}`)
-      if (agentId) {
+       if (agentId) {
         const res = await getChatUserDetails(agentId);
         if (res?.data) {
           const user: TChatUser = {

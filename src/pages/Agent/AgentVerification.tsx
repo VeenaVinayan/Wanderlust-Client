@@ -11,7 +11,6 @@ import { useLocation } from "react-router-dom";
 const  LicenseUpload : React.FC = () => {
   const location = useLocation();
   const data = location.state; 
-  console.log('Agent Verification ::',data);
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const agentData = useSelector((state: RootState) => state.agentSliceData);
@@ -25,7 +24,6 @@ const  LicenseUpload : React.FC = () => {
       toast.error("Image size exceeds 2 MB");
       return;
     }
-    console.log("Image size:", fileSizeInMB.toFixed(2), "MB");
      setFile(file);
      setImagePreview(URL.createObjectURL(file));
   }

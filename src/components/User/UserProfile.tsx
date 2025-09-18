@@ -79,7 +79,6 @@ const passwordResetSubmit = async (e: FormEvent) => {
   try {
     await schema.validate(password, { abortEarly: false });
     const res = await resetPassword(password, userInfo.id);
-    console.log("REsponse is ::",res);
     if (res?.success) {
       toast.success(res.message);
       setErrors({});

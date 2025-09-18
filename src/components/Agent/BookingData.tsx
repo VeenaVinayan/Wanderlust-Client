@@ -21,7 +21,6 @@ const BookingData : React.FC= () => {
     }
     const navigate = useNavigate();
     useEffect( () =>{
-         console.log("Booking Agent daata .....");
          const fetchData = async(page: number) =>{
          const data = await getBookingData(agent.id,{
               page,
@@ -32,8 +31,7 @@ const BookingData : React.FC= () => {
          });  
          if(data){
             setBookingData(data.data);
-            console.log('Booking Data ::',bookingData);
-            setCount(data.totalCount);
+             setCount(data.totalCount);
         }
       }  
       const id = setTimeout(()=>  fetchData(currentPage),900);

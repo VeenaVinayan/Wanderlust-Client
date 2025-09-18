@@ -9,6 +9,10 @@ import NotificationBell from "../../components/Notification/NotificationBell";
 import { RootState } from "../../app/store";
 import { logoutUser } from "../../services/Auth/Auth";
 import { toast } from "react-toastify";
+import {
+  LayoutDashboard, Users, Package2,
+  MessageCircle
+} from 'lucide-react';
 const AgentDashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -25,7 +29,12 @@ const AgentDashboard: React.FC = () => {
       console.error('Logout failed');
     } 
  };
-
+ const navItems = [
+    { to: 'view', label: 'Dashboard', icon: LayoutDashboard },
+    { to: 'bookingData', label: 'Bookings', icon: Users },
+    { to: 'package', label: 'Packages', icon: Package2 },
+    { to: 'chat', label: 'Chat', icon: MessageCircle },
+   ];
   return (
     <div className="flex min-h-screen bg-gray-100">
      <aside
@@ -37,40 +46,31 @@ const AgentDashboard: React.FC = () => {
             Wanderlust
           </h1>
         </div>
-        <nav className="flex-1 p-4">
-          <ul className="space-y-4">
-            <NavLink
-              to="/agent/agentDashboard"
-              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
-            >
-              Dashboard
-            </NavLink>
-            <NavLink
-              to="bookingData"
-              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
-            >
-              Bookings
-            </NavLink>
-            <NavLink
-              to="package"
-              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
-            >
-              Packages
-            </NavLink>
-            <NavLink
-              to="chat"
-              className="block p-3 bg-emerald-200 text-gray-600 hover:bg-blue-100 rounded-lg font-semibold"
-            >
-              Chats
-            </NavLink>
+        <nav className="flex-1 space-y-2 overflow-y-auto">
+          { navItems.map(({ to,label, icon:Icon}) =>(
+             <NavLink 
+                  key={to}
+                  to={to}
+                  className={({isActive}) => `="w-full block m-2 bg-emerald-200 text-gray-600  rounded-lg font-semibold  ${
+                    isActive ? 'bg-teal-500' : 'hover:bg-gray-200'
+                  }`
+                }
+                  onClick={() =>setIsSidebarOpen(false)}
+                  >
+                    <div className="flex flex-row ">
+                       <Icon className="w-5 h-5 m-4" />
+                       <span className="text-center p-2">{label}</span>
+                    </div>
+                  </NavLink>
+          ))}
+          </nav>
             <button
               onClick={handleLogout}
-              className="w-full block p-3 bg-emerald-200 text-gray-600 hover:bg-red-100 rounded-lg font-semibold text-left"
+              className="block m-2 p-3 bg-emerald-200 text-gray-600 hover:bg-red-100 rounded-lg font-semibold"
             >
               ⚙️ Logout
             </button>
-          </ul>
-        </nav>
+         
       </aside>
       {isSidebarOpen && (
         <div

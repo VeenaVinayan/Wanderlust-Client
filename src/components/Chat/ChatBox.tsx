@@ -69,7 +69,6 @@ useEffect(() => {
   };
  },[socket, selectedUserId, currentUserId]);
  const sendMessage = () => {
-    console.log(`Message Sent ! sender :: ${currentUserId} --> REceiver :: ${selectedUser!.id}`)
     const msg: TMessageSent = {
       sender: currentUserId,
       receiver: selectedUser!.id,
@@ -82,8 +81,7 @@ useEffect(() => {
 
   const handleCall = () => {
     if(!selectedUser) return;
-    console.log("Handle call in ChatBox ----> Handel Call::::", selectedUser.id);
-    dispatch(setVideoCall({
+     dispatch(setVideoCall({
             userID:selectedUser.id,
             type:"out-going",
             callType:"video",

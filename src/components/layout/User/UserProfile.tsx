@@ -54,9 +54,7 @@ const UserProfile : React.FC  = () => {
   const handleSubmit =  async (e : FormEvent) =>{
       e.preventDefault();
      try{
-        console.log(" User Id  update profile : ",userInfo.id);
         const response = await updateProfile(updateUser,userInfo.id);
-        console.log("REsponse after Edit ::",response.data)
         setIsModalOpen(false);
         if(response){
           dispatch(setUserData(response.data));
@@ -73,7 +71,6 @@ const passwordResetSubmit = async(e: FormEvent) =>{
        e.preventDefault();
        try{
             await schema.validate(password,{abortEarly: false});
-            console.log('Form Submitted Successfully !')
             const res = await resetPassword(password,userInfo.id);
             if(res){
                toast.success("Password successfully reset !");
@@ -83,8 +80,7 @@ const passwordResetSubmit = async(e: FormEvent) =>{
                toast.error("Pasword Invalid !");
             }
        }catch(err : unknown){
-         console.log('Error in ',err);
-         if( err instanceof ValidationError){
+          if( err instanceof ValidationError){
             const newErrors: Record<string, string> = {};
             err.inner.forEach((e) =>{
                 newErrors[e.path as string] = e.message;

@@ -5,7 +5,7 @@ import { TBookingType,TBookingData } from "../types/bookingTypes";
 import { TReviewData, TReview } from '../types/userTypes';
 import { SearchParams } from '../types/agentTypes';
 
-class UserApi{
+class User{
     async getAllCategories(): Promise<TCategoryValue[]> {
        try{
           const { data } = await axiosInstance.get('/user/category');
@@ -16,9 +16,7 @@ class UserApi{
     }
     async getPackagesByCategory(): Promise<TPackage[]> {
         try{
-            console.log('Error in get Packages :::');
             const respone = await axiosInstance.get(`/user/packages-category`);
-            console.log("REsponse is ::",respone.data.packages);
             return respone.data.packages;
         }catch(err : unknown){
             console.log('Error');
@@ -28,8 +26,7 @@ class UserApi{
     async getPackges(queryString : string) : Promise<TPackagePack>{
          try{
               const response = await axiosInstance.get(`/user/advance-search?${queryString}`);
-              console.log(' Searched Packages !!',response);
-             return response.data.data;
+              return response.data.data;
          }catch(err){
             console.error('Error in Stripe Payment:', err);
              throw Error('Error in get Packages !');
@@ -38,8 +35,6 @@ class UserApi{
     async stripePayment(bookingData : TBookingType) {
         try{
             const response = await axiosInstance.post('/user/stripe-payment', bookingData);
-            console.log('Booking Response:', response.data);
-            console.log('Booking URL:', response.data.data);
             return response.data.data;
         }catch(err : unknown){
             console.error('Error in Stripe Payment:', err);
@@ -48,9 +43,7 @@ class UserApi{
     }
     async addToWishlist(userId: string,packageId : string){
          try{
-             console.log(' Wishlist in api helper !!');
              const response = await axiosInstance.post(`/user/wishlist`,{userId,packageId});
-             console.log(' REsult in wishlist ::',response.data.message);
              return response.data.message;
          }catch(err){
             console.log('Error in add to wishlist:: ',err);
@@ -59,7 +52,6 @@ class UserApi{
     }
     async getWishlists(userId : string){
          try{
-             console.log('Get Wishlist !!');
              const res = await axiosInstance.get(`/user/wishlist?userId=${userId}`);
              return res.data.data;
          }catch(err){
@@ -69,7 +61,6 @@ class UserApi{
     }
     async deleteWishlist(id : string){
          try{
-             console.log('Delete Wishlist !');
              const res = await axiosInstance.delete(`/user/wishlist?wishlistId=${id}`);
              return res.data;
          }catch(err){
@@ -79,7 +70,6 @@ class UserApi{
     }
     async addReview(data :TReview , packageId : string, userId: string){
          try{
-             console.log('Add review Helper !!');
              const reviewData : TReviewData ={
                 review : data.review,
                 rating : data.rating,
@@ -95,9 +85,7 @@ class UserApi{
     }
     async getReview(userId : string ,packageId : string ){
          try{
-             console.log('Get Review data !');
              const data = await axiosInstance.get(`/user/review?userId=${userId}&packageId=${packageId}`);
-             console.log('Review DAta ::',data.data.data);
              return data.data.data;
          }catch(err){
              console.log('Error in get Review :',err);
@@ -107,7 +95,6 @@ class UserApi{
     async deleteReview(reviewId : string){
         try{
                 const response = await axiosInstance.delete(`/user/review?reviewId=${reviewId}`);
-                console.log('Result after Delete Review ::',response);
                 return response.data.success;
         }catch(err){
              console.log('Error in Delete Review !!');
@@ -117,7 +104,6 @@ class UserApi{
     async getReviews(packageId : string){
         try{
              const response = await axiosInstance.get(`/user/reviews/${packageId}`);
-             console.log('DAta reviews ::',response.data.data);
              return response.data.data;
         }catch(err){
             console.log('Error in Get Reviews ',err);
@@ -126,9 +112,7 @@ class UserApi{
     }
     async getWallet (userId : string,params : SearchParams){
         try{
-             console.log("User ID :: ", userId);
              const data = await axiosInstance.get(`/user/wallets/${userId}`,{params});
-             console.log("Data from ::",data.data.data);
              return data.data.data;
         }catch(err){
             console.log('Error in Wallet');
@@ -137,9 +121,7 @@ class UserApi{
     }
     async editReview(data : TReview, reviewId: string){
         try{
-            console.log('Edit Review !!',data,reviewId);
             const response = await axiosInstance.patch(`/user/reviews/${reviewId}`,data);
-            console.log('Response in Edit Review ::',response.data);
             return response.data.message;
         }catch(err){
             console.log('Error in Edit Review !!');
@@ -152,7 +134,7 @@ class UserApi{
             //const response = await axiosInstance.get('/bookings/validate',{bookingData});
            // return response.data;
         }catch(err){
-            console.log('Error in Validate Booking');
+            console.error('Error in Validate Booking');
             throw err;
         }
     } 
@@ -168,4 +150,4 @@ class UserApi{
     
 }
 
-export default new UserApi();
+export default new User();

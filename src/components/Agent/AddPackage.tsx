@@ -88,11 +88,9 @@ const AddPackage: React.FC = ()  => {
   const handleSubmit = async(e: React.FormEvent) => {
    e.preventDefault();
    try{  
-     console.log("Package Data:", packageData);
      packageData.images= files;
      packageData.agent= agentData.id;
      await schema.validate(packageData,{ abortEarly: false});
-     console.log("Package Data  :::",packageData)
      const response = await addPackage(packageData);
      if(response){
        toast.success("Package created Successfully !!");
@@ -103,7 +101,6 @@ const AddPackage: React.FC = ()  => {
      }
    }catch (err) {
     if (err instanceof ValidationError) {
-      console.log('Error in package Add ::',err)
       const formattedErrors: PackageFormError = {};
       err.inner.forEach((error) => {
         const path = error.path || "";
@@ -126,15 +123,13 @@ const AddPackage: React.FC = ()  => {
           formattedErrors[field] = error.message;
         }
       });
-      console.log("Errors::",formattedErrors);
-      setErrors(formattedErrors);
+        setErrors(formattedErrors);
     }
   }
 }
  const cancelHandleClick = (e: React.FormEvent) =>{
        e.preventDefault();
-       console.log('Handle Click !!');
-  }
+    }
   return (
     <div className="max-w-3xl mx-auto bg-gray-50 p-6 rounded-2xl shadow-lg mt-10">
      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Add Package</h2>

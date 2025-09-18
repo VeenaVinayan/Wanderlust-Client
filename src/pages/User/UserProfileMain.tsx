@@ -15,7 +15,7 @@ import { RootState } from "../../app/store";
 
 const UserProfile: React.FC = () => {
   const navItems = [
-    { name: "Profile", icon: <FaUser />, to: "." },
+    { name: "Profile", icon: <FaUser />, to: "profile" },
     { name: "Wallet", icon: <FaWallet />, to: "wallet" },
     { name: "Booking", icon: <FaBook />, to: "booking" },
     { name: "Chat", icon: <FaComment />, to: "chat" },

@@ -218,11 +218,7 @@ export const PackageColumn : Column <TPackage>[]=[
        label:"Trip Date",
         render: (value) => {
           const date = new Date(value);
-          return date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          });
+          return date.toLocaleDateString("en-IN");
         },
       },
      {key:"email", label:"Email"},
@@ -249,11 +245,7 @@ export const PackageColumn : Column <TPackage>[]=[
        label:"Trip Date",
         render: (value) => {
           const date = new Date(value as string | number | Date);
-          return date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          });
+          return date.toLocaleDateString("en-IN");
         },
       },
      {key:"email", label:"Email"},
@@ -295,7 +287,7 @@ export const PackageColumn : Column <TPackage>[]=[
       label: "Transaction Date",
       render: (value) => {
         const date = new Date(value);
-        return date.toLocaleDateString("en-US", {
+        return date.toLocaleDateString("en-IN", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",

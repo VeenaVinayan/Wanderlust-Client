@@ -9,7 +9,6 @@ import axiosInstance from '../../apiStore/authApi';
 
 const Navbar: React.FC = () => {
   const userInfo = useSelector((state: RootState) => state.userData);
-  console.log("User Data ::: ",userInfo)
   const [user, setUserInfo] = useState<UserData>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();

@@ -43,7 +43,6 @@ const AgentRegister :React.FC = () => {
   const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
     try{
-         console.log('Agent Registration Response : ', formData);
          await AgentValidation.validate(formData, {abortEarly :false});
          const response = await registerUser(formData.email);
          if(response.success){

@@ -31,7 +31,6 @@ export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode 
  },[userId, role, chatUsers.length]);
 
  const selectUser = async (user: TChatUser) => {
-    console.log(`Sender ::  ${id} - Receiver :: ${user.id}`);
     setSelectedUser(user);
     const data = await getMessages(id, user.id,role);
     setChatUsers((prev) => (
@@ -50,7 +49,6 @@ export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode 
   });
 };
   const clearChatState = () =>{
-     console.log("Inside clear chat state..... in context...")
      setChatUsers([]);
      setMessages([])
  }

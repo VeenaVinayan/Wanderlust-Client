@@ -11,9 +11,8 @@ export const fetchPackages = createAsyncThunk<TPackageDataValue[], void, {reject
    "packages/fetchPackages",
   async(_, {rejectWithValue}) =>{
     try{
-          const response = await axiosInstance.get('/user/packages');
-          console.log("Data Values ::",response.data.data);
-          return response.data.data;
+          const { data } = await axiosInstance.get('/user/packages');
+          return data.packages;
      }catch(error: unknown){
          let errorMessage = "Failed to fetch packages";
          if (typeof error === "object" && error !== null && "message" in error) {

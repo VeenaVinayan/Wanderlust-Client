@@ -6,8 +6,7 @@ const useBlockActions = () => {
   const [ loading, setLoading ] = useState(false);
 
   const handleBlock = async(id:string,role :string, onSuccess: () => void) =>{
-        console.log('Handle Block !!');
-        Swal.fire({
+       Swal.fire({
             title:"Are you sure to block the User ?",
             icon:"question",
             showCancelButton: true,

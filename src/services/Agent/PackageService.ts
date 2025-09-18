@@ -5,16 +5,12 @@ import { TSignedUrl } from "../../types/agentTypes";
 
 export const addPackage =  async (packageData : TPackageValue) =>{
     try{
-        console.log('Package Details ::',packageData);
         const imageTypes = packageData.images.map((image) => String(image.type));
-        console.log("Image types:", imageTypes);
         const{ data } = await packageApi.getSignedUrl(imageTypes);
         const urls = data.map((value: TSignedUrl) => value.signedUrl);
         const result = await packageApi.uploadToS3(urls,packageData.images,imageTypes)
         if(result) {
-            console.log('Result from S3:: ',result);
             const newUrls = data.map(((url:TSignedUrl) => url.publicUrl));
-            console.log('Public Urls ::',newUrls);
             packageData.images = newUrls;
             const packages: TPackageUpload = { ...packageData, images: newUrls };
             const response =  packageApi.addPackage(packages);
@@ -22,18 +18,16 @@ export const addPackage =  async (packageData : TPackageValue) =>{
         }
     }catch(err){
         console.log('Error in add package !!',err);
+        throw err;
     }
 }
 export const getCategories = async ():Promise<TCategoryValue[]> =>{
-    console.log('Get Categories ....');
     const response = await packageApi.getCategories();
     return response;
 }
 export const editPackage = async (packageData: TPackage, images: File[], deleteImage : string[]): Promise<string> => {
     try {
-       console.log(" Package Data in service ::",packageData,images);  
        const imageTypes = images.map((image) => String(image.type));
-       console.log("Image Types :: ",imageTypes)
        if(deleteImage.length >0){
         await  packageApi.deleteS3Image(deleteImage);
       }

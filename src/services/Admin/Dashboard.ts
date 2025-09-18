@@ -3,10 +3,10 @@ import { PER_PAGE } from '../../Constants/User';
 import { DataResponse } from "../../types/userTypes";
 import { TCategory, TCategoryData , TCategoryValue} from '../../types/categoryTypes';
 import axios from 'axios';
-import apiHelper from "../../helper/apiHelper";
+import Helper from "../../helper/apiHelper";
 import { TPackageData } from "../../types/packageTypes";
 import { SearchParams } from '../../types/agentTypes';
-import packageApi from "../../helper/packageApi";
+import packages from "../../helper/packageApi";
 
 export const fetchData = async (user: string,page:number,params: SearchParams): Promise< DataResponse | null> => {
   try {
@@ -20,17 +20,14 @@ export const fetchData = async (user: string,page:number,params: SearchParams): 
 export const adminLogout = async (): Promise<void> =>{
    localStorage.removeItem("accessToken");
    localStorage.removeItem("userId");
-   console.log('Inside logout from service !!');
 }
-
-export const blockOrUnblock = async (id: string, role : string)=>{
-    console.log('Block or Unblock !');
+export const blockOrUnblock = async (userId: string, role : string)=>{
    try{
         const response = await axiosInstance({
         method:'patch',
         url:'/admin/blockOrUnblock',
              data:{
-              id,
+              userId,
               role
             }
         })
@@ -41,7 +38,7 @@ export const blockOrUnblock = async (id: string, role : string)=>{
 }
 export const createCategory = async (category: TCategoryData) => {
   try {
-    const isExist = await apiHelper.isExistCategory(category.name);
+    const isExist = await Helper.isExistCategory(category.name);
     if (!isExist) return false;
     if (category.image && category.image instanceof File)
       console.log("Category details ::", category.image.type, category.name, category.description);
@@ -50,14 +47,10 @@ export const createCategory = async (category: TCategoryData) => {
     });
 
     const { signedUrl, publicUrl } = data.response;
-    console.log("Signed URL:", signedUrl);
-
     const uploadResponse = await axios.put(signedUrl, category.image, {
       headers: { "Content-Type": category.image.type },
     });
-    console.log('Response after upload ::',uploadResponse.status)
    if(uploadResponse.status !== 200) {
-      console.error("Failed to upload image to S3.");
       return false;
     }
      const categoryValue : TCategoryValue ={
@@ -84,9 +77,7 @@ export const  fetchAllCategory = async (params: SearchParams) => {
     }
  }
  export const deleteCategoryById = async (categoryId : string) =>{
-       console.log('Delete category !!');  
-       const res = await apiHelper.deleteCategory(categoryId); 
-       console.info(' Response :: ',res);
+       const res = await Helper.deleteCategory(categoryId); 
        if(res){
           return true;
        }else{
@@ -95,7 +86,6 @@ export const  fetchAllCategory = async (params: SearchParams) => {
   } 
   export const uploadImageCategoryEdit = async (image : File) : Promise<string>=>{
       try{
-          console.log("Category :: Values  ",image);
           const  { data } = await axiosInstance.post("/admin/getPresignedUrl", {
           fileType:image.type 
             })
@@ -104,8 +94,7 @@ export const  fetchAllCategory = async (params: SearchParams) => {
                          headers: {"Content-Type":image.type}
           });
         if(uploadResponse.status !==200){
-             console.error("Failed to Upload Image to S3 !");
-         return "";
+          return "";
       }
       return publicUrl;
      }catch(err){
@@ -116,7 +105,6 @@ export const  fetchAllCategory = async (params: SearchParams) => {
    
 export const editCategoryById = async (category : TCategory) =>{
   try{ 
-    console.log("Edit Category!!");
     const res = await axiosInstance.patch(`/admin/category-edit/${category._id}`,category);
     return res.status === 200 ? res : false;
   }catch(err){
@@ -127,10 +115,8 @@ export const editCategoryById = async (category : TCategory) =>{
 
 export const fetchPendingAgents = async (params:SearchParams) =>{
    try{
-        console.log(' Fetch Pending Agent data !!');
-        const response = await apiHelper.fetchPendingAgentData(params);
-        console.log('Data is ::',response.agentData);
-        return response.agentData;  
+        const { agentData } = await Helper.fetchPendingAgentData(params);
+        return agentData;  
    }catch(err){
         console.error('Error in Fetch Pending Data !!',err);
         return null;
@@ -139,7 +125,7 @@ export const fetchPendingAgents = async (params:SearchParams) =>{
 
 export const approveAgent = async(agentId : string) =>{
    try{
-       const response = await apiHelper.agentApproval(agentId);
+       const response = await Helper.agentApproval(agentId);
        return response;
    }catch(err){
      console.error('Error in approve Agent !!',err);
@@ -148,7 +134,7 @@ export const approveAgent = async(agentId : string) =>{
 }
 export const rejectAgentRequest = async(agentId : string) =>{
   try{
-    const response = await apiHelper.agentApproval(agentId);
+    const response = await Helper.agentApproval(agentId);
     return response;
 }catch(err){
   console.error('Error in approve Agent !!',err);
@@ -157,8 +143,7 @@ export const rejectAgentRequest = async(agentId : string) =>{
 }
 export const blockPackage = async(packageId : string): Promise<boolean> => {
    try{
-      console.log('Delete Package ::',packageId);
-      const response = apiHelper.blockPackage(packageId);
+      const response = Helper.blockPackage(packageId);
       return response;
    }catch(err){
       console.error('Error in delete Pacakge :',err);
@@ -167,19 +152,19 @@ export const blockPackage = async(packageId : string): Promise<boolean> => {
 }
 
 export const getPackages = async (params: SearchParams) : Promise<TPackageData> =>{
-    const response : TPackageData = await apiHelper.getPackages(params);
+    const response : TPackageData = await Helper.getPackages(params);
     return response;
 }
 
 
 export const getDashboard = async() => {
-  const response = await apiHelper.getDashboard();
+  const response = await Helper.getDashboard();
   return response;
 }
 
 export const verifyPackage = async (packageId : string,value: string) =>{
    try{
-      const response = await packageApi.verifyPackage(packageId,value);
+      const response = await packages.verifyPackage(packageId,value);
       return response;
    }catch(err){
       console.error('Error in verify Package !!',err);

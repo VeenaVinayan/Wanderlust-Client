@@ -31,10 +31,8 @@ const Wallet : React.FC = () => {
          sortBy: filters.sortBy,
          sortOrder: filters.sortOrder
       });
-      console.log('Wallet data in component :: :',data);
       if(data){
        const { amount, transaction, totalCount } = data;
-       console.log("Values ::" ,amount,transaction,totalCount);
         setWallet(amount);
         setTransaction(transaction);
         setCount(totalCount);

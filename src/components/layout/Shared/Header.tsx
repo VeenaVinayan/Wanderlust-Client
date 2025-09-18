@@ -73,7 +73,7 @@ const Header: React.FC = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-10 h-10 flex items-center justify-center text-white font-semibold text-lg rounded-full bg-gradient-to-t from-purple-600 via-pink-800 to-red-900"
               >
-                {user?.name.charAt(0)}
+                {user?.name?.charAt(0)}
               </button>
 
               {isOpen && (
@@ -86,7 +86,7 @@ const Header: React.FC = () => {
                     <li
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
-                        navigate(`/${user.role.toLowerCase()}/${user.role.toLowerCase()}Dashboard/`);
+                        navigate(`/${user.role.toLowerCase()}/${user.role.toLowerCase()}Dashboard/view`);
                         setIsOpen(false);
                       }}
                     >
@@ -97,7 +97,7 @@ const Header: React.FC = () => {
                       <li
                         className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                         onClick={() => {
-                          navigate('/user/userProfile/');
+                          navigate('/user/userProfile/profile');
                           setIsOpen(false);
                         }}
                       >

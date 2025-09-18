@@ -31,8 +31,7 @@ const AgentCard: React.FC = () => {
     useEffect(() =>{
         if(location.state){
              setAgent(location.state);
-             console.log("Agent Data in Card ::", location.state);
-        }
+       }
     },[location.state]);
 
     const verifyAgent = async () =>{

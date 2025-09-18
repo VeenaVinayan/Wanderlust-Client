@@ -1,11 +1,11 @@
 import { TBooking, TBookingData , TBookingValidationData} from "../../types/bookingTypes";
-import bookingApi from "../../helper/bookingApi";
+import booking from "../../helper/bookingApi";
 import { SearchParams } from "../../types/agentTypes";
-import userApi from "../../helper/userApi";
+import user from "../../helper/userApi";
 
 export const bookPackage = async (bookingData : TBooking) =>{
         try{
-             const response = await bookingApi.bookPackage(bookingData);
+             const response = await booking.bookPackage(bookingData);
              if(response){
                     return Response;
              }
@@ -16,7 +16,7 @@ export const bookPackage = async (bookingData : TBooking) =>{
 }
 export const getBookingData = async( userId: string,params : SearchParams) =>{
         try{
-                const response = await bookingApi.getBookingData(userId,params);
+                const response = await booking.getBookingData(userId,params);
                 if(response){
                 return response;
                 }
@@ -27,7 +27,7 @@ export const getBookingData = async( userId: string,params : SearchParams) =>{
  }
  export const updateBookingStatusByAgent = async (bookingId : string,status : string) =>{
         try{
-                const response = await bookingApi.updateBookingStatusByAgent(bookingId,status)
+                const response = await booking.updateBookingStatusByAgent(bookingId,status)
                 return response;
         }catch(err){
                 console.log('Error Update booking Status !!');
@@ -35,15 +35,13 @@ export const getBookingData = async( userId: string,params : SearchParams) =>{
         }
  }
  export const getBookingDataToAdmin = async(params: SearchParams)  =>{
-        console.log('Booking Data ::',params);
-        const data = await bookingApi.getBookingDataToAdmin(params);
+        const data = await booking.getBookingDataToAdmin(params);
         return data;
     }
 
 export const cancelBooking = async(bookingId : string) =>{
        try{
-           console.log('Booking data ',bookingId);
-           const data = await bookingApi.cancelBooking(bookingId);
+           const data = await booking.cancelBooking(bookingId);
            return data;
        }catch(err){
            console.log('Error occured in cancel Booking ',err); 
@@ -52,12 +50,12 @@ export const cancelBooking = async(bookingId : string) =>{
     }
 export const validateBooking = async(bookingData : TBookingData) =>{
         try{
-           return await userApi.validateBooking(bookingData);
+           return await user.validateBooking(bookingData);
         }catch(err){
                 console.log('Error in Validate Booking !');
                 throw err;
         }
 }   
 export const getPackageBookingDataValue = async (packageId : string,day :Date):Promise<TBookingValidationData> =>{     
-       return await bookingApi.getPackageBookingDataValue(packageId,day);
+       return await booking.getPackageBookingDataValue(packageId,day);
 }

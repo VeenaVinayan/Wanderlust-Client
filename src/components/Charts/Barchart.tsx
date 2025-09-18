@@ -12,8 +12,7 @@ type Props = {
   data: TMonthBooking[];
 };
 const Barchart = ({data} : Props) => {
-  console.log("Values ::", data);
-  return (
+   return (
     <div className="w-full h-[400px] m-5">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data}>

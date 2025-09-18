@@ -1,9 +1,10 @@
 import axiosInstance from "../apiStore/api";
+import { AgentRoute } from '../Constants/RouteValues';
 
-class AgentApi{
+class Agent{
      async getDashboard(agentId : string){
          try{
-             const { data } = await axiosInstance.get(`/agent/dashboard/${agentId}`);
+             const { data } = await axiosInstance.get(`${AgentRoute.AGENT_DASHBOARD}/${agentId}`);
              return data.data;
          }catch(err:unknown){
              console.error('Error in Fetching Agent Dashboard ::',err);
@@ -12,4 +13,4 @@ class AgentApi{
      }
    }
 
-export default new AgentApi();
+export default new Agent();

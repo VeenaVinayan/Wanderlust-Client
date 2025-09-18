@@ -23,10 +23,7 @@ const VideoCall: React.FC = () => {
 
   useEffect(() => {
     if (!roomIdUser) return;
-
-    console.log("🚀 Starting video call with Room ID:", roomIdUser);
-
-    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
       serverSecret,
       roomIdUser,
@@ -37,8 +34,7 @@ const VideoCall: React.FC = () => {
     const zc = ZegoUIKitPrebuilt.create(kitToken);
 
     const handleUserLeft = () => {
-      console.log('👋 User left the room');
-      zc.destroy();
+       zc.destroy();
       dispatch(setShowVideoCallUser(false));
       dispatch(setRoomIdUser(null));
       dispatch(setVideoCallUser(null));
@@ -62,8 +58,6 @@ const VideoCall: React.FC = () => {
     socket?.on('user-left', handleUserLeft);
 
     return () => {
-    
-      console.log('🧹 Cleaning up video call...');
       zc.destroy();
       socket?.off('user-left', handleUserLeft);
     };

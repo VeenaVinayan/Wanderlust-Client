@@ -13,7 +13,6 @@ const BookingPackageData: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const location = useLocation();
     const packageId = location.state;
-    console.log('Package Id ::',packageId);
     const navigate = useNavigate();
     const [ filters, setFilters] = useState({keyword:'',sortBy:'',sortOrder:''});
 
@@ -21,8 +20,7 @@ const BookingPackageData: React.FC = () => {
           setCurrentPage(page)
     }
     useEffect(() => {
-       console.log("Booking package Data !!");
-        const fetchData = async (page : number,packageId : string) => {
+      const fetchData = async (page : number,packageId : string) => {
               const response  = await getPackageBooking(packageId,{
                  page,
                  perPage: PER_PAGE,
@@ -30,7 +28,6 @@ const BookingPackageData: React.FC = () => {
                  sortBy:filters.sortBy,
                  sortOrder: filters.sortOrder,
               });
-              console.log('Pacakge data is ::',response);
               if(response){
                   setBooking(response.data.data);
                   setCount(response.data.totalCount)

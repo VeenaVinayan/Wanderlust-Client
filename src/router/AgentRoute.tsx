@@ -11,13 +11,13 @@ import BookingView from '../components/Agent/BookingView';
 import BookingPackageData from '../components/Agent/BookingPackageData';
 import AgentChat from '../components/Agent/AgentChat';
 import Notification from '../components/Notification/Notification';
+
 const AgentRoute : React.FC = () =>{
     return(
         <> 
           <Routes> 
-            
-             <Route path="/agentDashboard" element={< Dashboard/>} >
-                <Route path="" element={<DashboardContent />} />
+            <Route path="/agentDashboard" element={< Dashboard/>} >
+                <Route path="view" element={<DashboardContent />} />
                 <Route path="package" element={<Package/>}  /> 
                 <Route path="addPackage" element={<AddPackage/>} />
                 <Route path="editPackage" element={<EditPackage/>} />
@@ -33,5 +33,4 @@ const AgentRoute : React.FC = () =>{
        </>
     )
 }
-
 export default AgentRoute;

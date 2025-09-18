@@ -1,22 +1,21 @@
 import axiosInstance from "../apiStore/api";
 import { TChatUser } from '../types/chatTypes';
+import { Chat_Route } from "../Constants/RouteValues";
 
-class ChatApi{
+class Chat{
     async getChatUsers(userId : string,role: string):Promise<TChatUser[] | null>{
-      console.log("Users :",userId); 
       const user = role.toLowerCase();
-      const { data } = await axiosInstance.get(`/${user}/chats/users/${userId}`);
+      const { data } = await axiosInstance.get(`/${user}${Chat_Route.CHATS_USERS}/${userId}`);
       return data.users;
     }
     async getMessages(sender: string, receiver : string, role :string){
        const user = role.toLowerCase(); 
-       const data = await axiosInstance.get(`/${user}/chats/messages`, { params: { sender, receiver } });
+       const data = await axiosInstance.get(`/${user}${Chat_Route.CHATS_MESSAGES}`, { params: { sender, receiver } });
        return data.data;
     }
     async getChatUserDetails(userId : string){
-        const { data } = await axiosInstance(`/user/users/details/${userId}`);
-        console.log(data.data);
+        const { data } = await axiosInstance(`${Chat_Route.USERS_DETAILS}/${userId}`);
         return data;
     }
 }
-export default new ChatApi();
+export default new Chat();

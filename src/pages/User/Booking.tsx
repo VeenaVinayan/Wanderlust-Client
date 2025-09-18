@@ -114,7 +114,6 @@ const Booking : React.FC = ()  => {
      e.preventDefault();
  try{
      await schema.validate(bookingData, { abortEarly: false })
-     console.log('Booking Data : ', bookingData);
      navigate('/user/payment', { state: { bookingData, packageValue } });
   }catch (err: unknown) {
   if (err instanceof ValidationError) {

@@ -17,7 +17,7 @@ const AdminRoute : React.FC = () =>{
     return(
         <Routes>
              <Route path="/adminDashboard" element={< Dashboard />} >
-                <Route index element={<DashboardData/>} />
+                <Route path="view" element={<DashboardData/>} />
                 <Route path="users" element={<Users />} />
                 <Route path="agentView" element={<Agents />} />
                 <Route path="category" element={<Category /> } />

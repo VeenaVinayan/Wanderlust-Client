@@ -1,13 +1,12 @@
 import axiosInstance from "../apiStore/api";
 import { SearchParams } from "../types/agentTypes";
 import { TPackageData} from "../types/packageTypes";
-
-class ApiHelper {
+import { Admin_Route } from "../Constants/RouteValues";
+class Helper {
     async deleteCategory(categoryId : string) : Promise<boolean | undefined>{
         try{
-            const res  = await axiosInstance.patch(`/admin/category-delete/${categoryId}`);
-            console.log('Response :: ',res);
-            if(res?.data?.success){
+            const { data}  = await axiosInstance.patch(`${Admin_Route.ADMIN_CATEGORY_DELETE}/${categoryId}`);
+            if(data?.success){
                  return true;
             }
             return false;
@@ -18,7 +17,7 @@ class ApiHelper {
     }
     async isExistCategory(categoryName : string) : Promise<boolean> {
          try{
-              const result = await axiosInstance.get(`/admin/category-check/${categoryName}`);
+              const result = await axiosInstance.get(`${Admin_Route.ADMIN_CATEGORY_CHECK}/${categoryName}`);
               if(result.status === 200){
                  return true;
               }else{
@@ -31,9 +30,8 @@ class ApiHelper {
     }
     async fetchPendingAgentData(params: SearchParams) {
          try{
-             const response = await axiosInstance.get(`/admin/agent-pending`,{params});
-             console.log(" REsponse is :::",response.data);
-             return response.data;
+             const { data} = await axiosInstance.get(`${Admin_Route.ADMIN_AGENT_PENDING}`,{params});
+             return data;
          }catch(err){
              console.log('Error in fetch Agent data ::',err);
              return false;
@@ -41,8 +39,8 @@ class ApiHelper {
     }
     async agentApproval(agentId : string){
          try{
-             const response = await axiosInstance.patch(`/admin/approveAgent/${agentId}`);
-             return response.data;
+             const { data } = await axiosInstance.patch(`${Admin_Route.ADMIN_APPROVE_AGENT}/${agentId}`);
+             return data;
          }catch(err){
              console.error('Error in Api call Agent Approval !!',err);
              return null;
@@ -50,8 +48,8 @@ class ApiHelper {
     }
     async agentRejectRequest(agentId : string){
         try{
-            const response = await axiosInstance.patch(`/admin/rejectAgentRequest/${agentId}`);
-            return response.data;
+            const { data } = await axiosInstance.patch(`${Admin_Route.ADMIN_REJECT_AGENT_REQUEST}/${agentId}`);
+            return data;
         }catch(err){
             console.error('Error in Api call Agent Approval !!',err);
             return null;
@@ -59,7 +57,7 @@ class ApiHelper {
    }
    async blockPackage(packageId: string): Promise<boolean>{
         try{
-            const response = await axiosInstance.patch(`/admin/block-package/${packageId}`);
+            const response = await axiosInstance.patch(`${Admin_Route.ADMIN_BLOCK_PACKAGE}/${packageId}`);
             if(response.status === 200) return true;
             else return false;
         }catch(err){
@@ -68,13 +66,12 @@ class ApiHelper {
         }
     }
   async getPackages(params : SearchParams) : Promise<TPackageData>{
-        const response = await axiosInstance.get(`/admin/packages`,{params});
-        return response.data.data;
+        const { data } = await axiosInstance.get(`${Admin_Route.ADMIN_PACKAGES}`,{params});
+        return data.data;
   }
   async getDashboard(){
-     const response = await axiosInstance.get('/admin/dashboard');
-     console.log("DAta is ::",response.data);
-     return response.data;
+     const { data }= await axiosInstance.get(`${Admin_Route.ADMIN_DSAHBOARD}`);
+     return data;
   }
 }
-export default new ApiHelper();
+export default new Helper();

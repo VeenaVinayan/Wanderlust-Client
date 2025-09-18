@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   let accessToken: string | null = null;
   let route: string = '/login';
-  console.log('In public Route !!');
+  
   if (localStorage.getItem("accessToken")) {
     accessToken = localStorage.getItem("accessToken");
     route = '/login';

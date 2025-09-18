@@ -1,10 +1,11 @@
 import axiosInstance from '../apiStore/authApi';
 import { AgentFormDataType, FormDataType } from '../types/formTypes';
+import { Auth_Route } from '../Constants/RouteValues';
 
-class AuthApi{
+class Auth{
      async userLogin(email:string,password : string){
          try{ 
-            const res= await axiosInstance.post('/login',{email,password});
+            const res= await axiosInstance.post(`${Auth_Route.LOGIN}`,{email,password});
             return res.data;
          }catch(err : unknown){
              if(err instanceof Error){
@@ -15,7 +16,7 @@ class AuthApi{
      }
      async forgotPassword(email: string){
         try{
-             const response = await axiosInstance.post('/forgotPassword',{email});
+             const response = await axiosInstance.post(`${Auth_Route.FORGOT_PASSWORD}`,{email});
              return response.data;
         }catch(err : unknown){
              if(err instanceof Error){
@@ -26,8 +27,7 @@ class AuthApi{
      }
      async agentRegister(email :string){
          try{
-             const { data } = await axiosInstance.post('/register',{email});
-             console.log('Response from Agent Registration : ', data);
+             const { data } = await axiosInstance.post(`${Auth_Route.REGISTER}`,{email});
              return data;
          }catch(err: unknown){
                 if(err instanceof Error){
@@ -38,8 +38,7 @@ class AuthApi{
      }
      async resetPassword(password: string, token: string){
          try{
-             const  response  =await axiosInstance.post('/resetPassword',{password,token});
-             console.log('Resposne from reset password : ', response.data);
+             const  response  =await axiosInstance.post(`${Auth_Route.RESET_PASSWORD}`,{password,token});
              return response;
          }catch(err: unknown){
              if(err instanceof Error){
@@ -49,7 +48,7 @@ class AuthApi{
      }
      async otpVerification(otp: string,data:FormDataType | AgentFormDataType,user:string){
          try{
-             const response = await axiosInstance.post('/otp',{otp,data,user});
+             const response  = await axiosInstance.post(`${Auth_Route.OTP}`,{otp,data,user});
              return response.data;
          }catch(err: unknown){
              if(err instanceof Error){
@@ -60,7 +59,7 @@ class AuthApi{
      }
      async resendOtp(email : string){
          try{
-             const { data } = await axiosInstance.post('/resendOtp',{email});
+             const { data } = await axiosInstance.post(`${Auth_Route.RESEND_OTP}`,{email});
              return data;
          }catch(err : unknown){
              if(err instanceof Error){
@@ -70,9 +69,7 @@ class AuthApi{
      }
      async logoutUser(){
          try{
-            console.log("Logout user !!");
-            const response = await axiosInstance.post('/logout');
-            console.log('Response from Logout User : ',response);
+            const response = await axiosInstance.post(`${Auth_Route.LOGOUT}`);
             return response
          }catch(err: unknown){
              if(err instanceof Error){
@@ -83,4 +80,4 @@ class AuthApi{
      }
    }
    
-export default new AuthApi();
+export default new Auth();

@@ -3,7 +3,6 @@ import {toast} from 'react-toastify';
 
 const URL = import.meta.env.VITE_APP_BASEURL;
 
-console.log(`URL :: ${URL}`);
 const axiosInstance : AxiosInstance = axios.create({
      baseURL: `${URL}/auth`,
      timeout: 10000,
@@ -20,7 +19,6 @@ axiosInstance.interceptors.response.use(
          if(error.response) {
              const message =
                    error.response?.data?.message || error.message || 'Unexpected error occurred';
-             console.log("Error in Auth response ",error.response);
              switch(error.response.status) {
                  case 400:
                      toast.error(message);
@@ -36,8 +34,6 @@ axiosInstance.interceptors.response.use(
                      break;
                 case 409:
                       toast.error(message);
-                      console.log(message)
-                      //window.location.assign("/login");   
                       break;
                 case 500:
                     toast.error("Internal Server Error !");

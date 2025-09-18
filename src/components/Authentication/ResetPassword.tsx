@@ -27,7 +27,6 @@ const ResetPassword: React.FC = () => {
     setError("");
     const token = params.token!;
     const data = await resetPassword(password,token);
-    console.log("Response from reset password : ", data);
     if(data?.status){
        setSuccess(true);
        toast.success("Password reset successfully!");

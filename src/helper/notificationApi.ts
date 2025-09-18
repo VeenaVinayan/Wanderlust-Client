@@ -1,11 +1,11 @@
 import axiosInstance from '../apiStore/api';
+import { Notification_Route } from '../Constants/RouteValues';
 
-class NotificationApi {
+class Notification{
  
   async getAllNotifications(userId: string, role: string) {
     try {
-      const { data } = await axiosInstance.get(`/${role}/notifications/${userId}`);
-      console.log("Data :: Notifications ::", data.data);
+      const { data } = await axiosInstance.get(`/${role}${Notification_Route.NOTIFICATIONS}/${userId}`);
       return data.data;
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -15,7 +15,7 @@ class NotificationApi {
 
   async changeNotificationStatus(notificationId: string, role: string): Promise<boolean> {
     try {
-      const { data } = await axiosInstance.patch(`/${role}/notifications/${notificationId}`);
+      const { data } = await axiosInstance.patch(`/${role}${Notification_Route.NOTIFICATIONS}/${notificationId}`);
       return data.success ?? false;
     } catch (err) {
       console.error("Error changing notification status:", err);
@@ -24,4 +24,4 @@ class NotificationApi {
   }
 }
 
-export default new NotificationApi();
+export default new Notification();

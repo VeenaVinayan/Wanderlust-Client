@@ -23,12 +23,10 @@ const Success: React.FC = () => {
       if(checkBooking.current) return;
       checkBooking.current = true;
       const response = await bookPackage(booking);
-      console.log("Response is ...",response);
       if(response) {
         dispatch(resetBookingData());
       }
-      console.log('REsponse ::: ', response);
-    }
+     }
    } 
    packageBooking();
   },[]);

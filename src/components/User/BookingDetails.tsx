@@ -33,7 +33,6 @@ const BookingDetails: React.FC = () => {
   const { showConfirm } = useSweetAlert();
   useEffect(() => {
       setBookingValue(bookingData);
-      console.log('Booking DAta ::',bookingData);
       const fetchReviewData = async (userId: string, packageId: string) => {
       const data = await getReview(userId, packageId);
       setReview(data);
@@ -47,8 +46,7 @@ const BookingDetails: React.FC = () => {
   },[bookingData, user.id,setValue]);
 
   const handleDownloadPDF = async () => {
-    console.log('Download PDF !!',bookingValue?.packageId?.itinerary);
-    if (!bookingValue?.packageId?.itinerary) {
+  if (!bookingValue?.packageId?.itinerary) {
       toast.error('No itinerary available for this booking.');
       return;
     }
@@ -69,8 +67,7 @@ const BookingDetails: React.FC = () => {
     if (!isModalOpen) reset();
   };
   const handleCancelBooking = async () => {
-       console.log('Cancel Booking !!',bookingValue);
-       if(bookingValue){
+     if(bookingValue){
        const response = await cancelBooking(bookingValue._id);
        if(response.success){
          setBookingValue((prev) => {
@@ -80,8 +77,7 @@ const BookingDetails: React.FC = () => {
                     tripStatus: 'Cancelled',
                  };
           });
-           console.log("Booking Value ==",bookingValue);
-         toast.success(response.message);
+        toast.success(response.message);
         }else{
            toast.error(response.message);
         }
@@ -96,7 +92,6 @@ const BookingDetails: React.FC = () => {
     }
   };
  const handleDelete = async (id: string) => {
-    console.log('Delete review :',id);
     
   const response = await deleteReview(id);
     if (response) {
@@ -108,10 +103,8 @@ const BookingDetails: React.FC = () => {
   };
 const handleEditSubmit = async (data: TReview) => {
   setIsEditModal(false);
-  console.log('Edit Review ::', data);
-  if (review && bookingValue) {
+ if (review && bookingValue) {
     const result = await editReview(data, review._id);
-    console.log('Edit Review Result:', result);
     setReview({
       ...review,
       review: data.review,
@@ -121,8 +114,7 @@ const handleEditSubmit = async (data: TReview) => {
   }
 };
 const handleInvoice = async () =>{
-    console.log('Download INVoice PDF !!');
-    const booking: TBookingPdfProps = {
+   const booking: TBookingPdfProps = {
       title : bookingValue?.packageId.name || 'Package' ,
       day:  bookingValue?.packageId.day || 0,  
       night: bookingValue?.packageId.night || 0,
@@ -264,11 +256,11 @@ const handleInvoice = async () =>{
          }
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Trip Date : </span>
-          <span className="text-lg font-bold">{new Date(bookingValue.tripDate)?.toLocaleDateString()}</span>
+          <span className="text-lg font-bold">{new Date(bookingValue.tripDate)?.toLocaleDateString("en-IN")}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking Date </span>
-          <span className="text-lg font-bold">{new Date(bookingValue.bookingDate).toLocaleDateString()}</span>
+          <span className="text-lg font-bold">{new Date(bookingValue.bookingDate).toLocaleDateString("en-IN")}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-500 mb-1">Booking Status</span>

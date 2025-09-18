@@ -40,7 +40,6 @@ if(status ==='loading') return <p>Loading...</p>
 if(status === 'failed') return <p>Error ...{error}</p>
 
 const handleWishlist = async (packageId : string) => {
-   console.log('Wishlist !!',packageId);
    if(user.isAuthenticated){
    const res = await addToWishlist(user.id,packageId);
    if(res) toast.success(res);
@@ -53,7 +52,6 @@ const handleWishlist = async (packageId : string) => {
   }
 
 const handleThemeSearch = (categoryId : string) =>{
-   console.log("Category search",categoryId);
    navigate("/user/search",{state:categoryId});
 }
   return (
@@ -179,7 +177,7 @@ const handleThemeSearch = (categoryId : string) =>{
    
     </div>
   ))}
-</div>
+ </div>
 </div>
 </section>
  <Footer />  

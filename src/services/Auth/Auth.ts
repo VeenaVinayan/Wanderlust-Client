@@ -46,7 +46,6 @@ export const resetPassword = async(password : string,token: string) =>{
 
 export const  otpVerification = async (otp : string,data: FormDataType | AgentFormDataType, user:string) =>{
      try{
-         console.log("Values :: after verify otp ::",data);
          const res = await apiHelper.otpVerification(otp,data,user);
          return res;
      }catch(err: unknown){
@@ -69,11 +68,9 @@ export const resendOtp = async(email :string) =>{
 }
 export const logoutUser = async (): Promise<boolean> => {
      try{
-        console.log("Logout user !!");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         const  data  = await apiHelper.logoutUser();
-        console.log("Data :: ",data);
         if(data.status === 204) {
             return true;
         } else {

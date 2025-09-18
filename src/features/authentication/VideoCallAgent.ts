@@ -13,15 +13,13 @@ const agentSlice=createSlice({
     reducers:{
          setVideoCall(state, action: PayloadAction<VideoCallPayload  | null>) {
             state.videoCall = action.payload;
-            console.log('state.videoCall user', state.videoCall);
           },
           setShowVideoCall(state, action: PayloadAction<boolean>) {
             state.showVideoCallAgent = action.payload;
         },
           setRoomId(state, action: PayloadAction<string | null>) {
             state.roomIdAgent = action.payload;
-            console.log('roomIdAgent slice', state.roomIdAgent);
-          },
+         },
            endCallAgent: (state) => {
             state.videoCall = null;
             state.showVideoCallAgent = false; 

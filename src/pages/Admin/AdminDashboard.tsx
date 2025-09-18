@@ -31,7 +31,7 @@ const DashboardLayout: React.FC = () => {
   };
 
   const navItems = [
-    { to: '.', label: 'Dashboard', icon: LayoutDashboard },
+    { to: 'view', label: 'Dashboard', icon: LayoutDashboard },
     { to: 'users', label: 'Users', icon: Users },
     { to: 'category', label: 'Category', icon: Package2 },
     { to: 'packages', label: 'Packages', icon: Package2 },

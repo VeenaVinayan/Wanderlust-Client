@@ -33,8 +33,7 @@ const BookingData : React.FC = () => {
         if (data) {
           setBookingData(data.data);
           setCount(data.totalCount);
-          console.log('Booking Data :', data);
-        }
+         }
       };
       fetchBookingData(user.id, currentPage);
     }, [currentPage,filters]);

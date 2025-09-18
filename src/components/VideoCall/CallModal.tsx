@@ -6,16 +6,13 @@ import { MdCallEnd } from "react-icons/md"
 
 function IncomingVideoCall() {
   const { showIncomingVideoCall } = useSelector((state: RootState) => state.videoCall)
-  console.log("incoming",showIncomingVideoCall);
-   
+    
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocket();
-  console.log("Incoming Modal !!!");
-
+ 
   const handleEndCall = async () => {
     if (!showIncomingVideoCall) {
-      console.error("No incoming call to end.");
-      return;
+         return;
     }
     await socket?.emit("reject-call", {
       to: showIncomingVideoCall._id,
@@ -26,10 +23,8 @@ function IncomingVideoCall() {
   };
   const handleAcceptCall = async () => {
     if (!showIncomingVideoCall) {
-      console.error("No incoming call to accept.");
       return;
     }
-    console.log("Accept Video Call---");
     socket?.emit("accept-incoming-call", {
       to: showIncomingVideoCall._id,
       from: showIncomingVideoCall.agentId,

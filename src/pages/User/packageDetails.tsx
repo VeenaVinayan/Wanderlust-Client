@@ -27,7 +27,6 @@ const PackageDetails: React.FC = () => {
   useEffect(() =>{
      const fetchData = async (packageId : string) =>{
           const response = await getReviews(packageId);
-          console.log('Reviews !!',response);
           setReviews(response);
           handleRating(response);
      }
@@ -43,9 +42,7 @@ const PackageDetails: React.FC = () => {
     );
   }
  const handleRating = (review : TReviews []) => {
-  console.log("Reviews ::",review);
   const total = review.length;
-  console.log("Rating = ,total");
   if (total === 0) {
     setRating(0);
     return;
