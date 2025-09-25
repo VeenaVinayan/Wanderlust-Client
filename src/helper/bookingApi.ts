@@ -17,7 +17,7 @@ class Booking{
      async getBookingData(userId: string,params: SearchParams){
           try{
                const { data } = await axiosInstance.get(`${Booking_Route.USER_BOOKING_ID}/${userId}`,{params});
-               return data.data;    
+               return data.bookings;    
           }catch(err: unknown){
                console.error('Error in Fetching Booking Data:', err);
                throw Error('Error in Fetching Booking Data !!');

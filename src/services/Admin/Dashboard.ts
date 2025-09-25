@@ -158,8 +158,8 @@ export const getPackages = async (params: SearchParams) : Promise<TPackageData> 
 
 
 export const getDashboard = async() => {
-  const response = await Helper.getDashboard();
-  return response;
+  const dashboardData = await Helper.getDashboard();
+  return dashboardData;
 }
 
 export const verifyPackage = async (packageId : string,value: string) =>{

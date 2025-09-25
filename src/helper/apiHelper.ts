@@ -71,7 +71,7 @@ class Helper {
   }
   async getDashboard(){
      const { data }= await axiosInstance.get(`${Admin_Route.ADMIN_DSAHBOARD}`);
-     return data;
+     return data.dashboard;
   }
 }
 export default new Helper();

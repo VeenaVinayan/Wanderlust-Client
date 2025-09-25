@@ -28,8 +28,8 @@ export const uploadCertificate =  async (userId : string, image :File) =>{
 
 export const getDashboard = async (agentId : string) =>{
    try{
-        const data = await agentHelper.getDashboard(agentId);
-        return data;
+        const dashboard = await agentHelper.getDashboard(agentId);
+        return dashboard;
    }catch(err:unknown){
         console.error('Error in Fetching Agent Dashboard ::', err);
         throw err;

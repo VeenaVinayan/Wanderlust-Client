@@ -19,11 +19,12 @@ import Header from '../components/layout/Shared/Header';
 import { addToWishlist } from "../services/User/UserServices";
 import { toast } from 'react-toastify';
 import  Footer  from '../components/layout/Shared/Footer';
-
+import Loader from '../components/layout/Shared/Loader';
+import ErrorLoader from '../components/layout/Shared/ErrorLoader';  
 const HomePage : React.FC = () => {
 const dispatch = useDispatch<AppDispatch>();  
 const [ categories, setCategories ] = useState<TCategoryValue[]>([]);
-const { packages, status, error } = useSelector((state: RootState) => state.packages);
+const { packages, status } = useSelector((state: RootState) => state.packages);
 const user = useSelector(( state: RootState) => state.userData);
 const navigate = useNavigate();
 
@@ -36,8 +37,8 @@ const navigate = useNavigate();
       dispatch(fetchPackages());
   }, []);
 
-if(status ==='loading') return <p>Loading...</p>
-if(status === 'failed') return <p>Error ...{error}</p>
+if(status ==='loading') return <Loader />
+if(status === 'failed') return <ErrorLoader />  
 
 const handleWishlist = async (packageId : string) => {
    if(user.isAuthenticated){

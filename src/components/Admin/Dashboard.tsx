@@ -15,11 +15,11 @@ const AdminDashboard: React.FC = () => {
   const [bookingPerMonth, setBookingPerMonth] = useState<TMonthBooking[]>([]);
   useEffect(() => {
     (async () => {
-      const data = await getDashboard();
-      setDashboard(data.data.summary);
-      setBookingPerMonth(data.data.bookingsPerMonth);
-      if (data.data.topPackages) {
-        setTopPackages(data.data.topPackages);
+      const dashboard = await getDashboard();
+      setDashboard(dashboard.summary);
+      setBookingPerMonth(dashboard.bookingsPerMonth);
+      if(dashboard.topPackages) {
+         setTopPackages(dashboard.topPackages);
       }
     })();
   }, []);

@@ -51,3 +51,14 @@ export const Package_Route = {
     AGENT_DELETE_IMAGE :'/agent/delete-image',
     ADMIN_PACKAGES_VERIFY :'/admin/packages/verify'
 }
+export const USER_ROUTE = {
+    USER_CATEGORY :'/user/category',
+    USER_PACKAGES_CATEGORY:`/user/packages-category`,
+    ADVANCE_SEARCH:`/user/advance-search`,
+    STRIPE_PAYMENT:'/user/stripe-payment',
+    USER_WISHLIST: '/user/wishlist',
+    USER_REVIEW :'/user/review',
+    USER_REVIEWS: '/user/reviews',
+    USER_WALLETS:'/user/wallets',
+    USER_AGENTS_DATA:'/user/agents/data',
+}

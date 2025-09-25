@@ -27,8 +27,8 @@ export const getPackageData = async(): Promise<TPackage[]> =>{
 
 export const advanceSearch = async (queryString: string): Promise<TPackagePack> => {
     try {
-        const response = await userApi.getPackges(queryString);
-        return response; 
+        const packages = await userApi.getPackges(queryString);
+        return packages; 
     } catch (err) {
         console.error("Error in searching packages:", err);
         throw err;
