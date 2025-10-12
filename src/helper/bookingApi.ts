@@ -7,7 +7,8 @@ import { Booking_Route } from '../Constants/RouteValues';
 class Booking{
      async bookPackage(bookingData : TBooking){
             try{
-                 const { data} = await axiosInstance.post(`${Booking_Route.USER_BOOKING}`, bookingData);
+                 console.log("Booking Data in Axios ::",bookingData);
+                 const { data } = await axiosInstance.post(`${Booking_Route.USER_BOOKING}`, bookingData);
                  return data;
             }catch(err : unknown){
                  console.error('Error in Booking Package:', err);

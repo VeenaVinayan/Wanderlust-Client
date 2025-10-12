@@ -42,6 +42,7 @@ if(status === 'failed') return <ErrorLoader />
 
 const handleWishlist = async (packageId : string) => {
    if(user.isAuthenticated){
+   console.log("Package Id::",packageId); 
    const res = await addToWishlist(user.id,packageId);
    if(res) toast.success(res);
    else toast.error('Not successfully added To Wishlist !!');
@@ -49,7 +50,7 @@ const handleWishlist = async (packageId : string) => {
       toast.info("Please sign in to add items to your wishlist.");
       navigate(`/login?redirectBack=${encodeURIComponent(location.pathname)}`);
       return;
-   }
+  }
   }
 
 const handleThemeSearch = (categoryId : string) =>{
@@ -161,7 +162,7 @@ const handleThemeSearch = (categoryId : string) =>{
 
         <div 
              className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition"
-             onClick={() => handleWishlist(pkg.id)}>
+             onClick={() => handleWishlist(pkg._id)}>
           <HeartIcon size={24} className="text-red-500" />
         </div>
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col items-center"

@@ -22,7 +22,9 @@ const Success: React.FC = () => {
      if(booking) {
       if(checkBooking.current) return;
       checkBooking.current = true;
+      console.log("Booking Data :::",booking);
       const response = await bookPackage(booking);
+      console.log("Rsponse ::",response);
       if(response) {
         dispatch(resetBookingData());
       }
@@ -42,7 +44,7 @@ const Success: React.FC = () => {
       <h1 className="text-2xl font-bold text-green-700 mb-2 z-10">Payment Successful!</h1>
       <p className="text-green-600 mb-6 z-10">Thank you for your purchase. Your booking is confirmed.</p>
       <Link
-        to="/user/userProfile"
+        to="/user/userProfile/booking"
         className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 z-10"
       >
         Back to Home
