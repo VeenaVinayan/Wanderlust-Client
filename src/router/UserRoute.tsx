@@ -32,7 +32,6 @@ const UserRoute : React.FC = () =>{
           <Route path="/payment" element={<Payment/>} />
           <Route path="/success" element={<Success/>} />
           <Route path="/cancel" element={<Cancel />} />
-          
        </Routes>
       </>
    )

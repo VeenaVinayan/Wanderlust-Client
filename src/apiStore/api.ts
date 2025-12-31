@@ -65,10 +65,8 @@ axiosInstance.interceptors.response.use(
       default:
         if (status >= 500) {
           toast.error('Server Error: Please try again later.');
-        } else {
-          toast.error(`Error ${status}: ${message}`);
         }
-    }
+      }
    return Promise.reject(error);
   }
 );

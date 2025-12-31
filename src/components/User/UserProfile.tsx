@@ -87,8 +87,7 @@ const passwordResetSubmit = async (e: FormEvent) => {
     }else { 
       setIsPasswordModal(false);
       }   
-    
- } catch (err: unknown) {
+  }catch (err: unknown) {
     if (err instanceof ValidationError) {
       const newErrors: Record<string, string> = {};
       err.inner.forEach(e => {
@@ -236,7 +235,7 @@ return(
     </div>
    </Modal>
   </div>
-)
+  )
 }
 
 export default UserProfile;

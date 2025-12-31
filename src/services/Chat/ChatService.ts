@@ -1,9 +1,9 @@
 import chatApi  from "../../helper/chatHelper";
 import { TChatUser } from '../../types/chatTypes';
 
-export  const  getChatUsers = async (userId : string,role : string):Promise<TChatUser[] | null >=>{
+export  const  getChatUsers = async (userId : string,role : string, signal?: AbortSignal):Promise<TChatUser[] | null >=>{
     try{
-         const  users  = await chatApi.getChatUsers(userId,role);
+         const  users  = await chatApi.getChatUsers(userId,role,signal);
          return users;
     }catch(err){
         console.log('Error occured ::',err);

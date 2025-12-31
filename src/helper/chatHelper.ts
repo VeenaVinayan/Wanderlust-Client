@@ -3,9 +3,9 @@ import { TChatUser } from '../types/chatTypes';
 import { Chat_Route } from "../Constants/RouteValues";
 
 class Chat{
-    async getChatUsers(userId : string,role: string):Promise<TChatUser[] | null>{
+    async getChatUsers(userId : string,role: string,signal?:AbortSignal):Promise<TChatUser[] | null>{
       const user = role.toLowerCase();
-      const { data } = await axiosInstance.get(`/${user}${Chat_Route.CHATS_USERS}/${userId}`);
+      const { data } = await axiosInstance.get(`/${user}${Chat_Route.CHATS_USERS}/${userId}`,{signal});
       return data.users;
     }
     async getMessages(sender: string, receiver : string, role :string){

@@ -16,18 +16,20 @@ export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode 
   const [selectedUser, setSelectedUser] = useState<TChatUser | null>(null);
   const [messages, setMessages] = useState<TMessage[]>([]);
   const { id,role } = useSelector((state : RootState) => state.userData);
-
+ 
   useEffect(() => {
+   let controller = new AbortController();  
   if (!userId || role === 'Admin' || chatUsers.length > 0) return;
   const loadChats = async () => {
     try{
-       const  users  = await getChatUsers(userId, role);
+       const  users  = await getChatUsers(userId, role,controller.signal);
        setChatUsers(users || []);
     }catch (err) {
        console.error("Failed to load chats", err);
     }
   };
   loadChats();
+  return   () => { controller.abort();}
  },[userId, role, chatUsers.length]);
 
  const selectUser = async (user: TChatUser) => {
