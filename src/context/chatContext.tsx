@@ -63,7 +63,7 @@ export const ChatProvider: React.FC<{ userId: string; children: React.ReactNode 
 };
  return (
     <ChatContext.Provider
-      value={{ chatUsers, setChatUsers, selectedUser, messages, selectUser, addUserToChatList,sortChatList ,clearChatState }}
+      value={{ chatUsers, setChatUsers, selectedUser, messages, selectUser, addUserToChatList,sortChatList ,clearChatState, setSelectedUser }}
     >
       {children}
     </ChatContext.Provider>

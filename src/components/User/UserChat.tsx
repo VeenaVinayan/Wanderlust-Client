@@ -7,7 +7,7 @@ import { TChatUser } from "../../types/chatTypes";
 import { useChatContext } from "../../context/chatContext";
 
 const UserChat: React.FC = () => {
-  const { selectedUser, addUserToChatList } = useChatContext();
+  const { selectedUser, setSelectedUser, addUserToChatList } = useChatContext();
   const currentUserId = localStorage.getItem("userId")!;
   const location = useLocation();
   const agentId = location.state;
@@ -24,6 +24,7 @@ const UserChat: React.FC = () => {
             unreadCount:0,
           };
           addUserToChatList(user);
+          setSelectedUser(user);
         }
       }
     };

@@ -39,8 +39,8 @@ const Register: React.FC = () => {
     // Validations for phone
     if (!formData.phone) {
       errors.phone = "Phone Number is required !";
-    } else if (!/^[6-9]{4}\d{6}$/.test(formData.phone)) {
-      errors.phone = "Phone number must be 10 digits and valid!";
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+      errors.phone = "Phone number must be 10 digits , start digit in between  6-9 digit";
     }
 
     if (!formData.password) {
